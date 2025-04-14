@@ -1,63 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.Image?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HomeController">
+<AnchorPane prefHeight="700.0" prefWidth="1000.0"
+            xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.HomeController"
+            style="-fx-background-color: #f4f9f4;">
+
    <children>
-      <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f0f8ff;">
-         <children>
-            <Label text="AgriFarm" textFill="#2e7d32">
-               <font>
-                  <Font name="System Bold" size="36.0" />
-               </font>
-            </Label>
-            <Label text="Welcome to your agricultural management platform" textFill="#547b56">
-               <font>
-                  <Font size="16.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" spacing="30.0">
-               <children>
-                  <Button fx:id="farmButton" mnemonicParsing="false" onAction="#navigateToFarm" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #4caf50; -fx-background-radius: 10;" text="Farm" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#navigateToMarketplace" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #ff9800; -fx-background-radius: 10;" text="Marketplace" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="articlesButton" mnemonicParsing="false" onAction="#navigateToArticles" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #2196f3; -fx-background-radius: 10;" text="Articles" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="profileButton" mnemonicParsing="false" onAction="#navigateToProfile" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #9c27b0; -fx-background-radius: 10;" text="Profile" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-               </children>
-               <VBox.margin>
-                  <Insets top="40.0" />
-               </VBox.margin>
-            </HBox>
-            <Label text="© 2023 AgriFarm - All rights reserved" textFill="#757575">
-               <VBox.margin>
-                  <Insets top="100.0" />
-               </VBox.margin>
-            </Label>
-         </children>
+      <!-- Top VBox Container -->
+      <VBox spacing="20.0" prefWidth="1000.0">
          <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
          </padding>
+         <children>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <children>
+                  <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@/img/icon-1.png" />
+                     </image>
+                  </ImageView>
+                  <VBox spacing="5.0">
+                     <Label text="AgriFarm" textFill="#2e7d32">
+                        <font><Font name="Georgia Bold" size="32.0"/></font>
+                     </Label>
+                     <Label text="Empowering your farm, one click at a time" textFill="#4e6e50">
+                        <font><Font size="14.0"/></font>
+                     </Label>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Navigation Cards -->
+            <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f0f8ff;">
+                              <HBox alignment="CENTER" spacing="30.0">
+                     <children>
+                        <Button fx:id="farmButton" mnemonicParsing="false" onAction="#navigateToFarm" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #4caf50; -fx-background-radius: 10;" text="Farm" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#navigateToMarketplace" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #ff9800; -fx-background-radius: 10;" text="Marketplace" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="articlesButton" mnemonicParsing="false" onAction="#navigateToArticles" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #2196f3; -fx-background-radius: 10;" text="Articles" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="profileButton" mnemonicParsing="false" onAction="#navigateToProfile" prefHeight="120.0" prefWidth="150.0" style="-fx-background-color: #9c27b0; -fx-background-radius: 10;" text="Profile" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="40.0" />
+                     </VBox.margin>
+                  </HBox>
+
+                  <!-- Today's Tasks Section -->
+                  <VBox spacing="10.0">
+                     <Label text="Today's Tasks" textFill="#333333">
+                        <font><Font size="20.0"/></font>
+                     </Label>
+                     <VBox spacing="8.0" style="-fx-background-color: #e8f5e9; -fx-background-radius: 10; -fx-padding: 10;">
+                        <Label text="• Water greenhouse tomatoes – 9:00 AM" />
+                        <Label text="• Buy organic fertilizer from marketplace – 11:00 AM" />
+                        <Label text="• Inspect crop for pests – 3:00 PM" />
+                     </VBox>
+                  </VBox>
+
+                  <!-- Agriculture Quote -->
+                  <HBox alignment="CENTER" style="-fx-background-color: #fff3e0; -fx-padding: 15; -fx-background-radius: 10;">
+                     <Label text="“The farmer has to be an optimist or he wouldn't still be a farmer.” – Will Rogers"
+                            wrapText="true" textFill="#5d4037">
+                        <font><Font size="14.0" /></font>
+                     </Label>
+                  </HBox>
+
+                  <!-- Footer -->
+                  <HBox alignment="CENTER" style="-fx-padding: 20;">
+                     <Label text="© 2025 AgriFarm - Designed with love for smart agriculture 💚"
+                            textFill="#999999">
+                        <font><Font size="12.0"/></font>
+                     </Label>
+                  </HBox>
+
+            </VBox>
+         </children>
       </VBox>
    </children>
-</AnchorPane> 
+</AnchorPane>

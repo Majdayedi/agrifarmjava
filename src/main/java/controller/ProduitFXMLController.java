@@ -68,6 +68,8 @@ public class ProduitFXMLController implements Initializable {
     @FXML private Button logoutButton;
     @FXML private Button marketplaceButton;
     
+    @FXML private Button homeButton;
+    
     private final ProduitController produitController = new ProduitController();
     private Produit selectedProduit;
     private final ObservableList<Produit> produitData = FXCollections.observableArrayList();
@@ -808,6 +810,22 @@ public class ProduitFXMLController implements Initializable {
             LOGGER.log(Level.SEVERE, "Error loading Marketplace view", e);
             showAlert(Alert.AlertType.ERROR, "Erreur de Navigation", 
                      "Impossible de charger la vue Marketplace");
+        }
+    }
+    
+    @FXML
+    public void navigateToHome() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/home.fxml"));
+            Parent homeView = loader.load();
+            
+            Scene currentScene = homeButton.getScene();
+            Stage primaryStage = (Stage) currentScene.getWindow();
+            primaryStage.setTitle("AgriFarm System");
+            primaryStage.setScene(new Scene(homeView, 900, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Show error alert if you have an alert method
         }
     }
 } 

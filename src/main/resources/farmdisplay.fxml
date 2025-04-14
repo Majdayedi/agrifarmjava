@@ -74,6 +74,11 @@
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="80.0" style="-fx-background-color: #13af02;">
             <children>
+                <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="← Retour">
+                    <HBox.margin>
+                        <Insets right="20.0" left="10.0" />
+                    </HBox.margin>
+                </Button>
                 <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 20;" text="AGRIFARM" />
             </children>
         </HBox>
