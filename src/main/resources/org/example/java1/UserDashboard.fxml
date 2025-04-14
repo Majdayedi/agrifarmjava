@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.java1.controllers.UserDashboardController" spacing="20" alignment="center">
+    <!-- Profile Section -->
+    <VBox alignment="CENTER" spacing="10">
+        <ImageView fx:id="profileImageView" fitHeight="100" fitWidth="100" preserveRatio="true"/>
+        <Label fx:id="welcomeLabel" text="Welcome, User!" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <Label fx:id="nameLabel" text="Name: John Doe" style="-fx-font-size: 16px;"/>
+        <Label fx:id="emailLabel" text="Email: john.doe@example.com" style="-fx-font-size: 16px;"/>
+    </VBox>
+
+    <!-- Action Buttons -->
+    <VBox spacing="10" alignment="CENTER">
+        <Button text="Edit Profile" onAction="#handleEditProfile"/>
+        <Button text="View Profile" onAction="#handleViewProfile"/>
+        <Button text="Logout" onAction="#handleLogout"/>
+
+    </VBox>
+</VBox>

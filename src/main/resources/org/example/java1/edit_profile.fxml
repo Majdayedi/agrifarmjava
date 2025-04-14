@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            fx:controller="org.example.java1.controllers.EditProfileController"
+            prefWidth="600" prefHeight="500"
+            style="-fx-background-color: #f4f4f4;">
+
+    <VBox alignment="TOP_CENTER" spacing="20"
+          styleClass="dashboard-vbox"
+          AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <Label text="Edit Profile" styleClass="dashboard-label" />
+
+        <TextField fx:id="firstNameField" promptText="First Name" styleClass="text-field" />
+        <TextField fx:id="lastNameField" promptText="Last Name" styleClass="text-field" />
+        <TextField fx:id="emailField" promptText="Email" styleClass="text-field" />
+
+        <!-- Role Management Section -->
+        <HBox fx:id="rolesContainer" spacing="10" alignment="CENTER_LEFT">
+            <Label text="Roles:" styleClass="label"/>
+            <VBox spacing="5">
+                <CheckBox fx:id="userRoleCheckBox" text="ROLE_USER" />
+                <CheckBox fx:id="adminRoleCheckBox" text="ROLE_ADMIN" />
+            </VBox>
+        </HBox>
+
+        <VBox spacing="10" alignment="CENTER">
+            <Button text="Save Changes" onAction="#handleSaveChanges" styleClass="dashboard-button" prefWidth="200"/>
+            <Button text="Cancel" onAction="#cancel" styleClass="dashboard-button" prefWidth="200"/>
+            <Button fx:id="backButton" text="Back" onAction="#handleBackToDashboard" styleClass="dashboard-button" prefWidth="200"/>
+        </VBox>
+
+    </VBox>
+</AnchorPane>
