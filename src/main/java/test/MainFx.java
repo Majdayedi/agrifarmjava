@@ -19,7 +19,7 @@ public class MainFx extends Application {
     public void start(Stage primaryStage) {
         try {
             // Load the FXML file (make sure the path is correct)
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/farmdisplay.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/home.fxml"));
             Parent root = fxmlLoader.load();
 
             // Create the scene
