@@ -18,6 +18,11 @@
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="navbar" BorderPane.alignment="CENTER">
          <children>
+            <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" text="← Retour">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </Button>
             <Label styleClass="logo-text" text="AgriFarm">
                <font>
                   <Font name="System Bold" size="22.0" />

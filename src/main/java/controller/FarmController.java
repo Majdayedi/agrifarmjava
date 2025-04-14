@@ -29,6 +29,9 @@ public class FarmController {
     @FXML
     private Button addFarmBtn;
 
+    @FXML
+    private Button homeButton;
+
     private final FarmService farmService = new FarmService();
 
     @FXML
@@ -177,5 +180,21 @@ public class FarmController {
         errorAlert.setHeaderText(title);
         errorAlert.setContentText(message);
         errorAlert.showAndWait();
+    }
+
+    @FXML
+    public void navigateToHome() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/home.fxml"));
+            Parent homeView = loader.load();
+            
+            Scene currentScene = homeButton.getScene();
+            Stage primaryStage = (Stage) currentScene.getWindow();
+            primaryStage.setTitle("AgriFarm System");
+            primaryStage.setScene(new Scene(homeView, 900, 600));
+        } catch (IOException e) {
+            showError("Error", "Could not navigate to home: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
