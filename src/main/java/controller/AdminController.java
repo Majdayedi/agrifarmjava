@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import utils.Connections;
+import utils.DataSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -224,7 +224,7 @@ public class AdminController implements Initializable {
         ResultSet rs = null;
         
         try {
-            connection = Connections.getInstance().getConnection();
+            connection = DataSource.getInstance().getConnection();
             
             // Build query based on filters
             StringBuilder queryBuilder = new StringBuilder();
@@ -418,7 +418,7 @@ public class AdminController implements Initializable {
             System.out.println("Début de l'approbation du produit ID: " + product.getId());
             
             // Obtenir une connexion fraîche directement
-            connection = Connections.getInstance().getConnection();
+            connection = DataSource.getInstance().getConnection();
             if (connection == null) {
                 System.err.println("Connexion null, impossible d'approuver le produit");
                 showAlert(Alert.AlertType.ERROR, "Erreur d'Approbation", 
@@ -482,7 +482,7 @@ public class AdminController implements Initializable {
                     System.out.println("Début de la suppression du produit ID: " + product.getId());
                     
                     // Obtenir une connexion fraîche directement
-                    connection = Connections.getInstance().getConnection();
+                    connection = DataSource.getInstance().getConnection();
                     if (connection == null) {
                         System.err.println("Connexion null, impossible de supprimer le produit");
                         showAlert(Alert.AlertType.ERROR, "Erreur de Suppression", 

@@ -1,7 +1,7 @@
 package service;
 
 import entite.Farm;
-import utils.Connections;
+import utils.DataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class FarmService implements IService<Farm> {
                 "description, bir, photovoltaic, fence, irrigation, cabin, lon, lat) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
             
             pst.setString(1, farm.getLocation());
@@ -52,7 +52,7 @@ public class FarmService implements IService<Farm> {
                 "weather=?, description=?, bir=?, photovoltaic=?, fence=?, irrigation=?, " +
                 "cabin=?, lon=?, lat=? WHERE id=?";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              PreparedStatement pst = cnx.prepareStatement(requete)) {
             
             pst.setString(1, farm.getLocation());
@@ -80,7 +80,7 @@ public class FarmService implements IService<Farm> {
     @Override
     public void delete(Farm farm) {
         String requete = "DELETE FROM farm WHERE id=?";
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              PreparedStatement pst = cnx.prepareStatement(requete)) {
             
             pst.setInt(1, farm.getId());
@@ -95,7 +95,7 @@ public class FarmService implements IService<Farm> {
         List<Farm> farms = new ArrayList<>();
         String query = "SELECT * FROM farm";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
@@ -111,7 +111,7 @@ public class FarmService implements IService<Farm> {
     @Override
     public Farm readById(int id) {
         String requete = "SELECT * FROM farm WHERE id = ?";
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              PreparedStatement pst = cnx.prepareStatement(requete)) {
             
             pst.setInt(1, id);

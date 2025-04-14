@@ -2,7 +2,7 @@ package controller;
 
 import entite.Commande;
 import entite.Produit;
-import utils.Connections;
+import utils.DataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class CommandeController {
     
     // Méthode pour obtenir une connexion fraîche à chaque fois
     private Connection getConnection() {
-        return Connections.getInstance().getConnection();
+        return DataSource.getInstance().getConnection();
     }
 
     public boolean create(Commande commande) {
