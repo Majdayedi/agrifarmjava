@@ -38,7 +38,7 @@ public class ViewProfileController {
         // Load profile picture from external folder
         String imageFileName = user.getImageFileName();
         if (imageFileName != null && !imageFileName.isEmpty()) {
-            String imagePath = "user_data/profile_pics/" + imageFileName; // external path
+            String imagePath = "src/user_data/profile_pics/" + imageFileName; // external path
             File imageFile = new File(imagePath);
 
             if (imageFile.exists()) {

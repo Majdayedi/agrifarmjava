@@ -53,7 +53,7 @@ public class AdminDashboardController {
 
     private void loadUserProfilePicture(String imageName) {
         if (imageName != null && !imageName.isEmpty()) {
-            File file = new File("user_data/profile_pics/" + imageName);
+            File file = new File("src/user_data/profile_pics/" + imageName);
             if (file.exists()) {
                 Image image = new Image(file.toURI().toString());
                 profileImageView.setImage(image);

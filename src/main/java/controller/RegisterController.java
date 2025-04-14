@@ -103,7 +103,7 @@ public class RegisterController {
         if (selectedFile != null) {
             try {
                 // Instead of src/main/resources, use an external writable folder
-                String targetDir = "user_data/profile_pics/"; // you can change this path
+                String targetDir = "src/user_data/profile_pics/"; // you can change this path
                 File dir = new File(targetDir);
                 if (!dir.exists()) dir.mkdirs();
 
