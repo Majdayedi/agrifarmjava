@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="700.0" prefWidth="1000.0" stylesheets="@../styles/application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ProduitFXMLController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="navbar" BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="logo-text" text="AgriFarm">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="5.0">
+               <children>
+                  <Button mnemonicParsing="false" styleClass="nav-button-active" text="Agricole (CRUD)" />
+                  <Button fx:id="adminButton" mnemonicParsing="false" onAction="#handleAdminButtonAction" styleClass="nav-button" text="Administration" />
+                  <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#handleMarketplaceButtonAction" styleClass="nav-button" text="Marketplace" />
+               </children>
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+            </HBox>
+            <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogoutButtonAction" styleClass="logout-button" text="Déconnexion">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <HBox spacing="15.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="600.0" prefWidth="400.0" spacing="12.0" styleClass="form-container">
+               <children>
+                  <Label text="Gestion des Produits Agricoles" textFill="#2e7d32">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Nom du produit" />
+                        <TextField fx:id="nomField" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Quantité" />
+                        <TextField fx:id="quantiteField" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Prix" />
+                        <TextField fx:id="prixField" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Catégorie" />
+                        <ComboBox fx:id="categoriesCombo" prefWidth="150.0" promptText="Sélectionner" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Description" />
+                        <TextArea fx:id="descriptionArea" prefHeight="100.0" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Image" />
+                        <HBox spacing="5.0">
+                           <children>
+                              <TextField fx:id="imageFileNameField" prefHeight="26.0" prefWidth="296.0" />
+                              <Button fx:id="browseButton" mnemonicParsing="false" onAction="#handleBrowseButtonAction" text="Parcourir" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <CheckBox fx:id="approvedCheck" mnemonicParsing="false" text="Approuvé" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddButtonAction" prefWidth="90.0" styleClass="add-button" text="Ajouter" />
+                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#handleUpdateButtonAction" prefWidth="90.0" styleClass="update-button" text="Modifier" />
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButtonAction" prefWidth="90.0" styleClass="delete-button" text="Supprimer" />
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#handleClearButtonAction" prefWidth="90.0" styleClass="clear-button" text="Effacer" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+            <VBox prefHeight="600.0" prefWidth="600.0" spacing="12.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Rechercher:" />
+                        <TextField fx:id="searchField" prefHeight="26.0" prefWidth="200.0" promptText="Nom du produit" />
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" text="Rechercher" />
+                        <Label text="Catégorie:" />
+                        <ComboBox fx:id="filterCategoryCombo" prefWidth="150.0" promptText="Toutes" />
+                     </children>
+                  </HBox>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="560.0" prefWidth="570.0" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                     <content>
+                        <FlowPane fx:id="productCardsPane" hgap="15.0" prefHeight="550.0" prefWidth="550.0" styleClass="flow-pane" vgap="15.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </HBox>
+   </center>
+</BorderPane> 
