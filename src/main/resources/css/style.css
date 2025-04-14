@@ -1,0 +1,189 @@
+/* Main Grid */
+.grid-pane {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 100 20 20 20;
+    -fx-hgap: 30;
+    -fx-vgap: 100;
+    -fx-alignment: CENTER;
+}
+
+/* Menu Buttons */
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 15;
+    -fx-pref-width: 130;
+}
+
+.menu-button:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Farm Cards */
+.farm-card {
+    -fx-background-color: white;
+    -fx-background-radius: 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+    -fx-padding: 15;
+    -fx-pref-width: 250;
+    -fx-pref-height: 300;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+}
+
+.farm-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
+/* Labels */
+.label-bold {
+    -fx-font-weight: bold;
+}
+
+.detail-label {
+    -fx-font-weight: bold;
+    -fx-min-width: 70;
+}
+
+.detail-value {
+    -fx-text-fill: #555;
+}
+
+/* Buttons */
+.action-button {
+    -fx-background-color: #2E7D32;
+    -fx-text-fill: white;
+    -fx-pref-width: 80;
+    -fx-background-radius: 0;
+}
+
+.action-button:hover {
+    -fx-background-color: derive(#2E7D32, 10%);
+}
+
+.delete-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 0;
+    -fx-min-width: 25;
+    -fx-min-height: 25;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.delete-button:hover {
+    -fx-background-color: derive(#e74c3c, 10%);
+}
+
+/* Title */
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Modify and Details buttons */
+#modifyBtn {
+    -fx-background-color: #2E7D32;
+    -fx-text-fill: white;
+}
+
+#modifyBtn:hover {
+    -fx-background-color: derive(#2E7D32, 10%);
+}
+
+#detailsBtn {
+    -fx-background-color: #F57C00;
+    -fx-text-fill: white;
+}
+
+#detailsBtn:hover {
+    -fx-background-color: derive(#F57C00, 10%);
+}
+
+/* Header */
+.header {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+/* Add Button */
+.add-button {
+    -fx-background-color: #2E7D32;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 0;
+}
+
+.add-button:hover {
+    -fx-background-color: derive(#2E7D32, 10%);
+}
+
+/* Scroll Pane */
+.scroll-pane {
+    -fx-background-color: #f5f5f5;
+    -fx-background: #f5f5f5;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #f5f5f5;
+}
+
+.form-container {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-background-radius: 5;
+}
+
+.form-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #13af02;
+    -fx-padding: 0 0 20 0;
+}
+
+.form-scroll {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.form-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.section-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #13af02;
+    -fx-padding: 10 0 5 0;
+}
+
+.check-box {
+    -fx-padding: 5;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 3px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #13af02;
+}
+
+.read-only-field {
+    -fx-background-color: #f5f5f5;
+    -fx-opacity: 0.9;
+    -fx-text-fill: #666666;
+}
+
+.read-only-field:focused {
+    -fx-background-color: #f5f5f5;
+}

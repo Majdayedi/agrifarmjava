@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.AddFarmController"
+      spacing="10" styleClass="form-container">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="update Farm" styleClass="form-title"/>
+
+    <GridPane vgap="10" hgap="10">
+        <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+
+        <Label text="Location:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="locationField" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+
+        <Label text="Address:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="addressField" GridPane.rowIndex="2" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+
+        <Label text="Surface:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="surfaceField" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+
+        <Label text="Budget:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="budgetField" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+
+        <Label text="Latitude:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField fx:id="latField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label text="Longitude:" GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+        <TextField fx:id="lonField" GridPane.rowIndex="5" GridPane.columnIndex="3"/>
+
+        <Label text="Description:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <TextArea fx:id="descriptionField" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2" prefRowCount="3"/>
+
+    </GridPane>
+
+    <HBox spacing="10" styleClass="checkbox-container">
+        <CheckBox fx:id="bircheck" text="3andek bir?"/>
+        <CheckBox fx:id="irrigationCheck" text="Irrigation"/>
+        <CheckBox fx:id="photoCheck" text="photovolcatic?"/>
+        <CheckBox fx:id="fence" text="fence?"/>
+        <CheckBox fx:id="cabincheck" text="cabin?"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Save" onAction="#handleupate" styleClass="save-button"/>
+        <Button text="Cancel" onAction="#handleCancel" styleClass="cancel-button"/>
+    </HBox>
+
+</VBox>

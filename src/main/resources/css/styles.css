@@ -1,0 +1,10 @@
+.read-only-field {
+    -fx-background-color: #f5f5f5;
+    -fx-opacity: 0.9;
+    -fx-text-fill: #666666;
+}
+
+.read-only-field:focused {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #cccccc;
+} 
