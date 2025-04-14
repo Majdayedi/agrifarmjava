@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      styleClass="farm-card">
+    
+    <StackPane>
+        <!-- Farm Image -->
+        <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@img/icon-1.png"/>
+        </ImageView>
+        
+        <!-- Delete Button (Top Right) -->
+        <Button fx:id="deleteBtn" text="X" styleClass="delete-button" StackPane.alignment="TOP_RIGHT">
+            <StackPane.margin>
+                <Insets top="5" right="5"/>
+            </StackPane.margin>
+        </Button>
+    </StackPane>
+    
+    <VBox spacing="5" styleClass="farm-details">
+        <padding>
+            <Insets top="-10" right="10" bottom="10" left="10"/>
+        </padding>
+        
+        <Label fx:id="farmName" styleClass="farm-name"/>
+        <Label fx:id="farmLocation" styleClass="farm-location"/>
+        
+        <GridPane vgap="5" hgap="10">
+            <Label text="Surface:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Label fx:id="farmSurface" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            
+            <Label text="Budget:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <Label fx:id="farmBudget" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+        
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="detailsBtn" text="Details" styleClass="action-button"/>
+            <Button fx:id="modifyBtn" text="Modify" styleClass="action-button"/>
+        </HBox>
+    </VBox>
+</VBox>
