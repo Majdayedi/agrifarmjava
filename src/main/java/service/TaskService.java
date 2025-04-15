@@ -33,7 +33,7 @@ public class TaskService implements IService<Task> {
             pst.setString(6, task.getRessource());
             pst.setString(7, task.getResponsable());
             pst.setString(8, task.getPriority());
-            pst.setInt(9, task.getEstimatedDuration());
+            pst.setString(9, task.getEstimatedDuration());
             pst.setDate(10, new java.sql.Date(task.getDeadline().getTime()));
             pst.setInt(11, task.getWorkers());
             pst.setTimestamp(12, new java.sql.Timestamp(task.getLastUpdated().getTime()));
@@ -49,7 +49,7 @@ public class TaskService implements IService<Task> {
     }
 
     @Override
-    public void update(Task task) {
+    public boolean update(Task task) {
         String requete = "UPDATE task SET field_id=?, name=?, description=?, status=?, date=?, " +
                 "ressource=?, responsable=?, priority=?, estimated_duration=?, deadline=?, workers=?, " +
                 "last_updated=?, payment_worker=?, total=? WHERE id=?";
@@ -64,7 +64,7 @@ public class TaskService implements IService<Task> {
             pst.setString(6, task.getRessource());
             pst.setString(7, task.getResponsable());
             pst.setString(8, task.getPriority());
-            pst.setInt(9, task.getEstimatedDuration());
+            pst.setString(9, task.getEstimatedDuration());
             pst.setDate(10, new java.sql.Date(task.getDeadline().getTime()));
             pst.setInt(11, task.getWorkers());
             pst.setTimestamp(12, new java.sql.Timestamp(task.getLastUpdated().getTime()));
@@ -78,6 +78,7 @@ public class TaskService implements IService<Task> {
         } finally {
             closeResources();
         }
+        return false;
     }
 
     @Override
@@ -132,7 +133,10 @@ public class TaskService implements IService<Task> {
 
     public List<Task> getTasksByField(int fieldId) {
         List<Task> tasks = new ArrayList<>();
-        String query = "SELECT * FROM task WHERE field_id = ?";
+        String query = "SELECT t.*, f.id AS field_id, f.name AS field_name " +
+                "FROM task t " +
+                "JOIN field f ON t.field_id = f.id " +
+                "WHERE t.field_id = ?";
 
         try {
             pst = cnx.prepareStatement(query);
@@ -147,6 +151,27 @@ public class TaskService implements IService<Task> {
         } finally {
             closeResources();
         }
+
+        return tasks;
+    }
+    public List<Task> getTasksByStatus(String status) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT * FROM task WHERE status = ?";
+
+        try {
+            pst = cnx.prepareStatement(query);
+            pst.setString(1, status);
+            rs = pst.executeQuery();
+
+            while (rs.next()) {
+                tasks.add(mapResultSetToTask(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading tasks by status: " + e.getMessage(), e);
+        } finally {
+            closeResources();
+        }
+
         return tasks;
     }
 
@@ -156,23 +181,47 @@ public class TaskService implements IService<Task> {
         task.setName(rs.getString("name"));
         task.setDescription(rs.getString("description"));
         task.setStatus(rs.getString("status"));
-        task.setDate(rs.getDate("date"));
+
+        // Handle date fields safely
+        task.setDate(parseDateSafely(rs.getString("date")));
+        task.setDeadline(parseDateSafely(rs.getString("deadline")));
+
         task.setRessource(rs.getString("ressource"));
         task.setResponsable(rs.getString("responsable"));
         task.setPriority(rs.getString("priority"));
-        task.setEstimatedDuration(rs.getInt("estimated_duration"));
-        task.setDeadline(rs.getDate("deadline"));
+        task.setEstimatedDuration(rs.getString("estimated_duration"));
         task.setWorkers(rs.getInt("workers"));
         task.setLastUpdated(rs.getTimestamp("last_updated"));
         task.setPaymentWorker(rs.getDouble("payment_worker"));
         task.setTotal(rs.getDouble("total"));
 
-        // You'll need to set the field relationship here
-        // This would require additional queries or joins
-
         return task;
     }
 
+    // Helper method to safely parse date strings
+    private Date parseDateSafely(String dateString) {
+        if (dateString == null || dateString.trim().isEmpty() || dateString.equals("0000-00-00")) {
+            return null;
+        }
+        try {
+            return Date.valueOf(dateString);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid date format: " + dateString);
+            return null;
+        }
+    }
+    // Helper method to safely convert dates to strings
+    private String convertDateToString(ResultSet rs, String columnName) throws SQLException {
+        try {
+            java.sql.Date date = rs.getDate(columnName);
+            return (date != null) ? date.toString() : null;
+        } catch (SQLException e) {
+            if (e.getMessage().contains("Zero date value prohibited")) {
+                return null; // or return "0000-00-00" if you want to preserve the zero date
+            }
+            throw e;
+        }
+    }
     private void closeResources() {
         try {
             if (rs != null) {
@@ -185,4 +234,4 @@ public class TaskService implements IService<Task> {
             System.err.println("Error closing resources: " + e.getMessage());
         }
     }
-} 
+}

@@ -13,7 +13,7 @@ public class Task {
     private String ressource;
     private String responsable;
     private String priority;
-    private int estimatedDuration;
+    private String estimatedDuration;
     private Date deadline;
     private int workers;
     private Timestamp lastUpdated;
@@ -25,7 +25,7 @@ public class Task {
 
     public Task(int id, Field field, String name, String description, String status,
                 Date date, String ressource, String responsable, String priority,
-                int estimatedDuration, Date deadline, int workers, Timestamp lastUpdated,
+                String estimatedDuration, Date deadline, int workers, Timestamp lastUpdated,
                 double paymentWorker, double total) {
         this.id = id;
         this.field = field;
@@ -117,11 +117,11 @@ public class Task {
         this.priority = priority;
     }
 
-    public int getEstimatedDuration() {
+    public String getEstimatedDuration() {
         return estimatedDuration;
     }
 
-    public void setEstimatedDuration(int estimatedDuration) {
+    public void setEstimatedDuration(String estimatedDuration) {
         this.estimatedDuration = estimatedDuration;
     }
 
