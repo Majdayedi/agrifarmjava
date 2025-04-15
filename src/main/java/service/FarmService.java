@@ -1,7 +1,6 @@
 package service;
 
 import entite.Farm;
-import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +20,13 @@ public class FarmService implements IService<Farm> {
                 "description, bir, photovoltaic, fence, irrigation, cabin, lon, lat) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+<<<<<<< HEAD
         try (PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
+=======
+        try (Connection cnx = DataSource.getInstance().getConnection();
+             PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
+            
+>>>>>>> e0eaa5f4f55b5b6fb969ad4edffb69bdc0654cf9
             pst.setString(1, farm.getLocation());
             pst.setString(2, farm.getName());
             pst.setDouble(3, farm.getSurface());
@@ -55,7 +60,13 @@ public class FarmService implements IService<Farm> {
                 "weather=?, description=?, bir=?, photovoltaic=?, fence=?, irrigation=?, " +
                 "cabin=?, lon=?, lat=? WHERE id=?";
 
+<<<<<<< HEAD
         try (PreparedStatement pst = cnx.prepareStatement(requete)) {
+=======
+        try (Connection cnx = DataSource.getInstance().getConnection();
+             PreparedStatement pst = cnx.prepareStatement(requete)) {
+            
+>>>>>>> e0eaa5f4f55b5b6fb969ad4edffb69bdc0654cf9
             pst.setString(1, farm.getLocation());
             pst.setString(2, farm.getName());
             pst.setDouble(3, farm.getSurface());
@@ -81,7 +92,13 @@ public class FarmService implements IService<Farm> {
     @Override
     public void delete(Farm farm) {
         String requete = "DELETE FROM farm WHERE id=?";
+<<<<<<< HEAD
         try (PreparedStatement pst = cnx.prepareStatement(requete)) {
+=======
+        try (Connection cnx = DataSource.getInstance().getConnection();
+             PreparedStatement pst = cnx.prepareStatement(requete)) {
+            
+>>>>>>> e0eaa5f4f55b5b6fb969ad4edffb69bdc0654cf9
             pst.setInt(1, farm.getId());
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -94,7 +111,12 @@ public class FarmService implements IService<Farm> {
         List<Farm> farms = new ArrayList<>();
         String query = "SELECT * FROM farm";
 
+<<<<<<< HEAD
         try (Statement st = cnx.createStatement();
+=======
+        try (Connection cnx = DataSource.getInstance().getConnection();
+             Statement st = cnx.createStatement();
+>>>>>>> e0eaa5f4f55b5b6fb969ad4edffb69bdc0654cf9
              ResultSet rs = st.executeQuery(query)) {
 
             while (rs.next()) {
@@ -109,7 +131,13 @@ public class FarmService implements IService<Farm> {
     @Override
     public Farm readById(int id) {
         String requete = "SELECT * FROM farm WHERE id = ?";
+<<<<<<< HEAD
         try (PreparedStatement pst = cnx.prepareStatement(requete)) {
+=======
+        try (Connection cnx = DataSource.getInstance().getConnection();
+             PreparedStatement pst = cnx.prepareStatement(requete)) {
+            
+>>>>>>> e0eaa5f4f55b5b6fb969ad4edffb69bdc0654cf9
             pst.setInt(1, id);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {

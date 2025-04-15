@@ -22,7 +22,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import utils.Connections;
 
 import java.io.File;
 import java.io.IOException;
@@ -248,7 +247,7 @@ public class MarketplaceController implements Initializable {
         ResultSet rs = null;
         
         try {
-            connection = Connections.getInstance().getConnection();
+            connection = DataSource.getInstance().getConnection();
             
             // Build query based on filters - Only approved products
             StringBuilder queryBuilder = new StringBuilder();

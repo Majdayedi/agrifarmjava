@@ -1,7 +1,6 @@
 package service;
 
 import entite.Task;
-import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class TaskService implements IService<Task> {
     private ResultSet rs;
 
     public TaskService() {
-        cnx = Connections.getInstance().getConnection();
+        cnx = DataSource.getInstance().getConnection();
     }
 
     @Override
@@ -99,7 +98,7 @@ public class TaskService implements IService<Task> {
         List<Task> tasks = new ArrayList<>();
         String query = "SELECT * FROM task";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 

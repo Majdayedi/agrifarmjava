@@ -1,7 +1,6 @@
 package service;
 
 import entite.Field;
-import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class FieldService implements IService<Field> {
     private ResultSet rs;
 
     public FieldService() {
-        cnx = Connections.getInstance().getConnection();
+        cnx = DataSource.getInstance().getConnection();
     }
 
     @Override
@@ -92,7 +91,7 @@ public class FieldService implements IService<Field> {
         List<Field> fields = new ArrayList<>();
         String query = "SELECT * FROM field";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
+        try (Connection cnx = DataSource.getInstance().getConnection();
              Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
