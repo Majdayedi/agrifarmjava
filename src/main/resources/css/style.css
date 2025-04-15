@@ -188,161 +188,99 @@
 .read-only-field:focused {
     -fx-background-color: #f5f5f5;
 }
-/* Base Styles */
-.root {
-    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+
+/* Crop Cards */
+.crop-card {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
 }
 
-/* Responsive Container */
-.responsive-container {
-    -fx-padding: 5% 10% 5% 10%;
-    -fx-background-color: #F5F5F5;
+.crop-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
 }
 
-/* ScrollPane Styling */
-.responsive-scroll-pane {
-    -fx-background: transparent;
-    -fx-background-color: transparent;
-    -fx-padding: 0;
-    -fx-fit-to-width: true;
+.crop-card .header {
+    -fx-padding: 5;
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 5 5 0 0;
 }
 
-.scroll-content {
-    -fx-padding: 20;
-    -fx-spacing: 20;
-    -fx-min-width: 600px;
-}
-
-/* Header Styles */
-.header-text {
-    -fx-font-size: 24px;
+.crop-card .title {
     -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-    -fx-alignment: CENTER;
+    -fx-font-size: 14px;
 }
 
-.section-header {
+.crop-card .details {
+    -fx-padding: 10;
+}
+
+.crop-card .detail-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+}
+
+.crop-card .detail-value {
+    -fx-text-fill: #333;
+}
+
+/* Form Container */
+.form-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.form-title {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #444444;
-}
-
-/* Action Buttons */
-.action-buttons {
-    -fx-alignment: CENTER;
-}
-
-.action-button {
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-min-width: 120px;
-    -fx-padding: 8 12;
-    -fx-background-radius: 4;
-}
-
-.fence-button {
-    -fx-background-color: #4CAF50;
-}
-
-.water-button {
-    -fx-background-color: #2196F3;
-}
-
-.irrigation-button {
-    -fx-background-color: #FF9800;
-}
-
-/* Task Columns */
-.columns-container {
-    -fx-alignment: TOP_CENTER;
-    -fx-padding: 0 0 20 0;
-}
-
-.task-column {
-    -fx-padding: 15;
-    -fx-border-radius: 5;
-    -fx-min-width: 350px;
-}
-
-.todo-column {
-    -fx-background-color: #FFEBEE;
-}
-
-.inprogress-column {
-    -fx-background-color: #FFF8E1;
-}
-
-.done-column {
-    -fx-background-color: #E8F5E9;
-}
-
-.column-header {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
-    -fx-alignment: CENTER;
     -fx-padding: 0 0 10 0;
 }
 
-.task-items {
-    -fx-spacing: 10;
+/* Buttons */
+.save-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1000px) {
-    .responsive-container {
-        -fx-padding: 4% 8% 4% 8%;
-    }
-    .task-column {
-        -fx-min-width: 320px;
-    }
+.save-button:hover {
+    -fx-background-color: #45a049;
 }
 
-@media (max-width: 800px) {
-    .responsive-container {
-        -fx-padding: 3% 5% 3% 5%;
-    }
-    .scroll-content {
-        -fx-min-width: 500px;
-    }
-    .task-column {
-        -fx-min-width: 300px;
-    }
-    .header-text {
-        -fx-font-size: 22px;
-    }
+.cancel-button {
+    -fx-background-color: #9E9E9E;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
 }
 
-@media (max-width: 600px) {
-    .responsive-container {
-        -fx-padding: 2% 3% 2% 3%;
-    }
-    .scroll-content {
-        -fx-min-width: 400px;
-    }
-    .task-column {
-        -fx-min-width: 380px;
-    }
-    .columns-container {
-        -fx-spacing: 15;
-    }
-    .action-button {
-        -fx-min-width: 100px;
-        -fx-font-size: 12px;
-    }
+.cancel-button:hover {
+    -fx-background-color: #757575;
 }
 
-@media (max-width: 400px) {
-    .scroll-content {
-        -fx-min-width: 350px;
-    }
-    .task-column {
-        -fx-min-width: 340px;
-    }
-    .header-text {
-        -fx-font-size: 20px;
-    }
-    .section-header {
-        -fx-font-size: 16px;
-    }
+.action-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
 }
+
+.action-button:hover {
+    -fx-background-color: #1976D2;
+}
+
+.delete-button {
+    -fx-background-color: #F44336;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.delete-button:hover {
+  -fx-background-color: #D32F2}
