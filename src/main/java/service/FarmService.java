@@ -50,7 +50,7 @@ public class FarmService implements IService<Farm> {
     }
 
     @Override
-    public void update(Farm farm) {
+    public boolean update(Farm farm) {
         String requete = "UPDATE farm SET location=?, name=?, surface=?, adress=?, budget=?, " +
                 "weather=?, description=?, bir=?, photovoltaic=?, fence=?, irrigation=?, " +
                 "cabin=?, lon=?, lat=? WHERE id=?";
@@ -76,6 +76,7 @@ public class FarmService implements IService<Farm> {
         } catch (SQLException e) {
             throw new RuntimeException("Error updating farm: " + e.getMessage(), e);
         }
+        return false;
     }
 
     @Override

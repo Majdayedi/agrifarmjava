@@ -43,7 +43,7 @@ public class FieldService implements IService<Field> {
     }
 
     @Override
-    public void update(Field field) {
+    public boolean update(Field field) {
         if (field.getFarm() == null) {
             throw new IllegalArgumentException("Le champ n'est pas associé à une ferme valide.");
         }
@@ -71,6 +71,7 @@ public class FieldService implements IService<Field> {
         } finally {
             closeResources();
         }
+        return false;
     }
 
     @Override
