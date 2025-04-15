@@ -329,7 +329,7 @@ public class CropController {
     @FXML
     private void applyFilter() {
         String selectedType = filterTypeCombo.getValue();
-        if (selectedType != null && !selectedType.equals("All")) {
+        if (selectedType != null && !selectedType.equals("Tous")) {
             try {
                 List<Crop> filteredCrops = cropCRUD.getCropsByType(selectedType);
                 if (cropsTable != null) {

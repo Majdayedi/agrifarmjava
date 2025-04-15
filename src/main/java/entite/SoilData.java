@@ -7,14 +7,16 @@ public class SoilData {
     private double niveau_nutriment;
     private String type_sol;
     private int crop_id;
+    private String date;
 
-    public SoilData(int id, double humidite, double niveau_ph, double niveau_nutriment, String type_sol, int crop_id) {
+    public SoilData(int id, double humidite, double niveau_ph, double niveau_nutriment, String type_sol, int crop_id, String date) {
         this.id = id;
         this.humidite = humidite;
         this.niveau_ph = niveau_ph;
         this.niveau_nutriment = niveau_nutriment;
         this.type_sol = type_sol;
         this.crop_id = crop_id;
+        this.date = date;
     }
 
     // Getters and Setters
@@ -66,6 +68,14 @@ public class SoilData {
         this.crop_id = crop_id;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
         return "SoilData{" +
@@ -75,6 +85,7 @@ public class SoilData {
                 ", niveau_nutriment=" + niveau_nutriment +
                 ", type_sol='" + type_sol + '\'' +
                 ", crop_id=" + crop_id +
+                ", date='" + date + '\'' +
                 '}';
     }
 } 

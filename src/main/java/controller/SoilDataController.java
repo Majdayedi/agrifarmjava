@@ -17,18 +17,30 @@ import javafx.geometry.Pos;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class SoilDataController {
     private SoilDataCRUD soilDataCRUD = new SoilDataCRUD();
     private SoilData selectedSoilData;
     private int currentCropId;
 
-    @FXML private FlowPane soilDataCardsPane;
+    @FXML private VBox soilDataCardsPane;
     @FXML private TextField humiditeField;
     @FXML private TextField niveauPhField;
     @FXML private TextField niveauNutrimentField;
     @FXML private ComboBox<String> typeSolCombo;
     @FXML private TextArea resultArea;
+    @FXML private BarChart<String, Number> nutrientChart;
+    @FXML private BarChart<String, Number> phChart;
+    @FXML private BarChart<String, Number> humidityChart;
+    @FXML private PieChart soilTypeChart;
+    @FXML private Button statisticsButton;
 
     public void setCropId(int cropId) {
         this.currentCropId = cropId;
@@ -51,7 +63,6 @@ public class SoilDataController {
     @FXML
     private void showAddSoilDataForm() {
         try {
-            // Use getClassLoader().getResource() for more reliable loading
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("add_soil_data.fxml"));
             Parent root = loader.load();
 
@@ -62,10 +73,16 @@ public class SoilDataController {
             stage.setTitle("Add New Soil Data");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-            loadSoilData();
+            
+            // Only reload if we're in the main view
+            if (soilDataCardsPane != null) {
+                loadSoilData();
+            }
         } catch (IOException e) {
-            resultArea.setText("Error loading add form: " + e.getMessage());
-            e.printStackTrace(); // Add this for debugging
+            if (resultArea != null) {
+                resultArea.setText("Error loading add form: " + e.getMessage());
+            }
+            e.printStackTrace();
         }
     }
 
@@ -91,9 +108,13 @@ public class SoilDataController {
     private void displaySoilDataCards(List<SoilData> soilDataList) {
         if (soilDataCardsPane == null) return; // Skip if we're in the add/edit form
         
+        // Clear existing cards
         soilDataCardsPane.getChildren().clear();
+        
+        // Add new cards
         for (SoilData soilData : soilDataList) {
             VBox card = createSoilDataCard(soilData);
+            VBox.setMargin(card, new Insets(5, 5, 5, 5));
             soilDataCardsPane.getChildren().add(card);
         }
     }
@@ -124,10 +145,14 @@ public class SoilDataController {
                 if (confirmDialog.showAndWait().get() == ButtonType.OK) {
                     soilDataCRUD.deleteSoilData(soilData.getId());
                     loadSoilData();
-                    resultArea.setText("Soil data deleted successfully!");
+                    if (resultArea != null) {
+                        resultArea.setText("Soil data deleted successfully!");
+                    }
                 }
             } catch (SQLException e) {
-                resultArea.setText("Error deleting soil data: " + e.getMessage());
+                if (resultArea != null) {
+                    resultArea.setText("Error deleting soil data: " + e.getMessage());
+                }
             }
         });
         
@@ -170,22 +195,31 @@ public class SoilDataController {
                 
                 SoilDataController controller = loader.getController();
                 controller.selectedSoilData = soilData;
+                controller.currentCropId = this.currentCropId;
                 controller.populateFields(soilData);
                 
                 Stage stage = new Stage();
                 stage.setTitle("Update Soil Data");
                 stage.setScene(new Scene(root));
                 stage.showAndWait();
-                loadSoilData();
+                
+                // Only reload if we're in the main view
+                if (soilDataCardsPane != null) {
+                    loadSoilData();
+                }
             } catch (IOException e) {
-                resultArea.setText("Error loading update form: " + e.getMessage());
+                if (resultArea != null) {
+                    resultArea.setText("Error loading update form: " + e.getMessage());
+                }
             }
         });
         
         Button detailsButton = new Button("Details");
         detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
         detailsButton.setOnAction(event -> {
-            resultArea.setText(soilData.toString());
+            if (resultArea != null) {
+                resultArea.setText(soilData.toString());
+            }
         });
         
         buttons.getChildren().addAll(updateButton, detailsButton);
@@ -200,13 +234,17 @@ public class SoilDataController {
     private void createSoilData() {
         try {
             if (validateInputs()) {
+                // Get current date
+                String currentDate = java.time.LocalDate.now().toString();
+                
                 SoilData soilData = new SoilData(
                     0,
                     Double.parseDouble(humiditeField.getText()),
                     Double.parseDouble(niveauPhField.getText()),
                     Double.parseDouble(niveauNutrimentField.getText()),
                     typeSolCombo.getValue(),
-                    currentCropId
+                    currentCropId,
+                    currentDate
                 );
                 
                 if (selectedSoilData != null) {
@@ -320,6 +358,29 @@ public class SoilDataController {
         } catch (IOException e) {
             if (resultArea != null) {
                 resultArea.setText("Error going back to crops: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    private void showStatistics() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/soil_statistics.fxml"));
+            Parent root = loader.load();
+            
+            // Get the controller and set the crop ID
+            SoilStatisticsController controller = loader.getController();
+            controller.setCropId(currentCropId);
+            
+            // Create a new stage for the statistics view
+            Stage stage = new Stage();
+            stage.setTitle("Soil Data Statistics");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (resultArea != null) {
+                resultArea.setText("Error loading statistics view: " + e.getMessage());
             }
         }
     }
