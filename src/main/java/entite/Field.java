@@ -12,14 +12,14 @@ public class Field {
     private double outcome;
     private double profit;
     private String description;
-    private Crop crop;
+    private int crop;
     private List<Task> tasks;
 
     public Field() {
     }
 
     public Field(int id, Farm farm, double surface, String name, double budget,
-                double income, double outcome, double profit, String description, Crop crop) {
+                double income, double outcome, double profit, String description, int crop) {
         this.id = id;
         this.farm = farm;
         this.surface = surface;
@@ -105,11 +105,11 @@ public class Field {
         this.description = description;
     }
 
-    public Crop getCrop() {
+    public int getCrop() {
         return crop;
     }
 
-    public void setCrop(Crop crop) {
+    public void setCrop(int crop) {
         this.crop = crop;
     }
 

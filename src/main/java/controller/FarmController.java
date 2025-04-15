@@ -75,10 +75,10 @@ public class FarmController {
 
                 // Setup delete button
                 deleteBtn.setOnAction(e -> handleDelete(farm, card));
-                
+
                 // Setup modify button
                 modifyBtn.setOnAction(e -> handleModify(farm));
-                
+
                 // Setup details button
                 detailsBtn.setOnAction(e -> handleDetails(farm));
 
@@ -167,8 +167,24 @@ public class FarmController {
     }
 
     private void handleDetails(Farm farm) {
-        // TODO: Implement view details functionality
-        System.out.println("View Details clicked for: " + farm.getName());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fielddisplay.fxml"));
+            Pane detailsForm = loader.load();
+
+            // Passer l'objet Farm au FieldController
+            FieldController fieldController = loader.getController();
+            fieldController.loadField(farm);
+
+            // Remplacer le contenu principal
+            BorderPane mainContainer = getMainContainer();
+            if (mainContainer != null) {
+                mainContainer.setCenter(detailsForm);
+            } else {
+                showError("Error", "Could not find main container");
+            }
+        } catch (IOException e) {
+            showError("Error", "Could not load farm details form: " + e.getMessage());
+        }
     }
 
     private void showError(String title, String message) {
