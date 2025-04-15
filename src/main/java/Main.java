@@ -1,31 +1,30 @@
-import controller.FarmController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class Main extends Application {
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Load FXML file
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/controller/login.fxml")));
 
-    public void start(Stage primaryStage) {
-        try {
-            // 1. Create loader instance
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ressources/farm.fxml"));
+        // Create scene
+        Scene scene = new Scene(root, 520, 440);
 
-            // 2. Set controller manually
-            loader.setController(new FarmController());  // Uses your existing controller
+        // Load and apply stylesheet (optional, if you have styles.css)
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm());
 
-            // 3. Load the FXML
-            Parent root = loader.load();
+        // Set stage
+        stage.setTitle("AgriFarm - Login");
+        stage.setScene(scene);
+        stage.show();
+    }
 
-            // 4. Rest remains the same
-            Scene scene = new Scene(root, 900.0, 600.0);
-            primaryStage.setTitle("Farm Management System");
-            primaryStage.setScene(scene);
-            primaryStage.show();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) {
+        launch(args);
     }
 }

@@ -32,7 +32,7 @@ public class FieldService implements IService<Field> {
             pst.setDouble(6, field.getOutcome());
             pst.setDouble(7, field.getProfit());
             pst.setString(8, field.getDescription());
-            pst.setObject(9, field.getCrop() != null ? field.getCrop().getId() : null);
+            pst.setObject(9,  field.getCrop());
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -43,12 +43,17 @@ public class FieldService implements IService<Field> {
     }
 
     @Override
-    public void update(Field field) {
+    public boolean update(Field field) {
+        if (field.getFarm() == null) {
+            throw new IllegalArgumentException("Le champ n'est pas associé à une ferme valide.");
+        }
+
         String requete = "UPDATE field SET farm_id=?, surface=?, name=?, budget=?, " +
                 "income=?, outcome=?, profit=?, description=?, crop_id=? WHERE id=?";
 
         try {
             pst = cnx.prepareStatement(requete);
+
             pst.setInt(1, field.getFarm().getId());
             pst.setDouble(2, field.getSurface());
             pst.setString(3, field.getName());
@@ -57,7 +62,7 @@ public class FieldService implements IService<Field> {
             pst.setDouble(6, field.getOutcome());
             pst.setDouble(7, field.getProfit());
             pst.setString(8, field.getDescription());
-            pst.setObject(9, field.getCrop() != null ? field.getCrop().getId() : null);
+            pst.setObject(9, field.getCrop());
             pst.setInt(10, field.getId());
 
             pst.executeUpdate();
@@ -66,6 +71,7 @@ public class FieldService implements IService<Field> {
         } finally {
             closeResources();
         }
+        return false;
     }
 
     @Override
@@ -138,6 +144,7 @@ public class FieldService implements IService<Field> {
         return fields;
     }
 
+
     private Field mapResultSetToField(ResultSet rs) throws SQLException {
         Field field = new Field();
         field.setId(rs.getInt("id"));
@@ -148,10 +155,10 @@ public class FieldService implements IService<Field> {
         field.setOutcome(rs.getDouble("outcome"));
         field.setProfit(rs.getDouble("profit"));
         field.setDescription(rs.getString("description"));
-        
+
         // You'll need to set the farm and crop relationships here
         // This would require additional queries or joins
-        
+
         return field;
     }
 

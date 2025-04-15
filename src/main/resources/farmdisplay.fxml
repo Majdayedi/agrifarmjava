@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="681.0" prefWidth="784.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FarmController">
+<BorderPane  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="681.0" prefWidth="784.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FarmController">
 
     <!-- Menu latéral gauche -->
     <left>
@@ -36,21 +36,27 @@
             <padding>
                 <Insets top="40" right="20" bottom="20" left="20"/>
             </padding>
-            <top>
-                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button fx:id="addFarmBtn" styleClass="add-button" text="+ Add Farm">
-                            <HBox.margin>
-                                <Insets right="20.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                </HBox>
-            </top>
+
+
+
 
             <center>
+
+                    <Label style="-fx-text-fill: #2c3e50; -fx-font-size: 24; -fx-font-weight: bold;" text="Farms" />
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+
+
                     <content>
+                        <VBox>
+                            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                <children>
+                                    <Button fx:id="addFarmBtn" styleClass="add-button" text="+ Add Farm">
+                                        <HBox.margin>
+                                            <Insets right="20.0" />
+                                        </HBox.margin>
+                                    </Button>
+                                </children>
+                            </HBox>
                         <GridPane fx:id="farmgrid" prefHeight="410.0" prefWidth="632.0" hgap="10" vgap="10">
                             <padding>
                                 <Insets top="115" right="15" bottom="15" left="15" />
@@ -61,11 +67,16 @@
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             </columnConstraints>
                             <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
+
                         </GridPane>
+                        </VBox>
+
                     </content>
+
                 </ScrollPane>
             </center>
         </BorderPane>
@@ -75,6 +86,11 @@
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="80.0" style="-fx-background-color: #13af02;">
             <children>
+                <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="← Retour">
+                    <HBox.margin>
+                        <Insets right="20.0" left="10.0" />
+                    </HBox.margin>
+                </Button>
                 <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 20;" text="AGRIFARM" />
             </children>
         </HBox>

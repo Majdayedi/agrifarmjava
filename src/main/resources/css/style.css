@@ -25,7 +25,8 @@
 .farm-card {
     -fx-background-color: white;
     -fx-background-radius: 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 5, 0.0, 0, 1);
+
     -fx-padding: 15;
     -fx-pref-width: 250;
     -fx-pref-height: 300;
@@ -282,5 +283,4 @@
 }
 
 .delete-button:hover {
-    -fx-background-color: #D32F2F;
-}
+  -fx-background-color: #D32F2}

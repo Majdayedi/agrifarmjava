@@ -5,54 +5,45 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Connections {
-    private final String URL = "jdbc:mysql://localhost:3306/projet";
-    private final String USER = "root";
-    private final String PASS = "";
+
+    private final String url = "jdbc:mysql://localhost:3306/projet";
+    private final String username = "root";
+    private final String password = "";
     private Connection connection;
     private static Connections instance;
 
     private Connections() {
-        createConnection();
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void createConnection() {
-        try {
-            connection = DriverManager.getConnection(URL, USER, PASS);
-            System.out.println("Connection successful");
-        } catch (SQLException e) {
-            System.err.println("Connection failed: " + e.getMessage());
-            throw new RuntimeException("Failed to create database connection", e);
-        }
+    public static Connections getInstance() {
+        if (instance == null)
+            instance = new Connections();
+        return instance;
     }
 
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                createConnection();
+                connection = DriverManager.getConnection(url, username, password);
             }
-            return connection;
         } catch (SQLException e) {
-            System.err.println("Connection check failed: " + e.getMessage());
-            createConnection();
-            return connection;
+            throw new RuntimeException("Error reconnecting to the database", e);
         }
-    }
-
-    public static Connections getInstance() {
-        if (instance == null) {
-            instance = new Connections();
-        }
-        return instance;
+        return connection;
     }
 
     public void closeConnection() {
-        if (connection != null) {
-            try {
+        try {
+            if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Connection closed successfully");
-            } catch (SQLException e) {
-                System.err.println("Error closing connection: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
