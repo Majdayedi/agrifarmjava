@@ -299,10 +299,34 @@ public class PanierController implements Initializable {
             // Afficher une confirmation
             showAlert(Alert.AlertType.INFORMATION, "Commande passée", 
                     "Votre commande a été passée avec succès", 
-                    "Merci pour votre commande ! Vous pouvez suivre son état dans votre historique de commandes.");
+                    "Merci pour votre commande ! Les quantités des produits ont été mises à jour.");
             
-            // Retourner au marketplace
-            handleContinuerAchatsButtonAction(null);
+            // Retourner au marketplace avec un indicateur pour rafraîchir les produits
+            try {
+                // Charger la vue du marketplace avec refresh forcé
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/marketplace.fxml"));
+                Parent marketplaceView = loader.load();
+                
+                // Récupérer le contrôleur pour appeler directement le refresh
+                MarketplaceController marketplaceController = loader.getController();
+                
+                // Get current stage
+                Stage stage = (Stage) passerCommandeButton.getScene().getWindow();
+                
+                // Create new scene with Marketplace view
+                Scene scene = new Scene(marketplaceView);
+                
+                // Set the scene to the stage
+                stage.setScene(scene);
+                stage.setTitle("AgriFarm - Marketplace");
+                stage.show();
+                
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Error loading Marketplace view", e);
+                showAlert(Alert.AlertType.ERROR, "Erreur", 
+                        "Impossible de charger la vue Marketplace", 
+                        "Une erreur s'est produite: " + e.getMessage());
+            }
         } else {
             showAlert(Alert.AlertType.ERROR, "Erreur", 
                     "Impossible de finaliser la commande", 
