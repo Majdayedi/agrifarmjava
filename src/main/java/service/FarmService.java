@@ -9,15 +9,19 @@ import java.util.List;
 
 public class FarmService implements IService<Farm> {
 
+    private final Connection cnx;
+
+    public FarmService() {
+        this.cnx = Connections.getInstance().getConnection();
+    }
+
     @Override
     public void create(Farm farm) {
         String requete = "INSERT INTO farm (location, name, surface, adress, budget, weather, " +
                 "description, bir, photovoltaic, fence, irrigation, cabin, lon, lat) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
-             PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
-            
+        try (PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, farm.getLocation());
             pst.setString(2, farm.getName());
             pst.setDouble(3, farm.getSurface());
@@ -34,8 +38,7 @@ public class FarmService implements IService<Farm> {
             pst.setFloat(14, farm.getLat());
 
             pst.executeUpdate();
-            
-            // Get the auto-generated id
+
             try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     farm.setId(generatedKeys.getInt(1));
@@ -52,9 +55,7 @@ public class FarmService implements IService<Farm> {
                 "weather=?, description=?, bir=?, photovoltaic=?, fence=?, irrigation=?, " +
                 "cabin=?, lon=?, lat=? WHERE id=?";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
-             PreparedStatement pst = cnx.prepareStatement(requete)) {
-            
+        try (PreparedStatement pst = cnx.prepareStatement(requete)) {
             pst.setString(1, farm.getLocation());
             pst.setString(2, farm.getName());
             pst.setDouble(3, farm.getSurface());
@@ -80,9 +81,7 @@ public class FarmService implements IService<Farm> {
     @Override
     public void delete(Farm farm) {
         String requete = "DELETE FROM farm WHERE id=?";
-        try (Connection cnx = Connections.getInstance().getConnection();
-             PreparedStatement pst = cnx.prepareStatement(requete)) {
-            
+        try (PreparedStatement pst = cnx.prepareStatement(requete)) {
             pst.setInt(1, farm.getId());
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -95,8 +94,7 @@ public class FarmService implements IService<Farm> {
         List<Farm> farms = new ArrayList<>();
         String query = "SELECT * FROM farm";
 
-        try (Connection cnx = Connections.getInstance().getConnection();
-             Statement st = cnx.createStatement();
+        try (Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
             while (rs.next()) {
@@ -111,17 +109,32 @@ public class FarmService implements IService<Farm> {
     @Override
     public Farm readById(int id) {
         String requete = "SELECT * FROM farm WHERE id = ?";
-        try (Connection cnx = Connections.getInstance().getConnection();
-             PreparedStatement pst = cnx.prepareStatement(requete)) {
-            
+        try (PreparedStatement pst = cnx.prepareStatement(requete)) {
             pst.setInt(1, id);
             try (ResultSet rs = pst.executeQuery()) {
-                if(rs.next()) {
+                if (rs.next()) {
                     return mapResultSetToFarm(rs);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error reading farm by id: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public Farm getFarmByFieldId(int fieldId) {
+        String query = "SELECT f.* FROM farm f " +
+                "JOIN field fi ON f.id = fi.farm_id " +
+                "WHERE fi.id = ?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, fieldId);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToFarm(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching farm by field ID: " + e.getMessage(), e);
         }
         return null;
     }
