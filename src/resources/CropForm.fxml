@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<?import java.awt.Button?>
+<?import java.net.URL?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.CropController"
+      spacing="10" padding="10">
+
+    <Label text="Crop Management System" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Admin" onAction="#handleAdminButtonAction" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button text="Marketplace" onAction="#handleMarketplaceButtonAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Logout" onAction="#handleLogoutButtonAction" style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+    </HBox>
+
+    <HBox spacing="20">
+        <!-- Left side: Form -->
+        <VBox spacing="10" prefWidth="400">
+            <Label text="Crop Information" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <GridPane vgap="10" hgap="10">
+                <Label text="Crop ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="cropIdField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Crop Event:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="cropEventField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Type Crop:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <ComboBox fx:id="typeCropCombo" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="Method Crop:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <ComboBox fx:id="methodCropCombo" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="Plantation Date:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <DatePicker fx:id="plantationDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <Label text="Hour Plantation:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <TextField fx:id="hourPlantationField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                <Label text="Crop Date:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                <DatePicker fx:id="cropDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                <Label text="Hour Crop:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                <TextField fx:id="hourCropField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+            </GridPane>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Create" onAction="#createCrop" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                <Button text="Update" onAction="#updateCrop" style="-fx-background-color: #FFC107; -fx-text-fill: black;"/>
+                <Button text="Delete" onAction="#deleteCrop" style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+                <Button text="Clear" onAction="#clearCropFields" style="-fx-background-color: #9E9E9E; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+
+        <!-- Right side: Search and Results -->
+        <VBox spacing="10" prefWidth="400">
+            <HBox spacing="10" alignment="CENTER">
+                <TextField fx:id="searchField" promptText="Search crops..."/>
+                <Button text="Search" onAction="#handleSearchButtonAction" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                <Button text="Show All" onAction="#readAllCrops" style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
+            </HBox>
+
+            <ComboBox fx:id="filterTypeCombo" promptText="Filter by type"/>
+
+            <FlowPane fx:id="cropCardsPane" hgap="10" vgap="10" prefWrapLength="400"/>
+        </VBox>
+    </HBox>
+
+    <TextArea fx:id="resultArea" prefHeight="150" wrapText="true"/>
+
+    <stylesheets>
+        <URL value="@../styles/styles.css"/>
+    </stylesheets>
+</VBox> 

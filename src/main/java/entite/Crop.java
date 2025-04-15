@@ -1,129 +1,143 @@
 package entite;
 
-import java.sql.Date;
-import java.sql.Time;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 
 public class Crop {
-    private int id;
-    private String cropEvent;
-    private String typeCrop;
-    private String methodeCrop;
-    private Date datePlantation;
-    private Time heureCrop;
-    private Date dateCrop;
-    private Time heurePlantation;
-    private float income;
-    private SoilData soilData;
+    private final IntegerProperty id;
+    private final StringProperty cropEvent;
+    private final StringProperty typeCrop;
+    private final StringProperty methodCrop;
+    private final StringProperty plantationDate;
+    private final StringProperty hourPlantation;
+    private final StringProperty cropDate;
+    private final StringProperty hourCrop;
 
-    public Crop() {
+    public Crop(int id, String cropEvent, String typeCrop, String methodCrop,
+                String plantationDate, String hourPlantation, String cropDate,
+                String hourCrop) {
+        this.id = new SimpleIntegerProperty(id);
+        this.cropEvent = new SimpleStringProperty(cropEvent);
+        this.typeCrop = new SimpleStringProperty(typeCrop);
+        this.methodCrop = new SimpleStringProperty(methodCrop);
+        this.plantationDate = new SimpleStringProperty(plantationDate);
+        this.hourPlantation = new SimpleStringProperty(hourPlantation);
+        this.cropDate = new SimpleStringProperty(cropDate);
+        this.hourCrop = new SimpleStringProperty(hourCrop);
     }
 
-    public Crop(int id, String cropEvent, String typeCrop, String methodeCrop,
-                Date datePlantation, Time heureCrop, Date dateCrop, Time heurePlantation,
-                float income) {
-        this.id = id;
-        this.cropEvent = cropEvent;
-        this.typeCrop = typeCrop;
-        this.methodeCrop = methodeCrop;
-        this.datePlantation = datePlantation;
-        this.heureCrop = heureCrop;
-        this.dateCrop = dateCrop;
-        this.heurePlantation = heurePlantation;
-        this.income = income;
-    }
-
-    // Getters and Setters
-    public int getId() {
+    // Property getters
+    public IntegerProperty idProperty() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCropEvent() {
+    public StringProperty cropEventProperty() {
         return cropEvent;
     }
 
-    public void setCropEvent(String cropEvent) {
-        this.cropEvent = cropEvent;
-    }
-
-    public String getTypeCrop() {
+    public StringProperty typeCropProperty() {
         return typeCrop;
     }
 
+    public StringProperty methodCropProperty() {
+        return methodCrop;
+    }
+
+    public StringProperty plantationDateProperty() {
+        return plantationDate;
+    }
+
+    public StringProperty hourPlantationProperty() {
+        return hourPlantation;
+    }
+
+    public StringProperty cropDateProperty() {
+        return cropDate;
+    }
+
+    public StringProperty hourCropProperty() {
+        return hourCrop;
+    }
+
+    // Regular getters
+    public int getId() {
+        return id.get();
+    }
+
+    public String getCropEvent() {
+        return cropEvent.get();
+    }
+
+    public String getTypeCrop() {
+        return typeCrop.get();
+    }
+
+    public String getMethodCrop() {
+        return methodCrop.get();
+    }
+
+    public String getPlantationDate() {
+        return plantationDate.get();
+    }
+
+    public String getHourPlantation() {
+        return hourPlantation.get();
+    }
+
+    public String getCropDate() {
+        return cropDate.get();
+    }
+
+    public String getHourCrop() {
+        return hourCrop.get();
+    }
+
+    // Setters
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setCropEvent(String cropEvent) {
+        this.cropEvent.set(cropEvent);
+    }
+
     public void setTypeCrop(String typeCrop) {
-        this.typeCrop = typeCrop;
+        this.typeCrop.set(typeCrop);
     }
 
-    public String getMethodeCrop() {
-        return methodeCrop;
+    public void setMethodCrop(String methodCrop) {
+        this.methodCrop.set(methodCrop);
     }
 
-    public void setMethodeCrop(String methodeCrop) {
-        this.methodeCrop = methodeCrop;
+    public void setPlantationDate(String plantationDate) {
+        this.plantationDate.set(plantationDate);
     }
 
-    public Date getDatePlantation() {
-        return datePlantation;
+    public void setHourPlantation(String hourPlantation) {
+        this.hourPlantation.set(hourPlantation);
     }
 
-    public void setDatePlantation(Date datePlantation) {
-        this.datePlantation = datePlantation;
+    public void setCropDate(String cropDate) {
+        this.cropDate.set(cropDate);
     }
 
-    public Time getHeureCrop() {
-        return heureCrop;
-    }
-
-    public void setHeureCrop(Time heureCrop) {
-        this.heureCrop = heureCrop;
-    }
-
-    public Date getDateCrop() {
-        return dateCrop;
-    }
-
-    public void setDateCrop(Date dateCrop) {
-        this.dateCrop = dateCrop;
-    }
-
-    public Time getHeurePlantation() {
-        return heurePlantation;
-    }
-
-    public void setHeurePlantation(Time heurePlantation) {
-        this.heurePlantation = heurePlantation;
-    }
-
-    public float getIncome() {
-        return income;
-    }
-
-    public void setIncome(float income) {
-        this.income = income;
-    }
-
-    public SoilData getSoilData() {
-        return soilData;
-    }
-
-    public void setSoilData(SoilData soilData) {
-        this.soilData = soilData;
+    public void setHourCrop(String hourCrop) {
+        this.hourCrop.set(hourCrop);
     }
 
     @Override
     public String toString() {
         return "Crop{" +
-                "id=" + id +
-                ", cropEvent='" + cropEvent + '\'' +
-                ", typeCrop='" + typeCrop + '\'' +
-                ", methodeCrop='" + methodeCrop + '\'' +
-                ", datePlantation=" + datePlantation +
-                ", heureCrop=" + heureCrop +
-                ", dateCrop=" + dateCrop +
-                ", heurePlantation=" + heurePlantation +
+                "id=" + id.get() +
+                ", cropEvent='" + cropEvent.get() + '\'' +
+                ", typeCrop='" + typeCrop.get() + '\'' +
+                ", methodCrop='" + methodCrop.get() + '\'' +
+                ", plantationDate='" + plantationDate.get() + '\'' +
+                ", hourPlantation='" + hourPlantation.get() + '\'' +
+                ", cropDate='" + cropDate.get() + '\'' +
+                ", hourCrop='" + hourCrop.get() + '\'' +
                 '}';
     }
 } 

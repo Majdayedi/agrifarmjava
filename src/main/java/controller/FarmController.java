@@ -29,6 +29,9 @@ public class FarmController {
     @FXML
     private Button addFarmBtn;
 
+    @FXML
+    private Button cropButton;
+
     private final FarmService farmService = new FarmService();
 
     @FXML
@@ -40,6 +43,9 @@ public class FarmController {
         
         // Add Farm button handler
         addFarmBtn.setOnAction(e -> handleAddFarm());
+        
+        // Add Crop button handler
+        cropButton.setOnAction(e -> handleCropButton());
     }
 
     private BorderPane getMainContainer() {
@@ -111,9 +117,23 @@ public class FarmController {
         }
     }
 
+    private void handleCropButton() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/crop.fxml"));
+            Pane cropPane = loader.load();
+
+            BorderPane mainContainer = getMainContainer();
+            if (mainContainer != null) {
+                mainContainer.setCenter(cropPane);
+            } else {
+                showError("Error", "Could not find main container");
+            }
+        } catch (IOException e) {
+            showError("Error", "Could not load crop view: " + e.getMessage());
+        }
+    }
+
     @FXML
-
-
     private void handleDelete(Farm farm, Pane card) {
         // Create confirmation dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

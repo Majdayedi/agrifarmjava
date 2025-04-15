@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.SoilDataController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <spacing>20</spacing>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="Soil Data Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <Button fx:id="addButton" mnemonicParsing="false" onAction="#showAddSoilDataForm" text="Add New Soil Data" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#goBackToCrops" text="Back to Crops" style="-fx-background-color: #9E9E9E; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
+    </HBox>
+
+    <!-- Result Area -->
+    <TextArea fx:id="resultArea" editable="false" style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5;"/>
+
+    <!-- Soil Data Cards Container -->
+    <ScrollPane fitToWidth="true" vbarPolicy="ALWAYS" hbarPolicy="NEVER">
+        <FlowPane fx:id="soilDataCardsPane" hgap="20" vgap="20" style="-fx-background-color: transparent;"/>
+    </ScrollPane>
+
+    <!-- Hidden ComboBox for initialization -->
+    <ComboBox fx:id="typeSolCombo" visible="false"/>
+</VBox> 

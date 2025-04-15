@@ -25,6 +25,7 @@
                 <Button prefHeight="42.0" prefWidth="130.0" styleClass="menu-button" text="Farms" />
                 <Button prefHeight="43.0" prefWidth="130.0" styleClass="menu-button" text="Marketplace" />
                 <Button prefHeight="42.0" prefWidth="130.0" styleClass="menu-button" text="Articles" />
+                <Button fx:id="cropButton" prefHeight="42.0" prefWidth="130.0" styleClass="menu-button" text="Crops" />
             </children>
         </VBox>
     </left>

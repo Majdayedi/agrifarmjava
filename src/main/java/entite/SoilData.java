@@ -2,23 +2,19 @@ package entite;
 
 public class SoilData {
     private int id;
-    private double niveauPh;
     private double humidite;
-    private double niveauNutriment;
-    private String typeSol;
-    private Crop crop;
+    private double niveau_ph;
+    private double niveau_nutriment;
+    private String type_sol;
+    private int crop_id;
 
-    public SoilData() {
-    }
-
-    public SoilData(int id, double niveauPh, double humidite, double niveauNutriment,
-                    String typeSol, Crop crop) {
+    public SoilData(int id, double humidite, double niveau_ph, double niveau_nutriment, String type_sol, int crop_id) {
         this.id = id;
-        this.niveauPh = niveauPh;
         this.humidite = humidite;
-        this.niveauNutriment = niveauNutriment;
-        this.typeSol = typeSol;
-        this.crop = crop;
+        this.niveau_ph = niveau_ph;
+        this.niveau_nutriment = niveau_nutriment;
+        this.type_sol = type_sol;
+        this.crop_id = crop_id;
     }
 
     // Getters and Setters
@@ -30,14 +26,6 @@ public class SoilData {
         this.id = id;
     }
 
-    public double getNiveauPh() {
-        return niveauPh;
-    }
-
-    public void setNiveauPh(double niveauPh) {
-        this.niveauPh = niveauPh;
-    }
-
     public double getHumidite() {
         return humidite;
     }
@@ -46,38 +34,47 @@ public class SoilData {
         this.humidite = humidite;
     }
 
-    public double getNiveauNutriment() {
-        return niveauNutriment;
+    public double getNiveau_ph() {
+        return niveau_ph;
     }
 
-    public void setNiveauNutriment(double niveauNutriment) {
-        this.niveauNutriment = niveauNutriment;
+    public void setNiveau_ph(double niveau_ph) {
+        this.niveau_ph = niveau_ph;
     }
 
-    public String getTypeSol() {
-        return typeSol;
+    public double getNiveau_nutriment() {
+        return niveau_nutriment;
     }
 
-    public void setTypeSol(String typeSol) {
-        this.typeSol = typeSol;
+    public void setNiveau_nutriment(double niveau_nutriment) {
+        this.niveau_nutriment = niveau_nutriment;
     }
 
-    public Crop getCrop() {
-        return crop;
+    public String getType_sol() {
+        return type_sol;
     }
 
-    public void setCrop(Crop crop) {
-        this.crop = crop;
+    public void setType_sol(String type_sol) {
+        this.type_sol = type_sol;
+    }
+
+    public int getCrop_id() {
+        return crop_id;
+    }
+
+    public void setCrop_id(int crop_id) {
+        this.crop_id = crop_id;
     }
 
     @Override
     public String toString() {
         return "SoilData{" +
                 "id=" + id +
-                ", niveauPh=" + niveauPh +
                 ", humidite=" + humidite +
-                ", niveauNutriment=" + niveauNutriment +
-                ", typeSol='" + typeSol + '\'' +
+                ", niveau_ph=" + niveau_ph +
+                ", niveau_nutriment=" + niveau_nutriment +
+                ", type_sol='" + type_sol + '\'' +
+                ", crop_id=" + crop_id +
                 '}';
     }
 } 
