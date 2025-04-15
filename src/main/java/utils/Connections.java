@@ -26,7 +26,7 @@ public class Connections {
         return instance;
     }
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(url, username, password);
