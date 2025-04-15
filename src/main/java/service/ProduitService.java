@@ -1,4 +1,4 @@
-package controller;
+package service;
 
 import entite.Produit;
 import utils.Connections;
@@ -7,16 +7,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProduitController {
+public class ProduitService {
     // Ne pas stocker la connexion comme attribut de classe
-    
+
     // Méthode pour obtenir une connexion fraîche à chaque fois
     public Connection getConnection() {
         return Connections.getInstance().getConnection();
     }
 
     // Suppression du constructeur qui stockait la connexion
-    public ProduitController() {
+    public ProduitService() {
         // Ne pas stocker la connexion
     }
 
@@ -24,37 +24,37 @@ public class ProduitController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet generatedKeys = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot create product: Database connection is null");
                 return false;
             }
-            
+
             String sql = "INSERT INTO produit (nom, quantite, prix, categories, date_creation_produit, " +
                     "date_modification_produit, approved, description, image_file_name) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+
             statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, produit.getNom());
             statement.setInt(2, produit.getQuantite());
             statement.setDouble(3, produit.getPrix());
             statement.setString(4, produit.getCategories());
-            
+
             // Use current timestamp if date_creation_produit is null
             Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-            statement.setTimestamp(5, produit.getDate_creation_produit() != null ? 
+            statement.setTimestamp(5, produit.getDate_creation_produit() != null ?
                     new Timestamp(produit.getDate_creation_produit().getTime()) : currentTimestamp);
-            statement.setTimestamp(6, produit.getDate_modification_produit() != null ? 
+            statement.setTimestamp(6, produit.getDate_modification_produit() != null ?
                     new Timestamp(produit.getDate_modification_produit().getTime()) : currentTimestamp);
-            
+
             statement.setBoolean(7, produit.isApproved());
             statement.setString(8, produit.getDescription());
             statement.setString(9, produit.getImage_file_name());
-            
+
             int rowsAffected = statement.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 generatedKeys = statement.getGeneratedKeys();
                 if (generatedKeys.next()) {
@@ -82,19 +82,19 @@ public class ProduitController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot read product: Database connection is null");
                 return null;
             }
-            
+
             String sql = "SELECT * FROM produit WHERE id = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             rs = statement.executeQuery();
-            
+
             if (rs.next()) {
                 return extractProduitFromResultSet(rs);
             }
@@ -118,18 +118,18 @@ public class ProduitController {
         Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot read all products: Database connection is null");
                 return produits;
             }
-            
+
             String sql = "SELECT * FROM produit";
             statement = connection.createStatement();
             rs = statement.executeQuery(sql);
-            
+
             while (rs.next()) {
                 produits.add(extractProduitFromResultSet(rs));
             }
@@ -144,25 +144,25 @@ public class ProduitController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return produits;
     }
 
     public boolean update(Produit produit) {
         Connection connection = null;
         PreparedStatement statement = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot update product: Database connection is null");
                 return false;
             }
-            
+
             String sql = "UPDATE produit SET nom = ?, quantite = ?, prix = ?, categories = ?, " +
                     "date_modification_produit = ?, approved = ?, description = ?, image_file_name = ? " +
                     "WHERE id = ?";
-            
+
             statement = connection.prepareStatement(sql);
             statement.setString(1, produit.getNom());
             statement.setInt(2, produit.getQuantite());
@@ -173,7 +173,7 @@ public class ProduitController {
             statement.setString(7, produit.getDescription());
             statement.setString(8, produit.getImage_file_name());
             statement.setInt(9, produit.getId());
-            
+
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -192,18 +192,18 @@ public class ProduitController {
     public boolean delete(int id) {
         Connection connection = null;
         PreparedStatement statement = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot delete product: Database connection is null");
                 return false;
             }
-            
+
             String sql = "DELETE FROM produit WHERE id = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
-            
+
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -224,19 +224,19 @@ public class ProduitController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot search products: Database connection is null");
                 return produits;
             }
-            
+
             String sql = "SELECT * FROM produit WHERE nom LIKE ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + keyword + "%");
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 produits.add(extractProduitFromResultSet(rs));
             }
@@ -251,7 +251,7 @@ public class ProduitController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return produits;
     }
 
@@ -260,19 +260,19 @@ public class ProduitController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot filter products: Database connection is null");
                 return produits;
             }
-            
+
             String sql = "SELECT * FROM produit WHERE categories = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, category);
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 produits.add(extractProduitFromResultSet(rs));
             }
@@ -287,7 +287,7 @@ public class ProduitController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return produits;
     }
 
@@ -296,19 +296,19 @@ public class ProduitController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot search products by category: Database connection is null");
                 return produits;
             }
-            
+
             String sql = "SELECT * FROM produit WHERE categories LIKE ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + category + "%");
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 produits.add(extractProduitFromResultSet(rs));
             }
@@ -323,7 +323,7 @@ public class ProduitController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return produits;
     }
 
@@ -332,19 +332,19 @@ public class ProduitController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot search products by approval status: Database connection is null");
                 return produits;
             }
-            
+
             String sql = "SELECT * FROM produit WHERE approved = ?";
             statement = connection.prepareStatement(sql);
             statement.setBoolean(1, approved);
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 produits.add(extractProduitFromResultSet(rs));
             }
@@ -359,7 +359,7 @@ public class ProduitController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return produits;
     }
 
@@ -377,4 +377,4 @@ public class ProduitController {
         produit.setImage_file_name(rs.getString("image_file_name"));
         return produit;
     }
-} 
+}

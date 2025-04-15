@@ -1,4 +1,4 @@
-package controller;
+package service;
 
 import entite.Commande;
 import entite.Produit;
@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandeController {
+public class CommandeService {
 
     // Méthode pour obtenir une connexion fraîche à chaque fois
     private Connection getConnection() {
@@ -220,14 +220,14 @@ public class CommandeController {
                     // D'abord récupérer la quantité actuelle du produit
                     PreparedStatement getQuantityStmt = connection.prepareStatement(
 
-                        "SELECT quantite FROM produit WHERE id = ?"
+                            "SELECT quantite FROM produit WHERE id = ?"
                     );
                     getQuantityStmt.setInt(1, produit.getId());
                     ResultSet quantityRS = getQuantityStmt.executeQuery();
-                    
+
                     if (quantityRS.next()) {
                         int currentQuantity = quantityRS.getInt("quantite");
-                        
+
                         // Vérification des logs
                         System.out.println("Produit ID: " + produit.getId() + " - " + produit.getNom());
                         System.out.println("Quantité actuelle en stock: " + currentQuantity);
@@ -241,27 +241,27 @@ public class CommandeController {
                             System.out.println("La quantité a été ajustée à: " + quantite);
                         }
 
-                        
+
                         int newQuantity = Math.max(0, currentQuantity - quantite); // Éviter les quantités négatives
-                        
+
                         // Mise à jour de la quantité du produit
                         PreparedStatement updateQuantityStmt = connection.prepareStatement(
-                            "UPDATE produit SET quantite = ? WHERE id = ?"
+                                "UPDATE produit SET quantite = ? WHERE id = ?"
                         );
                         updateQuantityStmt.setInt(1, newQuantity);
                         updateQuantityStmt.setInt(2, produit.getId());
                         int rowsUpdated = updateQuantityStmt.executeUpdate();
                         updateQuantityStmt.close();
 
-                        
-                        System.out.println("Quantité du produit ID: " + produit.getId() + 
-                                          " (" + produit.getNom() + ") mise à jour de " + 
-                                          currentQuantity + " à " + newQuantity +
-                                          " - Lignes mises à jour: " + rowsUpdated);
+
+                        System.out.println("Quantité du produit ID: " + produit.getId() +
+                                " (" + produit.getNom() + ") mise à jour de " +
+                                currentQuantity + " à " + newQuantity +
+                                " - Lignes mises à jour: " + rowsUpdated);
                     } else {
                         System.out.println("ERREUR: Produit ID " + produit.getId() + " non trouvé dans la base de données!");
                     }
-                    
+
 
                     quantityRS.close();
                     getQuantityStmt.close();
@@ -337,7 +337,7 @@ public class CommandeController {
             statement.setInt(1, commande.getId());
             rs = statement.executeQuery();
 
-            ProduitController produitController = new ProduitController();
+            ProduitService produitService = new ProduitService();
             while (rs.next()) {
                 Produit produit = new Produit();
                 produit.setId(rs.getInt("id"));
@@ -614,4 +614,4 @@ public class CommandeController {
 
         return commande;
     }
-} 
+}
