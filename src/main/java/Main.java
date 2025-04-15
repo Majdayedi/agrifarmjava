@@ -1,28 +1,32 @@
-import controller.FarmController;
+
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class Main extends Application {
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Load FXML file
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/controller/register.fxml")));
 
-    public void start(Stage primaryStage) {
-        try {
-            // Load the home.fxml file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/home.fxml"));
-            
-            // Load the FXML
-            Parent root = loader.load();
-            
-            // Create scene and set stage
-            Scene scene = new Scene(root, 900.0, 600.0);
-            primaryStage.setTitle("AgriFarm System");
-            primaryStage.setScene(scene);
-            primaryStage.show();
+        // Create scene
+        Scene scene = new Scene(root, 520, 440);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Load and apply stylesheet (optional, if you have styles.css)
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm());
+
+        // Set stage
+        stage.setTitle("Register");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
