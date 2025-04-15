@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -68,8 +69,11 @@ public class AdminController implements Initializable {
     @FXML
     private Button marketplaceButton;
 
-    @FXML
+
+    
+ @FXML
     private Button homeButton;
+
 
     private ProduitController produitController;
     private ObservableList<Produit> productsList = FXCollections.observableArrayList();
@@ -239,6 +243,33 @@ public class AdminController implements Initializable {
         }
     }
 
+    
+    @FXML
+    private void navigateToHome(ActionEvent event) {
+        try {
+            // Load the Home/Produit view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/produit.fxml"));
+            Parent homeView = loader.load();
+            
+            // Get current stage
+            Stage stage = (Stage) homeButton.getScene().getWindow();
+            
+            // Create new scene with Home view
+            Scene scene = new Scene(homeView);
+            
+            // Set the scene to the stage
+            stage.setScene(scene);
+            stage.setTitle("AgriFarm - Accueil");
+            stage.show();
+            
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading Home view", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation", 
+                     "Impossible de charger la vue d'accueil", 
+                     "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+    
     private void loadProducts() {
         productCardsPane.getChildren().clear();
         productsList.clear();

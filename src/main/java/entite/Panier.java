@@ -165,9 +165,13 @@ public class Panier {
             typePaiement
         );
         
-        // Ajouter tous les produits à la commande
-        for (Produit produit : produitsQuantites.keySet()) {
-            commande.addProduit(produit);
+        // Ajouter tous les produits à la commande avec leurs quantités spécifiques
+        for (Map.Entry<Produit, Integer> entry : produitsQuantites.entrySet()) {
+            Produit produit = entry.getKey();
+            int quantite = entry.getValue();
+            
+            // Utiliser la méthode addProduit qui prend en compte la quantité
+            commande.addProduit(produit, quantite);
         }
         
         return commande;
