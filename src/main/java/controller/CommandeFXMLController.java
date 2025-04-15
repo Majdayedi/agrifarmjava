@@ -14,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import service.CommandeService;
+import service.ProduitService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,8 +59,8 @@ public class CommandeFXMLController implements Initializable {
     @FXML private Button addProduitButton;
     @FXML private Button removeProduitButton;
     
-    private final CommandeController commandeController = new CommandeController();
-    private final ProduitController produitController = new ProduitController();
+    private final CommandeService commandeService = new CommandeService();
+    private final ProduitService produitService = new ProduitService();
     private Commande selectedCommande;
     private final ObservableList<Commande> commandeData = FXCollections.observableArrayList();
     private final ObservableList<Produit> allProduits = FXCollections.observableArrayList();
@@ -203,14 +205,14 @@ public class CommandeFXMLController implements Initializable {
     
     private void loadAllCommandes() {
         commandeData.clear();
-        List<Commande> commandes = commandeController.readAll();
+        List<Commande> commandes = commandeService.readAll();
         commandeData.addAll(commandes);
         commandeTable.setItems(commandeData);
     }
     
     private void loadAllProduits() {
         allProduits.clear();
-        List<Produit> produits = produitController.readAll();
+        List<Produit> produits = produitService.readAll();
         allProduits.addAll(produits);
     }
     
@@ -253,7 +255,7 @@ public class CommandeFXMLController implements Initializable {
                     commande.addProduit(p);
                 }
                 
-                boolean success = commandeController.create(commande);
+                boolean success = commandeService.create(commande);
                 if (success) {
                     showAlert(Alert.AlertType.INFORMATION, "Succès", "Commande ajoutée avec succès", 
                              "La commande a été enregistrée dans la base de données.");
@@ -295,7 +297,7 @@ public class CommandeFXMLController implements Initializable {
                     selectedCommande.addProduit(p);
                 }
                 
-                boolean success = commandeController.update(selectedCommande);
+                boolean success = commandeService.update(selectedCommande);
                 if (success) {
                     showAlert(Alert.AlertType.INFORMATION, "Succès", "Commande mise à jour avec succès",
                              "La commande a été mise à jour dans la base de données.");
@@ -329,7 +331,7 @@ public class CommandeFXMLController implements Initializable {
         
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                boolean success = commandeController.delete(selectedCommande.getId());
+                boolean success = commandeService.delete(selectedCommande.getId());
                 if (success) {
                     showAlert(Alert.AlertType.INFORMATION, "Succès", "Commande supprimée avec succès",
                              "La commande a été supprimée de la base de données.");

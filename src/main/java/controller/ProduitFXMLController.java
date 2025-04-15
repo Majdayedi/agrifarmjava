@@ -21,6 +21,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import service.ProduitService;
 import utils.Connections;
 
 import java.io.File;
@@ -70,7 +71,7 @@ public class ProduitFXMLController implements Initializable {
     
     @FXML private Button homeButton;
     
-    private final ProduitController produitController = new ProduitController();
+    private final ProduitService produitService = new ProduitService();
     private Produit selectedProduit;
     private final ObservableList<Produit> produitData = FXCollections.observableArrayList();
     private final String IMAGE_DIRECTORY = "src/main/resources/images/";
@@ -125,7 +126,7 @@ public class ProduitFXMLController implements Initializable {
     private void loadAllProducts() {
         try {
         produitData.clear();
-        List<Produit> products = produitController.readAll();
+        List<Produit> products = produitService.readAll();
             if (products != null) {
         produitData.addAll(products);
                 displayProductCards();
@@ -327,7 +328,7 @@ public class ProduitFXMLController implements Initializable {
                 
                 copyImageIfNeeded(imageFileNameField.getText());
                 
-                boolean success = produitController.create(produit);
+                boolean success = produitService.create(produit);
                 if (success) {
                     showAlert(Alert.AlertType.INFORMATION, "Succès", "Produit ajouté avec succès");
                     clearFields();
@@ -361,7 +362,7 @@ public class ProduitFXMLController implements Initializable {
                 
                 selectedProduit.setApproved(approvedCheck.isSelected());
                 
-                boolean success = produitController.update(selectedProduit);
+                boolean success = produitService.update(selectedProduit);
                 if (success) {
                     showAlert(Alert.AlertType.INFORMATION, "Succès", "Produit mis à jour avec succès");
                     clearFields();
@@ -390,7 +391,7 @@ public class ProduitFXMLController implements Initializable {
             
             confirmAlert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    boolean success = produitController.delete(selectedProduit.getId());
+                    boolean success = produitService.delete(selectedProduit.getId());
                     if (success) {
                         showAlert(Alert.AlertType.INFORMATION, "Succès", "Produit supprimé avec succès");
                         clearFields();
@@ -468,7 +469,7 @@ public class ProduitFXMLController implements Initializable {
             loadAllProducts();
         } else {
             produitData.clear();
-            List<Produit> foundProducts = produitController.searchByName(keyword);
+            List<Produit> foundProducts = produitService.searchByName(keyword);
             produitData.addAll(foundProducts);
             displayProductCards();
         }
@@ -531,7 +532,7 @@ public class ProduitFXMLController implements Initializable {
             loadAllProducts();
         } else {
             produitData.clear();
-            List<Produit> filteredProducts = produitController.filterByCategory(selectedCategory);
+            List<Produit> filteredProducts = produitService.filterByCategory(selectedCategory);
             produitData.addAll(filteredProducts);
             displayProductCards();
         }

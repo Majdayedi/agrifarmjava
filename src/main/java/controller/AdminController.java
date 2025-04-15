@@ -23,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import service.ProduitService;
 import utils.Connections;
 
 import java.io.File;
@@ -75,7 +76,7 @@ public class AdminController implements Initializable {
     private Button homeButton;
 
 
-    private ProduitController produitController;
+    private ProduitService produitService;
     private ObservableList<Produit> productsList = FXCollections.observableArrayList();
     private int totalProducts = 0;
     private int approvedProducts = 0;
@@ -83,7 +84,7 @@ public class AdminController implements Initializable {
     private final String IMAGE_DIRECTORY = "src/main/resources/images/";
 
     public AdminController() {
-        produitController = new ProduitController();
+        produitService = new ProduitService();
     }
 
     @Override
