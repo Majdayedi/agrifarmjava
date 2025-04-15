@@ -218,9 +218,7 @@ public class AdminController implements Initializable {
         }
     }
 
-  
 
-    
     @FXML
     private void navigateToHome(ActionEvent event) {
         try {

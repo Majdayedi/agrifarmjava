@@ -25,7 +25,8 @@
 .farm-card {
     -fx-background-color: white;
     -fx-background-radius: 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 5, 0.0, 0, 1);
+
     -fx-padding: 15;
     -fx-pref-width: 250;
     -fx-pref-height: 300;
@@ -187,3 +188,99 @@
 .read-only-field:focused {
     -fx-background-color: #f5f5f5;
 }
+
+/* Crop Cards */
+.crop-card {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.crop-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
+.crop-card .header {
+    -fx-padding: 5;
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.crop-card .title {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.crop-card .details {
+    -fx-padding: 10;
+}
+
+.crop-card .detail-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+}
+
+.crop-card .detail-value {
+    -fx-text-fill: #333;
+}
+
+/* Form Container */
+.form-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.form-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Buttons */
+.save-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.save-button:hover {
+    -fx-background-color: #45a049;
+}
+
+.cancel-button {
+    -fx-background-color: #9E9E9E;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #757575;
+}
+
+.action-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.action-button:hover {
+    -fx-background-color: #1976D2;
+}
+
+.delete-button {
+    -fx-background-color: #F44336;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.delete-button:hover {
+  -fx-background-color: #D32F2}

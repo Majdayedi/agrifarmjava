@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CropController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <spacing>20</spacing>
+
+    <!-- Back Button -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Button text="Back to Crops" onAction="#goBackToCrops" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+    </HBox>
+
+    <!-- Title -->
+    <Label text="Crop Administration" style="-fx-font-size: 24px; -fx-text-fill: #4CAF50; -fx-font-weight: bold;"/>
+
+    <!-- Table View -->
+    <TableView fx:id="cropsTable" style="-fx-background-color: white; -fx-border-color: #4CAF50; -fx-border-radius: 5;">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="eventColumn" text="Event" prefWidth="150"/>
+            <TableColumn fx:id="typeColumn" text="Type" prefWidth="100"/>
+            <TableColumn fx:id="methodColumn" text="Method" prefWidth="100"/>
+            <TableColumn fx:id="plantationDateColumn" text="Plantation Date" prefWidth="150"/>
+            <TableColumn fx:id="cropDateColumn" text="Crop Date" prefWidth="150"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+    <!-- Result Area -->
+    <TextArea fx:id="resultArea" editable="false" style="-fx-background-color: white; -fx-border-color: #4CAF50; -fx-border-radius: 5;"/>
+</VBox> 
