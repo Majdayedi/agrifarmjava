@@ -21,6 +21,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import utils.Connections;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -93,7 +94,7 @@ public class ProduitFXMLController implements Initializable {
         }
         
         // Check database connection before loading products
-        Connection conn = DataSource.getInstance().getConnection();
+        Connection conn = Connections.getInstance().getConnection();
         if (conn != null) {
             loadAllProducts();
         } else {
