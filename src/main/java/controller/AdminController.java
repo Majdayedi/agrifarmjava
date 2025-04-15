@@ -67,6 +67,9 @@ public class AdminController implements Initializable {
     @FXML
     private Button marketplaceButton;
     
+    @FXML
+    private Button homeButton;
+    
     private ProduitController produitController;
     private ObservableList<Produit> productsList = FXCollections.observableArrayList();
     private int totalProducts = 0;
@@ -205,6 +208,32 @@ public class AdminController implements Initializable {
             LOGGER.log(Level.SEVERE, "Error loading Marketplace view", e);
             showAlert(Alert.AlertType.ERROR, "Erreur de Navigation", 
                      "Impossible de charger la vue Marketplace", 
+                     "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void navigateToHome(ActionEvent event) {
+        try {
+            // Load the Home/Produit view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/produit.fxml"));
+            Parent homeView = loader.load();
+            
+            // Get current stage
+            Stage stage = (Stage) homeButton.getScene().getWindow();
+            
+            // Create new scene with Home view
+            Scene scene = new Scene(homeView);
+            
+            // Set the scene to the stage
+            stage.setScene(scene);
+            stage.setTitle("AgriFarm - Accueil");
+            stage.show();
+            
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading Home view", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation", 
+                     "Impossible de charger la vue d'accueil", 
                      "Une erreur s'est produite: " + e.getMessage());
         }
     }

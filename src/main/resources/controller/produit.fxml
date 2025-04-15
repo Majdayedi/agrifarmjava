@@ -16,37 +16,25 @@
 
 <BorderPane prefHeight="700.0" prefWidth="1000.0" stylesheets="@../styles/application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ProduitFXMLController">
    <top>
-      <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="navbar" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" prefHeight="80.0" style="-fx-background-color: #13af02;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" text="← Retour">
+            <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="← Retour">
                <HBox.margin>
-                  <Insets right="20.0" />
+                  <Insets right="20.0" left="10.0" />
                </HBox.margin>
             </Button>
-            <Label styleClass="logo-text" text="AgriFarm">
-               <font>
-                  <Font name="System Bold" size="22.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="5.0">
+            <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 20;" text="AGRIFARM" />
+            <HBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" styleClass="nav-button-active" text="Agricole (CRUD)" />
-                  <Button fx:id="adminButton" mnemonicParsing="false" onAction="#handleAdminButtonAction" styleClass="nav-button" text="Administration" />
-                  <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#handleMarketplaceButtonAction" styleClass="nav-button" text="Marketplace" />
+                  <Button fx:id="produitButton" mnemonicParsing="false" styleClass="nav-button-active" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Produits" />
+                  <Button fx:id="adminButton" mnemonicParsing="false" onAction="#handleAdminButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Administration" />
+                  <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#handleMarketplaceButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Marketplace" />
                </children>
                <HBox.margin>
                   <Insets left="50.0" />
                </HBox.margin>
             </HBox>
-            <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogoutButtonAction" styleClass="logout-button" text="Déconnexion">
-               <HBox.margin>
-                  <Insets right="20.0" />
-               </HBox.margin>
-            </Button>
          </children>
-         <padding>
-            <Insets left="20.0" right="20.0" />
-         </padding>
       </HBox>
    </top>
    <center>

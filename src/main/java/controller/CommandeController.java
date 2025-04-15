@@ -213,6 +213,58 @@ public class CommandeController {
                         statement.close();
                     }
                 }
+                
+                // Mise à jour de la quantité du produit (déduction de la quantité commandée)
+                try {
+                    // D'abord récupérer la quantité actuelle du produit
+                    PreparedStatement getQuantityStmt = connection.prepareStatement(
+                        "SELECT quantite FROM produit WHERE id = ?"
+                    );
+                    getQuantityStmt.setInt(1, produit.getId());
+                    ResultSet quantityRS = getQuantityStmt.executeQuery();
+                    
+                    if (quantityRS.next()) {
+                        int currentQuantity = quantityRS.getInt("quantite");
+                        
+                        // Vérification des logs
+                        System.out.println("Produit ID: " + produit.getId() + " - " + produit.getNom());
+                        System.out.println("Quantité actuelle en stock: " + currentQuantity);
+                        System.out.println("Quantité commandée: " + quantite);
+                        
+                        // Vérification que la quantité ne sera pas négative
+                        if (currentQuantity < quantite) {
+                            System.out.println("ATTENTION: La quantité commandée dépasse le stock disponible!");
+                            // Si la quantité est insuffisante, on ajuste à 0 (stock épuisé)
+                            quantite = currentQuantity;
+                            System.out.println("La quantité a été ajustée à: " + quantite);
+                        }
+                        
+                        int newQuantity = Math.max(0, currentQuantity - quantite); // Éviter les quantités négatives
+                        
+                        // Mise à jour de la quantité du produit
+                        PreparedStatement updateQuantityStmt = connection.prepareStatement(
+                            "UPDATE produit SET quantite = ? WHERE id = ?"
+                        );
+                        updateQuantityStmt.setInt(1, newQuantity);
+                        updateQuantityStmt.setInt(2, produit.getId());
+                        int rowsUpdated = updateQuantityStmt.executeUpdate();
+                        updateQuantityStmt.close();
+                        
+                        System.out.println("Quantité du produit ID: " + produit.getId() + 
+                                          " (" + produit.getNom() + ") mise à jour de " + 
+                                          currentQuantity + " à " + newQuantity +
+                                          " - Lignes mises à jour: " + rowsUpdated);
+                    } else {
+                        System.out.println("ERREUR: Produit ID " + produit.getId() + " non trouvé dans la base de données!");
+                    }
+                    
+                    quantityRS.close();
+                    getQuantityStmt.close();
+                } catch (SQLException e) {
+                    System.err.println("Erreur lors de la mise à jour de la quantité du produit: " + e.getMessage());
+                    e.printStackTrace();
+                    // Ne pas retourner false ici pour permettre la poursuite de la commande même en cas d'échec de mise à jour
+                }
             }
             return true;
         } catch (SQLException e) {
