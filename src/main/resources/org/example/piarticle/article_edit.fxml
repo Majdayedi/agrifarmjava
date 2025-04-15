@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.piarticle.Controllers.EditArticleController"
+      spacing="10" alignment="CENTER">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Text text="✏️ Edit Article" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="titleField" promptText="Title"/>
+    
+    <TextArea fx:id="contentArea" promptText="Content" prefRowCount="5" wrapText="true"/>
+    
+    <TextArea fx:id="featuredTextArea" promptText="Featured Text" prefRowCount="2" wrapText="true"/>
+    
+    <TextField fx:id="imageField" promptText="Image URL"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="saveButton" text="💾 Save Changes" onAction="#handleSave" 
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="❌ Cancel" onAction="#handleCancel" 
+                style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+    </HBox>
+
+</VBox>
