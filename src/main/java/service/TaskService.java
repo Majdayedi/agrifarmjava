@@ -1,6 +1,7 @@
 package service;
 
 import entite.Task;
+import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class TaskService implements IService<Task> {
     private ResultSet rs;
 
     public TaskService() {
-        cnx = DataSource.getInstance().getConnection();
+        cnx = Connections.getInstance().getConnection();
     }
 
     @Override
@@ -98,7 +99,7 @@ public class TaskService implements IService<Task> {
         List<Task> tasks = new ArrayList<>();
         String query = "SELECT * FROM task";
 
-        try (Connection cnx = DataSource.getInstance().getConnection();
+        try (Connection cnx = Connections.getInstance().getConnection();
              Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
@@ -165,10 +166,10 @@ public class TaskService implements IService<Task> {
         task.setLastUpdated(rs.getTimestamp("last_updated"));
         task.setPaymentWorker(rs.getDouble("payment_worker"));
         task.setTotal(rs.getDouble("total"));
-        
+
         // You'll need to set the field relationship here
         // This would require additional queries or joins
-        
+
         return task;
     }
 

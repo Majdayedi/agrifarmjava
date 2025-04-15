@@ -1,6 +1,7 @@
 package controller;
 
 import entite.Produit;
+import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class ProduitController {
     
     // Méthode pour obtenir une connexion fraîche à chaque fois
     public Connection getConnection() {
-        return DataSource.getInstance().getConnection();
+        return Connections.getInstance().getConnection();
     }
 
     // Suppression du constructeur qui stockait la connexion

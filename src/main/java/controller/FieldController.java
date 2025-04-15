@@ -126,7 +126,7 @@ public class FieldController {
     }
 
     private void handleDetails(Field field) {
-
+        
     }
 
     private void handleDelete(Field field, Pane card) {

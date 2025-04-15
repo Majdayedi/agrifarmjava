@@ -1,6 +1,7 @@
 package service;
 
 import entite.Field;
+import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class FieldService implements IService<Field> {
     private ResultSet rs;
 
     public FieldService() {
-        cnx = DataSource.getInstance().getConnection();
+        cnx = Connections.getInstance().getConnection();
     }
 
     @Override
@@ -91,7 +92,7 @@ public class FieldService implements IService<Field> {
         List<Field> fields = new ArrayList<>();
         String query = "SELECT * FROM field";
 
-        try (Connection cnx = DataSource.getInstance().getConnection();
+        try (Connection cnx = Connections.getInstance().getConnection();
              Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
 
@@ -153,10 +154,10 @@ public class FieldService implements IService<Field> {
         field.setOutcome(rs.getDouble("outcome"));
         field.setProfit(rs.getDouble("profit"));
         field.setDescription(rs.getString("description"));
-        
+
         // You'll need to set the farm and crop relationships here
         // This would require additional queries or joins
-        
+
         return field;
     }
 

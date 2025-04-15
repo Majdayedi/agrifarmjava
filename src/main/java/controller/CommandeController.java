@@ -2,37 +2,38 @@ package controller;
 
 import entite.Commande;
 import entite.Produit;
+import utils.Connections;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandeController {
-    
+
     // Méthode pour obtenir une connexion fraîche à chaque fois
     private Connection getConnection() {
-        return DataSource.getInstance().getConnection();
+        return Connections.getInstance().getConnection();
     }
 
     public boolean create(Commande commande) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet generatedKeys = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot create commande: Database connection is null");
                 return false;
             }
-            
+
             // Vérifier si la table a la colonne quantite
             boolean hasQuantiteColumn = false;
             try {
                 PreparedStatement checkStatement = connection.prepareStatement("DESCRIBE commande");
                 ResultSet checkRs = checkStatement.executeQuery();
                 System.out.println("Structure de la table commande:");
-                
+
                 while (checkRs.next()) {
                     String columnName = checkRs.getString("Field");
                     System.out.println(columnName);
@@ -40,24 +41,24 @@ public class CommandeController {
                         hasQuantiteColumn = true;
                     }
                 }
-                
+
                 checkRs.close();
                 checkStatement.close();
-                
+
                 // Si la colonne quantite n'existe pas, on l'ajoute
                 if (!hasQuantiteColumn) {
                     System.out.println("La colonne quantite n'existe pas, ajout...");
                     PreparedStatement alterStatement = connection.prepareStatement(
-                        "ALTER TABLE commande ADD COLUMN quantite INT NOT NULL DEFAULT 1 AFTER id");
+                            "ALTER TABLE commande ADD COLUMN quantite INT NOT NULL DEFAULT 1 AFTER id");
                     alterStatement.executeUpdate();
                     alterStatement.close();
                     hasQuantiteColumn = true;
                 }
-                
+
                 // Requête d'insertion avec la colonne quantite
                 String sql = "INSERT INTO commande (quantite, prix, type_commande, status, " +
-                    "adress, paiment, date_creation_commande) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                
+                        "adress, paiment, date_creation_commande) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
                 statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 statement.setInt(1, commande.getQuantite());
                 statement.setDouble(2, commande.getPrix());
@@ -65,39 +66,39 @@ public class CommandeController {
                 statement.setString(4, commande.getStatus());
                 statement.setString(5, commande.getAdress());
                 statement.setString(6, commande.getPaiment());
-                
+
                 // Use current timestamp if date_creation_commande is null
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-                statement.setTimestamp(7, commande.getDate_creation_commande() != null ? 
+                statement.setTimestamp(7, commande.getDate_creation_commande() != null ?
                         new Timestamp(commande.getDate_creation_commande().getTime()) : currentTimestamp);
-                
+
             } catch (SQLException e) {
                 System.err.println("Erreur lors de la vérification ou modification de la structure de la table: " + e.getMessage());
-                
+
                 // Si la vérification échoue, on utilise une requête sans la colonne quantite
                 String sql = "INSERT INTO commande (prix, type_commande, status, adress, " +
-                    "paiment, date_creation_commande) VALUES (?, ?, ?, ?, ?, ?)";
-                
+                        "paiment, date_creation_commande) VALUES (?, ?, ?, ?, ?, ?)";
+
                 statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 statement.setDouble(1, commande.getPrix());
                 statement.setString(2, commande.getType_commande());
                 statement.setString(3, commande.getStatus());
                 statement.setString(4, commande.getAdress());
                 statement.setString(5, commande.getPaiment());
-                
+
                 // Use current timestamp if date_creation_commande is null
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-                statement.setTimestamp(6, commande.getDate_creation_commande() != null ? 
+                statement.setTimestamp(6, commande.getDate_creation_commande() != null ?
                         new Timestamp(commande.getDate_creation_commande().getTime()) : currentTimestamp);
             }
-            
+
             int rowsAffected = statement.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 generatedKeys = statement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     commande.setId(generatedKeys.getInt(1));
-                    
+
                     // Maintenant, insérer les relations many-to-many avec les produits
                     return insertCommandeProduits(connection, commande);
                 }
@@ -124,24 +125,24 @@ public class CommandeController {
         PreparedStatement statement = null;
         try {
             System.out.println("Insertion des produits pour la commande ID: " + commande.getId());
-            
+
             // Vérification de l'existence de la table commande_produit
             try {
                 statement = connection.prepareStatement("SHOW TABLES LIKE 'commande_produit'");
                 ResultSet tablesRS = statement.executeQuery();
                 boolean tableExists = tablesRS.next();
                 statement.close();
-                
+
                 if (!tableExists) {
                     System.out.println("La table commande_produit n'existe pas, création...");
                     statement = connection.prepareStatement(
-                        "CREATE TABLE IF NOT EXISTS commande_produit (" +
-                        "commande_id INT NOT NULL, " +
-                        "produit_id INT NOT NULL, " +
-                        "quantite INT NOT NULL DEFAULT 1, " +
-                        "PRIMARY KEY (commande_id, produit_id), " +
-                        "FOREIGN KEY (commande_id) REFERENCES commande(id) ON DELETE CASCADE, " +
-                        "FOREIGN KEY (produit_id) REFERENCES produit(id) ON DELETE CASCADE)"
+                            "CREATE TABLE IF NOT EXISTS commande_produit (" +
+                                    "commande_id INT NOT NULL, " +
+                                    "produit_id INT NOT NULL, " +
+                                    "quantite INT NOT NULL DEFAULT 1, " +
+                                    "PRIMARY KEY (commande_id, produit_id), " +
+                                    "FOREIGN KEY (commande_id) REFERENCES commande(id) ON DELETE CASCADE, " +
+                                    "FOREIGN KEY (produit_id) REFERENCES produit(id) ON DELETE CASCADE)"
                     );
                     statement.executeUpdate();
                     statement.close();
@@ -157,12 +158,12 @@ public class CommandeController {
                         }
                     }
                     statement.close();
-                    
+
                     // Si la colonne n'existe pas, l'ajouter
                     if (!quantiteColumnExists) {
                         System.out.println("La colonne quantite n'existe pas dans la table commande_produit, ajout...");
                         statement = connection.prepareStatement(
-                            "ALTER TABLE commande_produit ADD COLUMN quantite INT NOT NULL DEFAULT 1"
+                                "ALTER TABLE commande_produit ADD COLUMN quantite INT NOT NULL DEFAULT 1"
                         );
                         statement.executeUpdate();
                         statement.close();
@@ -172,23 +173,23 @@ public class CommandeController {
                 System.out.println("Erreur lors de la vérification de la table: " + e.getMessage());
                 e.printStackTrace();
             }
-            
+
             // Pour chaque produit dans la commande
             for (int i = 0; i < commande.getProduits().size(); i++) {
                 Produit produit = commande.getProduits().get(i);
                 int quantite = 1; // Valeur par défaut
-                
+
                 // Récupérer la quantité spécifique du produit depuis la commande si disponible
                 if (commande.getQuantitesParProduit() != null && commande.getQuantitesParProduit().containsKey(produit.getId())) {
                     quantite = commande.getQuantitesParProduit().get(produit.getId());
                 }
-                
+
                 System.out.println("Ajout du produit ID: " + produit.getId() + " avec quantité: " + quantite);
-                
+
                 try {
                     // Essayer d'abord sans la colonne quantite au cas où la modification n'aurait pas fonctionné
                     statement = connection.prepareStatement(
-                        "INSERT INTO commande_produit (commande_id, produit_id) VALUES (?, ?)"
+                            "INSERT INTO commande_produit (commande_id, produit_id) VALUES (?, ?)"
                     );
                     statement.setInt(1, commande.getId());
                     statement.setInt(2, produit.getId());
@@ -197,7 +198,7 @@ public class CommandeController {
                     // Si l'insertion a échoué, essayer avec la colonne quantite
                     try {
                         statement = connection.prepareStatement(
-                            "INSERT INTO commande_produit (commande_id, produit_id, quantite) VALUES (?, ?, ?)"
+                                "INSERT INTO commande_produit (commande_id, produit_id, quantite) VALUES (?, ?, ?)"
                         );
                         statement.setInt(1, commande.getId());
                         statement.setInt(2, produit.getId());
@@ -213,11 +214,12 @@ public class CommandeController {
                         statement.close();
                     }
                 }
-                
+
                 // Mise à jour de la quantité du produit (déduction de la quantité commandée)
                 try {
                     // D'abord récupérer la quantité actuelle du produit
                     PreparedStatement getQuantityStmt = connection.prepareStatement(
+
                         "SELECT quantite FROM produit WHERE id = ?"
                     );
                     getQuantityStmt.setInt(1, produit.getId());
@@ -230,7 +232,7 @@ public class CommandeController {
                         System.out.println("Produit ID: " + produit.getId() + " - " + produit.getNom());
                         System.out.println("Quantité actuelle en stock: " + currentQuantity);
                         System.out.println("Quantité commandée: " + quantite);
-                        
+
                         // Vérification que la quantité ne sera pas négative
                         if (currentQuantity < quantite) {
                             System.out.println("ATTENTION: La quantité commandée dépasse le stock disponible!");
@@ -238,6 +240,7 @@ public class CommandeController {
                             quantite = currentQuantity;
                             System.out.println("La quantité a été ajustée à: " + quantite);
                         }
+
                         
                         int newQuantity = Math.max(0, currentQuantity - quantite); // Éviter les quantités négatives
                         
@@ -249,6 +252,7 @@ public class CommandeController {
                         updateQuantityStmt.setInt(2, produit.getId());
                         int rowsUpdated = updateQuantityStmt.executeUpdate();
                         updateQuantityStmt.close();
+
                         
                         System.out.println("Quantité du produit ID: " + produit.getId() + 
                                           " (" + produit.getNom() + ") mise à jour de " + 
@@ -258,6 +262,7 @@ public class CommandeController {
                         System.out.println("ERREUR: Produit ID " + produit.getId() + " non trouvé dans la base de données!");
                     }
                     
+
                     quantityRS.close();
                     getQuantityStmt.close();
                 } catch (SQLException e) {
@@ -282,25 +287,25 @@ public class CommandeController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot read commande: Database connection is null");
                 return null;
             }
-            
+
             String sql = "SELECT * FROM commande WHERE id = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             rs = statement.executeQuery();
-            
+
             if (rs.next()) {
                 Commande commande = extractCommandeFromResultSet(rs);
-                
+
                 // Charger les produits associés à cette commande
                 loadCommandeProduits(connection, commande);
-                
+
                 return commande;
             }
             return null;
@@ -322,16 +327,16 @@ public class CommandeController {
     private void loadCommandeProduits(Connection connection, Commande commande) throws SQLException {
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             String sql = "SELECT p.* FROM produit p " +
-                        "JOIN commande_produit cp ON p.id = cp.produit_id " +
-                        "WHERE cp.commande_id = ?";
-            
+                    "JOIN commande_produit cp ON p.id = cp.produit_id " +
+                    "WHERE cp.commande_id = ?";
+
             statement = connection.prepareStatement(sql);
             statement.setInt(1, commande.getId());
             rs = statement.executeQuery();
-            
+
             ProduitController produitController = new ProduitController();
             while (rs.next()) {
                 Produit produit = new Produit();
@@ -349,7 +354,7 @@ public class CommandeController {
                 produit.setApproved(rs.getBoolean("approved"));
                 produit.setDescription(rs.getString("description"));
                 produit.setImage_file_name(rs.getString("image_file_name"));
-                
+
                 commande.addProduit(produit);
             }
         } finally {
@@ -363,18 +368,18 @@ public class CommandeController {
         Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot read all commandes: Database connection is null");
                 return commandes;
             }
-            
+
             String sql = "SELECT * FROM commande ORDER BY date_creation_commande DESC";
             statement = connection.createStatement();
             rs = statement.executeQuery(sql);
-            
+
             while (rs.next()) {
                 Commande commande = extractCommandeFromResultSet(rs);
                 loadCommandeProduits(connection, commande);
@@ -392,29 +397,29 @@ public class CommandeController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return commandes;
     }
 
     public boolean update(Commande commande) {
         Connection connection = null;
         PreparedStatement statement = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot update commande: Database connection is null");
                 return false;
             }
-            
+
             // Vérifier dynamiquement les colonnes
             try {
                 PreparedStatement checkStatement = connection.prepareStatement("DESCRIBE commande");
                 ResultSet checkRs = checkStatement.executeQuery();
-                
+
                 StringBuilder setClause = new StringBuilder();
                 List<String> columns = new ArrayList<>();
-                
+
                 while (checkRs.next()) {
                     String columnName = checkRs.getString("Field");
                     if (!columnName.equals("id") && !columnName.equals("date_creation_commande")) {
@@ -425,15 +430,15 @@ public class CommandeController {
                         columns.add(columnName);
                     }
                 }
-                
+
                 checkRs.close();
                 checkStatement.close();
-                
+
                 String sql = "UPDATE commande SET " + setClause.toString() + " WHERE id = ?";
                 System.out.println("Requête SQL update: " + sql);
-                
+
                 statement = connection.prepareStatement(sql);
-                
+
                 int paramIndex = 1;
                 for (String column : columns) {
                     switch (column) {
@@ -462,14 +467,14 @@ public class CommandeController {
                     }
                 }
                 statement.setInt(paramIndex, commande.getId());
-                
+
             } catch (SQLException e) {
                 System.err.println("Erreur lors de la construction de la requête d'update: " + e.getMessage());
-                
+
                 // Fallback avec une requête fixe
                 String sql = "UPDATE commande SET quantite = ?, prix = ?, type_commande = ?, " +
                         "status = ?, adress = ?, paiment = ? WHERE id = ?";
-                
+
                 statement = connection.prepareStatement(sql);
                 statement.setInt(1, commande.getQuantite());
                 statement.setDouble(2, commande.getPrix());
@@ -479,10 +484,10 @@ public class CommandeController {
                 statement.setString(6, commande.getPaiment());
                 statement.setInt(7, commande.getId());
             }
-            
+
             int rowsAffected = statement.executeUpdate();
             statement.close();
-            
+
             if (rowsAffected > 0) {
                 // Mettre à jour les produits associés
                 // D'abord, supprimer toutes les relations existantes
@@ -491,11 +496,11 @@ public class CommandeController {
                 statement.setInt(1, commande.getId());
                 statement.executeUpdate();
                 statement.close();
-                
+
                 // Puis, insérer les nouvelles relations
                 return insertCommandeProduits(connection, commande);
             }
-            
+
             return false;
         } catch (SQLException e) {
             System.err.println("Error updating commande: " + e.getMessage());
@@ -514,26 +519,26 @@ public class CommandeController {
     public boolean delete(int id) {
         Connection connection = null;
         PreparedStatement statement = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot delete commande: Database connection is null");
                 return false;
             }
-            
+
             // D'abord supprimer les relations dans la table de jointure
             String sql = "DELETE FROM commande_produit WHERE commande_id = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             statement.executeUpdate();
             statement.close();
-            
+
             // Ensuite supprimer la commande
             sql = "DELETE FROM commande WHERE id = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
-            
+
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -555,19 +560,19 @@ public class CommandeController {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             connection = getConnection();
             if (connection == null) {
                 System.err.println("Cannot search commandes: Database connection is null");
                 return commandes;
             }
-            
+
             String sql = "SELECT * FROM commande WHERE status = ? ORDER BY date_creation_commande DESC";
             statement = connection.prepareStatement(sql);
             statement.setString(1, status);
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 Commande commande = extractCommandeFromResultSet(rs);
                 loadCommandeProduits(connection, commande);
@@ -585,28 +590,28 @@ public class CommandeController {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
-        
+
         return commandes;
     }
 
     private Commande extractCommandeFromResultSet(ResultSet rs) throws SQLException {
         Commande commande = new Commande();
         commande.setId(rs.getInt("id"));
-        
+
         try {
             commande.setQuantite(rs.getInt("quantite"));
         } catch (SQLException e) {
             // Si la colonne quantite n'existe pas, on utilise une valeur par défaut
             commande.setQuantite(1);
         }
-        
+
         commande.setPrix(rs.getDouble("prix"));
         commande.setType_commande(rs.getString("type_commande"));
         commande.setStatus(rs.getString("status"));
         commande.setAdress(rs.getString("adress"));
         commande.setPaiment(rs.getString("paiment"));
         commande.setDate_creation_commande(rs.getDate("date_creation_commande"));
-        
+
         return commande;
     }
 } 
