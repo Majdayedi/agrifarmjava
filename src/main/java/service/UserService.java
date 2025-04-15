@@ -26,6 +26,32 @@ public class UserService {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String rolesJson = gson.toJson(assignedRoles);
 
+        // First, let's try to alter the users table to make id auto-increment if it isn't already
+        try (Connection conn = Connections.getInstance().getConnection();
+             Statement alterStmt = conn.createStatement()) {
+            
+            // Check if the id column is already AUTO_INCREMENT
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet rs = meta.getColumns(null, null, "users", "id");
+            
+            boolean isAutoIncrement = false;
+            if (rs.next()) {
+                isAutoIncrement = rs.getString("IS_AUTOINCREMENT").equals("YES");
+            }
+            rs.close();
+            
+            // If it's not AUTO_INCREMENT, alter the table
+            if (!isAutoIncrement) {
+                System.out.println("Altering users table to make id AUTO_INCREMENT...");
+                alterStmt.executeUpdate("ALTER TABLE users MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1");
+                System.out.println("Table altered successfully.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking/altering table: " + e.getMessage());
+            // Continue with the insert even if the alter fails
+        }
+
+        // Now proceed with the insert (SQL remains the same)
         String sql = "INSERT INTO users (email, password, roles, first_name, last_name, created_at, image_file_name) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Connections.getInstance().getConnection();
@@ -42,6 +68,52 @@ public class UserService {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            System.out.println("Error inserting user: " + e.getMessage());
+            e.printStackTrace();
+            
+            // If the main approach fails, try alternative approach with explicit id
+            return registerUserAlternative(email, password, assignedRoles, firstName, lastName, imageFileName);
+        }
+    }
+    
+    // Alternative method that tries to handle the id explicitly
+    private boolean registerUserAlternative(String email, String password, List<String> roles, String firstName, String lastName, String imageFileName) {
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        String rolesJson = gson.toJson(roles);
+        
+        // Try to get the next ID manually
+        int nextId = 1;
+        try (Connection conn = Connections.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT MAX(id) + 1 AS next_id FROM users")) {
+            
+            if (rs.next() && rs.getObject("next_id") != null) {
+                nextId = rs.getInt("next_id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting next ID: " + e.getMessage());
+            // Continue with default ID=1
+        }
+        
+        // Insert with explicit ID
+        String sql = "INSERT INTO users (id, email, password, roles, first_name, last_name, created_at, image_file_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = Connections.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, nextId);
+            stmt.setString(2, email);
+            stmt.setString(3, hashedPassword);
+            stmt.setString(4, rolesJson);
+            stmt.setString(5, firstName);
+            stmt.setString(6, lastName);
+            stmt.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(8, imageFileName);
+            
+            return stmt.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Error in alternative registration: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
