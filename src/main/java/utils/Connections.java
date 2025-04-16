@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 public class Connections {
 
-    private final String url = "jdbc:mysql://localhost:3306/projet";
-    private final String username = "root";
-    private final String password = "";
-    private Connection connection;
+    private static final String url = "jdbc:mysql://localhost:3306/test";
+    private static final String username = "root";
+    private static final String password = "";
+    private static Connection connection;
     private static Connections instance;
 
     private Connections() {
@@ -26,7 +26,7 @@ public class Connections {
         return instance;
     }
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(url, username, password);

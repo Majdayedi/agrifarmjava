@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.CommentaireViewController"
+      spacing="10" styleClass="comments-section">
+
+    <!-- Comments Header -->
+    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="comments-header">
+        <Label text="Comments" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="commentCountLabel" styleClass="comment-count"/>
+        <Label fx:id="averageRatingLabel" styleClass="average-rating"/>
+        <Button text="💬 Add Comment" onAction="#handleAddComment" styleClass="add-comment-button"/>
+    </HBox>
+
+    <!-- Comments List -->
+    <ScrollPane fitToWidth="true" styleClass="comments-scroll">
+        <VBox fx:id="commentsContainer" spacing="10" styleClass="comments-container">
+            <!-- Comments will be added here dynamically -->
+        </VBox>
+    </ScrollPane>
+
+    <stylesheets>
+        <URL value="@styles.css"/>
+    </stylesheets>
+</VBox> 
