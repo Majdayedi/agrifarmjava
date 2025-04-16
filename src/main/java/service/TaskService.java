@@ -19,26 +19,26 @@ public class TaskService implements IService<Task> {
 
     @Override
     public void create(Task task) {
-        String requete = "INSERT INTO task (field_id, name, description, status, date, " +
+        String requete = "INSERT INTO task ( name, description, status, date, " +
                 "ressource, responsable, priority, estimated_duration, deadline, workers, " +
                 "last_updated, payment_worker, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             pst = cnx.prepareStatement(requete);
-            pst.setInt(1, task.getField().getId());
-            pst.setString(2, task.getName());
-            pst.setString(3, task.getDescription());
-            pst.setString(4, task.getStatus());
-            pst.setDate(5, new java.sql.Date(task.getDate().getTime()));
-            pst.setString(6, task.getRessource());
-            pst.setString(7, task.getResponsable());
-            pst.setString(8, task.getPriority());
-            pst.setString(9, task.getEstimatedDuration());
-            pst.setDate(10, new java.sql.Date(task.getDeadline().getTime()));
-            pst.setInt(11, task.getWorkers());
-            pst.setTimestamp(12, new java.sql.Timestamp(task.getLastUpdated().getTime()));
-            pst.setDouble(13, task.getPaymentWorker());
-            pst.setDouble(14, task.getTotal());
+
+            pst.setString(1, task.getName());
+            pst.setString(2, task.getDescription());
+            pst.setString(3, task.getStatus());
+            pst.setDate(4, new java.sql.Date(task.getDate().getTime()));
+            pst.setString(5, task.getRessource());
+            pst.setString(6, task.getResponsable());
+            pst.setString(7, task.getPriority());
+            pst.setString(8, task.getEstimatedDuration());
+            pst.setDate(9, new java.sql.Date(task.getDeadline().getTime()));
+            pst.setInt(10, task.getWorkers());
+            pst.setTimestamp(11, new java.sql.Timestamp(task.getLastUpdated().getTime()));
+            pst.setDouble(12, task.getPaymentWorker());
+            pst.setDouble(13, task.getTotal());
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -235,17 +235,22 @@ public class TaskService implements IService<Task> {
         }
     }
 
-    public void updateTaskStatusById(int taskId, String newStatus) {
-        String query = "UPDATE task SET status = ? WHERE id = ?";
-        try {
-            pst = cnx.prepareStatement(query);
-            pst.setString(1, newStatus);
-            pst.setInt(2, taskId);
-            pst.executeUpdate();
+    public boolean updateStatus(Task task, String status) {
+        String sql = "UPDATE task SET status=? WHERE id=?";
+
+        try (PreparedStatement pst = cnx.prepareStatement(sql)) {
+            pst.setString(1, status);
+            pst.setInt(2, task.getId());
+
+            int rowsUpdated = pst.executeUpdate();
+            if (rowsUpdated > 0) {
+                task.setStatus(status); // Update local object
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating task status: " + e.getMessage(), e);
-        } finally {
-            closeResources();
+            throw new RuntimeException("Failed to update task status", e);
         }
+        // No need for finally block - try-with-resources handles closing
     }
 }

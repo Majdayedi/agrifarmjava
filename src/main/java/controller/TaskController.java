@@ -2,14 +2,18 @@ package controller;
 
 import entite.Field;
 import entite.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import service.TaskService;
 
@@ -22,7 +26,7 @@ public class TaskController {
     @FXML private VBox inProgressColumn;
     @FXML private VBox doneColumn;
     @FXML private Button addTaskBtn;
-
+    @FXML private Button deleteBtn;
     private final TaskService taskService = new TaskService();
     private Field currentField;
 
@@ -31,7 +35,7 @@ public class TaskController {
         styleColumns();
 
         if (addTaskBtn != null) {
-            addTaskBtn.setOnAction(event -> handleAddTask());
+            addTaskBtn.setOnAction(event -> handleAddTask(currentField));
         }
     }
 
@@ -80,10 +84,18 @@ public class TaskController {
             taskStatusLabel.setText(task.getStatus());
             applyStatusStyle(taskStatusLabel, task.getStatus());
         }
+        Label durationLabel = (Label) taskCard.lookup("#durationLabel");
+        if (durationLabel != null && task.getDate() != null) {
+            durationLabel.setText(task.getDate() + " days");
+        }
+        Label paymentworker=(Label) taskCard.lookup("#paymentworker");
+        if (paymentworker != null && task.getPaymentWorker() != 0) {
+            paymentworker.setText(task.getTotal() + " DT");
+        }
 
         // Set button actions
         if (deleteBtn != null) deleteBtn.setOnAction(e -> handleDeleteTask(task, taskCard));
-        if (editBtn != null) editBtn.setOnAction(e -> handleEditTask(task));
+        if (editBtn != null) editBtn.setOnAction(e -> handleEditTask(task, taskCard));
 
         return taskCard;
     }
@@ -190,74 +202,70 @@ public class TaskController {
         });
     }
 
-    private void handleAddTask() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddTask.fxml"));
-            Parent addTaskPane = loader.load();
+   // Add this if you want to reference the button in code
 
-            // Get current stage and switch scene
-            Stage stage = (Stage) addTaskBtn.getScene().getWindow();
-            stage.getScene().setRoot(addTaskPane);
+    @FXML
+    private void handleAddTask(Field field) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/addtask.fxml"));
+            Parent root = loader.load();
+
+            AddTaskController controller = loader.getController();
+            controller.setField(field);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Add New Task");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh task list after closing the add task window
+            LoadTasks(currentField);
+
         } catch (IOException e) {
-            System.err.println("Error loading AddTask.fxml:");
+            showAlert("Error", "Failed to load task form: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
+    // Helper method to show alerts
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
     private void handleDeleteTask(Task task, Pane taskCard) {
         taskService.delete(task);
-            removeTaskFromAllColumns(taskCard);
-            System.out.println("Task deleted: " + task.getName());
-            System.err.println("Failed to delete task: " + task.getName());
+        removeTaskFromAllColumns(taskCard);
+        System.out.println("Task deleted: " + task.getName());
+        System.err.println("Failed to delete task: " + task.getName());
 
     }
 
-    private void handleEditTask(Task task) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/EditTask.fxml"));
-            Parent editTaskPane = loader.load();
+    private void handleEditTask(Task task, Pane taskCard) {
+            if (task.getStatus().equals("to do") ){
+                taskService.updateStatus(task,"In progres");
 
-            // Get current stage and switch scene
-            Stage stage = (Stage) addTaskBtn.getScene().getWindow();
-            stage.getScene().setRoot(editTaskPane);
-        } catch (IOException e) {
-            System.err.println("Error loading EditTask.fxml:");
-            e.printStackTrace();
+            }
+            else if (task.getStatus().equals("In progres") ){
+            taskService.updateStatus(task,"done");
+
         }
-    }
+
+        removeTaskFromAllColumns(taskCard);
+        LoadTasks(currentField);
 
 
-
-@FXML
-    private void setupDragAndDrop(Pane taskCard, Task task) {
-        taskCard.setOnDragDetected(event -> {
-            Dragboard dragboard = taskCard.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent clipboardContent = new ClipboardContent();
-            clipboardContent.putString(String.valueOf(task.getId())); // Transfer task ID
-            dragboard.setContent(clipboardContent);
-            event.consume();
-        });
-    }
-
-    private void setupColumnDragOver(VBox column) {
-        column.setOnDragOver(event -> {
-            if (event.getGestureSource() != column && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-    }
-
-    private void setupColumnDropHandler(VBox column, String newStatus, Task task) {
-        column.setOnDragDropped(event -> {
-            Dragboard dragboard = event.getDragboard();
-            if (dragboard.hasString()) {
-                int taskId = Integer.parseInt(dragboard.getString());
-                taskService.updateTaskStatusById(taskId, newStatus); // Update the task status in the service
-                addTaskToColumn(task, new Pane()); // Move task properly in the UI
-            }
-            event.setDropCompleted(true);
-            event.consume();
-        });
     }
 }

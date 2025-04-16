@@ -41,9 +41,9 @@ public class Task {
         this.workers = workers;
         this.lastUpdated = lastUpdated;
         this.paymentWorker = paymentWorker;
+        this.paymentWorker = paymentWorker;
         this.total = total;
     }
-
     // Getters and Setters
     public int getId() {
         return id;
@@ -165,6 +165,7 @@ public class Task {
         this.total = total;
     }
 
+
     @Override
     public String toString() {
         return "Task{" +
@@ -184,4 +185,4 @@ public class Task {
                 ", total=" + total +
                 '}';
     }
-} 
+}

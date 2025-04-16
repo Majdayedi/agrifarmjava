@@ -7,54 +7,63 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.TaskController"
-            stylesheets="css/style.css">
+            stylesheets="css/style.css"
+>
 
-    <ScrollPane fitToWidth="true" fitToHeight="true"
-                fx:id="mainContainer"
-                AnchorPane.topAnchor="-10" AnchorPane.rightAnchor="00"
-                AnchorPane.bottomAnchor="00" AnchorPane.leftAnchor="00"
-                style="-fx-background-insets: 20 20 40 20; -fx-padding: 20 20 50 20;">
+    <ScrollPane  fitToWidth="true" fitToHeight="true"
+                 fx:id="mainContainer"
+                 AnchorPane.topAnchor="-10" AnchorPane.rightAnchor="00"
+                 AnchorPane.bottomAnchor="00" AnchorPane.leftAnchor="00"
+                 style="-fx-background-insets: 20 20 40 20;
+    -fx-padding: 20 20 50 20;">
         <content>
-            <VBox spacing="20" style="-fx-padding: 20;">
+            <VBox  spacing="20" style="-fx-padding: 20;">
                 <!-- Header Section -->
                 <Label text="Manage your tasks efficiently"
                        style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
                 <!-- Quick Actions -->
-                <VBox spacing="10">
+                <VBox  spacing="10">
                     <Label text="Create Farm Tasks"
                            style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-                    <HBox spacing="10">
+                    <HBox  spacing="10">
                         <Button text="Add Fence Tasks"
                                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
                         <Button text="Add Water Tasks"
                                 style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
                         <Button text="Add Irrigation Tasks"
                                 style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
+                        <HBox alignment="CENTER_LEFT" spacing="20">
+                            <Label text="Manage your tasks efficiently"
+                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+                            <!-- Add Task Button -->
+                            <Button fx:id="addTaskBtn"
+                                    text="Add Task"
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
+                        </HBox>
                     </HBox>
+
                 </VBox>
 
                 <!-- Task Columns -->
-                <HBox spacing="30">
+                <HBox  spacing="30">
                     <!-- To-Do Column -->
-                    <VBox spacing="10" style="-fx-background-color: #FFEBEE; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 300;"
-                          onDragOver="#onColumnDragOver" onDragDropped="#onColumnDrop">
+                    <VBox spacing="10" style="-fx-background-color: #FFEBEE; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 300;">
                         <Label text="To Do"
                                style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
                         <VBox fx:id="todoColumn" spacing="10" style="-fx-min-width: 350;"/>
                     </VBox>
 
                     <!-- In Progress Column -->
-                    <VBox spacing="10" style="-fx-background-color: #FFF8E1; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 300;"
-                          onDragOver="#onColumnDragOver" onDragDropped="#onColumnDrop">
+                    <VBox spacing="10" style="-fx-background-color: #FFF8E1; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 300;">
                         <Label text="In Progress"
                                style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
                         <VBox fx:id="inProgressColumn" spacing="10" style="-fx-min-width: 350;"/>
                     </VBox>
 
                     <!-- Done Column -->
-                    <VBox spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 300;"
-                          onDragOver="#onColumnDragOver" onDragDropped="#onColumnDrop">
+                    <VBox spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 300;">
                         <Label text="Done"
                                style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
                         <VBox fx:id="doneColumn" spacing="10" style="-fx-min-width: 350;"/>
