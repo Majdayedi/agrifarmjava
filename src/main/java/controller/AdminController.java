@@ -61,7 +61,18 @@ public class AdminController implements Initializable {
     @FXML
     private Button refreshButton;
 
- @FXML
+    @FXML
+    private Button agricoleButton;
+
+    @FXML
+    private Button logoutButton;
+
+    @FXML
+    private Button marketplaceButton;
+
+
+
+    @FXML
     private Button homeButton;
 
 
@@ -93,6 +104,52 @@ public class AdminController implements Initializable {
         loadProducts();
     }
 
+    @FXML
+    private void handleAgricoleButtonAction(ActionEvent event) {
+        try {
+            // Load the Agricole CRUD view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/produit.fxml"));
+            Parent agricoleView = loader.load();
+
+            // Get current stage
+            Stage stage = (Stage) agricoleButton.getScene().getWindow();
+
+            // Create new scene with Agricole view
+            Scene scene = new Scene(agricoleView);
+
+            // Set the scene to the stage
+            stage.setScene(scene);
+            stage.setTitle("AgriFarm - Agricole (CRUD)");
+            stage.show();
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading Agricole view", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
+                    "Impossible de charger la vue Agricole",
+                    "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleLogoutButtonAction(ActionEvent event) {
+        // Show confirmation dialog
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirmation de déconnexion");
+        confirmDialog.setHeaderText("Êtes-vous sûr de vouloir vous déconnecter ?");
+        confirmDialog.setContentText("Toutes les modifications non enregistrées seront perdues.");
+
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    // Close the application for now
+                    Stage stage = (Stage) logoutButton.getScene().getWindow();
+                    stage.close();
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Error during logout", e);
+                }
+            }
+        });
+    }
 
     @FXML
     private void handleSearchButtonAction() {
@@ -109,6 +166,11 @@ public class AdminController implements Initializable {
         loadProducts();
     }
 
+    /**
+     * Vérifie si une chaîne contient des caractères potentiellement utilisés pour l'injection SQL
+     * @param input la chaîne à vérifier
+     * @return true si la chaîne contient des caractères suspects
+     */
     private boolean containsSQLInjection(String input) {
         String[] sqlKeywords = {"SELECT", "INSERT", "UPDATE", "DELETE", "DROP", "UNION", "ALTER",
                 "--", ";", "/*", "*/", "@@", "@", "CHAR(", "EXEC(", "EXECUTE(", "DECLARE"};
@@ -131,18 +193,45 @@ public class AdminController implements Initializable {
     }
 
     @FXML
+    private void handleMarketplaceButtonAction(ActionEvent event) {
+        try {
+            // Load the Marketplace view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/marketplace.fxml"));
+            Parent marketplaceView = loader.load();
+
+            // Get current stage
+            Stage stage = (Stage) marketplaceButton.getScene().getWindow();
+
+            // Create new scene with Marketplace view
+            Scene scene = new Scene(marketplaceView);
+
+            // Set the scene to the stage
+            stage.setScene(scene);
+            stage.setTitle("AgriFarm - Marketplace");
+            stage.show();
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading Marketplace view", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
+                    "Impossible de charger la vue Marketplace",
+                    "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+
+
+    @FXML
     private void navigateToHome(ActionEvent event) {
         try {
             // Load the Admin Dashboard view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/AdminDashboard.fxml"));
             Parent adminDashboardView = loader.load();
-            
+
             // Get current stage
             Stage stage = (Stage) homeButton.getScene().getWindow();
-            
+
             // Create new scene with Admin Dashboard view
             Scene scene = new Scene(adminDashboardView);
-            
+
 
             // Set the scene to the stage
             stage.setScene(scene);
@@ -150,21 +239,10 @@ public class AdminController implements Initializable {
             stage.show();
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading Home view", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
-                    "Impossible de charger la vue d'accueil",
-                    "Une erreur s'est produite: " + e.getMessage());
-        }
-    }
-
-    
-
-            
-        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading Admin Dashboard view", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation", 
-                     "Impossible de charger la vue du tableau de bord admin", 
-                     "Une erreur s'est produite: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
+                    "Impossible de charger la vue du tableau de bord admin", 
+                    "Une erreur s'est produite: " + e.getMessage());
         }
     }
     
@@ -493,6 +571,7 @@ public class AdminController implements Initializable {
         statisticsLabel.setText(String.format("Total: %d produits | Approuvés: %d | En attente: %d",
                 totalProducts, approvedProducts, pendingProducts));
     }
+
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
