@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.ArticleFormController"
+      spacing="10">
+
+    <!-- Padding set via property element -->
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Text text="➕ Create New Article" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+
+    <TextField fx:id="titleField" promptText="Title" />
+    <TextArea fx:id="contentArea" promptText="Content" prefRowCount="5" />
+    <TextArea fx:id="featuredTextArea" promptText="Featured Text" prefRowCount="2" />
+    
+    <!-- Image Section -->
+    <VBox spacing="10">
+        <Label text="Image (Optional)" style="-fx-font-weight: bold;"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="imageField" promptText="Image URL or select a file" HBox.hgrow="ALWAYS"/>
+            <Button text="Choose File" onAction="#handleChooseImage"/>
+        </HBox>
+        <ImageView fx:id="imagePreview" fitWidth="200" fitHeight="200" preserveRatio="true"
+                   style="-fx-border-color: #ddd; -fx-border-width: 1; -fx-border-style: dashed;"/>
+    </VBox>
+
+    <HBox spacing="10">
+        <Button text="Submit" fx:id="submitButton" onAction="#handleSubmit" 
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Cancel" onAction="#handleCancel" 
+                style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>

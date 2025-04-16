@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.AddCommentaireController"
+      prefWidth="400.0">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Rating Section -->
+    <VBox spacing="5">
+        <Label text="Rating:" style="-fx-font-weight: bold;"/>
+        <Slider fx:id="ratingSlider" min="1" max="5" value="5" 
+                majorTickUnit="1" minorTickCount="0" 
+                snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+        <Label fx:id="ratingLabel" style="-fx-text-fill: #f39c12;"/>
+    </VBox>
+
+    <!-- Comment Section -->
+    <VBox spacing="5" VBox.vgrow="ALWAYS">
+        <Label text="Your Comment:" style="-fx-font-weight: bold;"/>
+        <TextArea fx:id="commentArea" wrapText="true" prefRowCount="4"/>
+    </VBox>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#handleCancel" 
+                style="-fx-background-color: #6c757d; -fx-text-fill: white;"/>
+        <Button fx:id="submitButton" text="Add Comment" onAction="#handleSubmit" 
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+    </HBox>
+
+</VBox> 

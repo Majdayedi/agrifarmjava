@@ -232,10 +232,22 @@ public class AdminController implements Initializable {
             // Create new scene with Admin Dashboard view
             Scene scene = new Scene(adminDashboardView);
             
+
             // Set the scene to the stage
             stage.setScene(scene);
             stage.setTitle("AgriFarm - Admin Dashboard");
             stage.show();
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading Home view", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
+                    "Impossible de charger la vue d'accueil",
+                    "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+
+    
+
             
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading Admin Dashboard view", e);
