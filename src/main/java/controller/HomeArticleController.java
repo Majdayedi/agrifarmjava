@@ -70,12 +70,12 @@ public class HomeArticleController {
                 try {
                     if (article.getImage() != null && !article.getImage().isEmpty()) {
                         // Load the article's image from the uploads directory on disk
-                        String imagePath = "file:src/main/resources/org/example/piarticle/uploads/" + article.getImage();
+                        String imagePath = "file:src/main/resources/controller/uploads/" + article.getImage();
                         Image image = new Image(imagePath, true);
                         imageView.setImage(image);
                     } else {
                         // Load default agriculture image from uploads directory as resource
-                        String defaultImagePath = getClass().getResource("/org/example/piarticle/uploads/agriculture.png").toExternalForm();
+                        String defaultImagePath = getClass().getResource("/controller/uploads/agriculture.png").toExternalForm();
                         Image defaultImage = new Image(defaultImagePath);
                         imageView.setImage(defaultImage);
                     }
@@ -86,7 +86,7 @@ public class HomeArticleController {
                     System.out.println("Failed to load image for article: " + article.getId() + ", Error: " + e.getMessage());
                     // Load default agriculture image on error
                     try {
-                        String defaultImagePath = getClass().getResource("/org/example/piarticle/uploads/agriculture.png").toExternalForm();
+                        String defaultImagePath = getClass().getResource("/controller/uploads/agriculture.png").toExternalForm();
                         Image defaultImage = new Image(defaultImagePath);
                         imageView.setImage(defaultImage);
                     } catch (Exception ex) {
@@ -119,7 +119,7 @@ public class HomeArticleController {
 
         private void handleViewArticle(Article article) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/article_details.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_details.fxml"));
                 Parent root = loader.load();
 
                 ArticleDetailsController controller = loader.getController();
@@ -135,7 +135,7 @@ public class HomeArticleController {
 
         private void handleEditArticle(Article article) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/article_edit.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_edit.fxml"));
                 Parent root = loader.load();
 
                 EditArticleController controller = loader.getController();
@@ -162,7 +162,7 @@ public class HomeArticleController {
         @FXML
         private void handleNewArticle() {
             try {
-                URL fxmlUrl = getClass().getResource("/org/example/piarticle/article_form.fxml");
+                URL fxmlUrl = getClass().getResource("/controller/article_form.fxml");
                 if (fxmlUrl == null) {
                     showAlert("Error", "Could not find article form FXML file!");
                     return;

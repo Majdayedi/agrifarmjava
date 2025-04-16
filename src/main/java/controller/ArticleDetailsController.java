@@ -99,7 +99,7 @@ public class ArticleDetailsController {
             // Load and display the image if available
             if (currentArticle.getImage() != null && !currentArticle.getImage().isEmpty()) {
                 try {
-                    String imagePath = "file:src/main/resources/org/example/piarticle/uploads/" + currentArticle.getImage().replace("uploads/", "");
+                    String imagePath = "file:src/main/resources/uploads/" + currentArticle.getImage().replace("uploads/", "");
                     Image image = new Image(imagePath, true);
                     articleImage.setImage(image);
                     articleImage.setFitWidth(600); // Set a reasonable max width
@@ -179,7 +179,7 @@ public class ArticleDetailsController {
 
     private void handleEditComment(Commentaire comment) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/add-commentaire.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
             Parent root = loader.load();
             
             AddCommentaireController commentController = loader.getController();
@@ -210,7 +210,7 @@ public class ArticleDetailsController {
     @FXML
     private void handleAddComment() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/add-commentaire.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
             Parent root = loader.load();
             
             AddCommentaireController commentController = loader.getController();
@@ -239,7 +239,7 @@ public class ArticleDetailsController {
     @FXML
     private void handleBack() {
         try {
-            URL resource = getClass().getResource("/org/example/piarticle/home.fxml");
+            URL resource = getClass().getResource("/controller/home.fxml");
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
             Stage stage = (Stage) backButton.getScene().getWindow();
@@ -253,7 +253,7 @@ public class ArticleDetailsController {
     @FXML
     private void handleEdit() {
         try {
-            URL resource = getClass().getResource("/org/example/piarticle/article_edit.fxml");
+            URL resource = getClass().getResource("/controller/article_edit.fxml");
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 

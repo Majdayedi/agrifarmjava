@@ -23,7 +23,6 @@ import java.util.List;
 
 public class ArticleDashboardController {
 
-    public class AdminDashboardController {
 
         @FXML
         private TableView<Article> articlesTable;
@@ -50,13 +49,19 @@ public class ArticleDashboardController {
         private final CommentaireService commentaireService;
         private final SimpleDateFormat dateFormat;
 
-        public AdminDashboardController() throws SQLException {
+        public ArticleDashboardController() throws SQLException {
             this.articleService = new ArticleService();
             this.commentaireService = new CommentaireService();
             this.dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' h:mm a");
         }
 
-        @FXML
+    public ArticleDashboardController(ArticleService articleService, CommentaireService commentaireService, SimpleDateFormat dateFormat) {
+        this.articleService = articleService;
+        this.commentaireService = commentaireService;
+        this.dateFormat = dateFormat;
+    }
+
+    @FXML
         private void initialize() {
             setupTableColumns();
             loadArticles();
@@ -182,7 +187,7 @@ public class ArticleDashboardController {
         @FXML
         private void handleNewArticle() {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/article_form.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_form.fxml"));
                 Parent root = loader.load();
                 Stage stage = (Stage) articlesTable.getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -211,7 +216,7 @@ public class ArticleDashboardController {
 
         private void handleViewComments(Article article) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/article_details.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_details.fxml"));
                 Parent root = loader.load();
 
                 ArticleDetailsController controller = loader.getController();
@@ -235,7 +240,7 @@ public class ArticleDashboardController {
         @FXML
         private void handleBack() {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/home.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/home.fxml"));
                 Parent root = loader.load();
                 Stage stage = (Stage) articlesTable.getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -248,7 +253,7 @@ public class ArticleDashboardController {
         @FXML
         private void handleManageComments() {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/admin_comments.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/admin_comments.fxml"));
                 Parent root = loader.load();
                 Stage stage = (Stage) articlesTable.getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -266,4 +271,4 @@ public class ArticleDashboardController {
             alert.showAndWait();
         }
     }
-}
+

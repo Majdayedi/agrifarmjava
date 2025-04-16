@@ -138,7 +138,7 @@ public class ArticleFormController {
     }
 
     private void goToHomePage() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/home.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/home.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) submitButton.getScene().getWindow();
         stage.setScene(new Scene(root));

@@ -99,7 +99,7 @@ public class CommentaireViewController {
     @FXML
     private void handleAddComment() {
         try {
-            URL resource = getClass().getResource("/org/example/piarticle/add-commentaire.fxml");
+            URL resource = getClass().getResource("/controller/add-commentaire.fxml");
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
             

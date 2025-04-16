@@ -105,7 +105,7 @@ public class EditArticleController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/add-commentaire.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
             Parent root = loader.load();
             
             AddCommentaireController commentController = loader.getController();
@@ -132,7 +132,7 @@ public class EditArticleController {
     }
 
     private void goToHomePage() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/home.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/home.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.setScene(new Scene(root));

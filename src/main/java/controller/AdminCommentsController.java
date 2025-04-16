@@ -114,7 +114,7 @@ public class AdminCommentsController {
 
     private void handleEditComment(Commentaire comment) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/add-commentaire.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
             Parent root = loader.load();
             
             AddCommentaireController commentController = loader.getController();
@@ -153,7 +153,7 @@ public class AdminCommentsController {
 
     private void handleViewArticle(Article article) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/article_details.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_details.fxml"));
             Parent root = loader.load();
 
             ArticleDetailsController controller = loader.getController();
@@ -171,7 +171,7 @@ public class AdminCommentsController {
     @FXML
     private void handleBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/piarticle/admin_dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/admin_dashboard.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) backButton.getScene().getWindow();
             stage.setScene(new Scene(root));
