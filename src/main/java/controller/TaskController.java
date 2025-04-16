@@ -225,4 +225,39 @@ public class TaskController {
             e.printStackTrace();
         }
     }
+
+
+
+@FXML
+    private void setupDragAndDrop(Pane taskCard, Task task) {
+        taskCard.setOnDragDetected(event -> {
+            Dragboard dragboard = taskCard.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString(String.valueOf(task.getId())); // Transfer task ID
+            dragboard.setContent(clipboardContent);
+            event.consume();
+        });
+    }
+
+    private void setupColumnDragOver(VBox column) {
+        column.setOnDragOver(event -> {
+            if (event.getGestureSource() != column && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+    }
+
+    private void setupColumnDropHandler(VBox column, String newStatus, Task task) {
+        column.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                int taskId = Integer.parseInt(dragboard.getString());
+                taskService.updateTaskStatusById(taskId, newStatus); // Update the task status in the service
+                addTaskToColumn(task, new Pane()); // Move task properly in the UI
+            }
+            event.setDropCompleted(true);
+            event.consume();
+        });
+    }
 }

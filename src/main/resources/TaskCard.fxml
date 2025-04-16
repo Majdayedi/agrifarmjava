@@ -3,8 +3,9 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 
-<VBox  xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml" spacing="5" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" spacing="5"
+      onDragDetected="#onDragDetected" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
     <Label fx:id="taskName" style="-fx-font-weight: bold;"/>
     <Label text="Responsible:"/>
     <HBox spacing="5">

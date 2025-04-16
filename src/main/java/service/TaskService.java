@@ -234,4 +234,18 @@ public class TaskService implements IService<Task> {
             System.err.println("Error closing resources: " + e.getMessage());
         }
     }
+
+    public void updateTaskStatusById(int taskId, String newStatus) {
+        String query = "UPDATE task SET status = ? WHERE id = ?";
+        try {
+            pst = cnx.prepareStatement(query);
+            pst.setString(1, newStatus);
+            pst.setInt(2, taskId);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating task status: " + e.getMessage(), e);
+        } finally {
+            closeResources();
+        }
+    }
 }
