@@ -8,141 +8,107 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="752.0" prefWidth="1288.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AdminDashboardController">
+<AnchorPane prefHeight="752.0" prefWidth="1288.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AdminDashboardController">
 
-    <!-- Main container with specific styles -->
-    <VBox alignment="TOP_CENTER" layoutX="-1.0" prefHeight="752.0" prefWidth="321.0" spacing="20" style="-fx-background-color: #EBE8F9;" styleClass="dashboard-vbox" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="968.0" AnchorPane.topAnchor="0.0">
+   <!-- Sidebar -->
+   <VBox alignment="TOP_CENTER" prefWidth="320.0" style="-fx-background-color: #EBE8F9;" spacing="30.0"
+         AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+      <padding>
+         <Insets top="40" left="10" right="10" />
+      </padding>
       <children>
-         <ImageView fx:id="profileImageView" fitHeight="162.0" fitWidth="324.0" pickOnBounds="true" preserveRatio="true" />
-         <Label fx:id="welcomeLabel" layoutX="400.0" layoutY="20.0" text="Welcome" />
-         <Button fx:id="viewProfileButton" alignment="BASELINE_LEFT" graphicTextGap="25.0" onAction="#handleViewProfile" prefHeight="37.0" prefWidth="334.0" style="-fx-background-color: #EBE8F9;" styleClass="dashboard-button" text="Profile Details">
+         <ImageView fx:id="profileImageView" fitHeight="140.0" fitWidth="140.0" preserveRatio="true" />
+         <Label fx:id="welcomeLabel" text="Welcome" style="-fx-font-size: 20px; -fx-text-fill: #2A2A2A;" />
+
+         <Button fx:id="viewProfileButton" text="Profile Details" onAction="#handleViewProfile"
+                 prefWidth="280.0" styleClass="dashboard-button" style="-fx-background-color: transparent;">
             <graphic>
-               <ImageView fitHeight="21.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                   <image>
                      <Image url="@/images/icons8_Search_52px.png" />
                   </image>
                </ImageView>
             </graphic>
-            <padding>
-               <Insets left="50.0" />
-            </padding>
          </Button>
-         <Button fx:id="manageUsersButton" alignment="BASELINE_LEFT" graphicTextGap="25.0" onAction="#handleManageUsers" prefHeight="39.0" prefWidth="334.0" style="-fx-background-color: #EBE8F9;" styleClass="dashboard-button" text="Manage Users">
+
+         <Button fx:id="manageUsersButton" text="Manage Users" onAction="#handleManageUsers"
+                 prefWidth="280.0" styleClass="dashboard-button" style="-fx-background-color: transparent;">
             <graphic>
-               <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+               <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true">
                   <image>
                      <Image url="@/images/icons8_Slider__32px.png" />
                   </image>
                </ImageView>
             </graphic>
-            <padding>
-               <Insets left="50.0" />
-            </padding>
          </Button>
-         <Button fx:id="editProfileButton" alignment="BASELINE_LEFT" graphicTextGap="25.0" onAction="#handleEditProfile" prefHeight="42.0" prefWidth="336.0" style="-fx-background-color: #EBE8F9;" styleClass="dashboard-button" text="Edit Profile">
+
+         <Button fx:id="editProfileButton" text="Edit Profile" onAction="#handleEditProfile"
+                 prefWidth="280.0" styleClass="dashboard-button" style="-fx-background-color: transparent;">
             <graphic>
-               <ImageView fitHeight="25.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+               <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true">
                   <image>
                      <Image url="@/images/icons8_Person_32px.png" />
                   </image>
                </ImageView>
             </graphic>
-            <padding>
-               <Insets left="50.0" />
-            </padding>
          </Button>
-         <Button fx:id="logoutButton" alignment="BASELINE_LEFT" graphicTextGap="25.0" onAction="#handleLogout" prefHeight="44.0" prefWidth="382.0" style="-fx-background-color: #EBE8F9;" styleClass="dashboard-button" text="Logout">
+
+         <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout"
+                 prefWidth="280.0" styleClass="dashboard-button" style="-fx-background-color: transparent;">
             <graphic>
-               <ImageView fitHeight="23.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+               <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
                   <image>
                      <Image url="@/images/icons8_Sign_Out_32px.png" />
                   </image>
                </ImageView>
             </graphic>
-            <padding>
-               <Insets left="50.0" />
-            </padding>
          </Button>
       </children>
-    </VBox>
-   <Label layoutX="410.0" layoutY="46.0" text="Farm Orders">
-      <font>
-         <Font size="24.0" />
-      </font>
-   </Label>
-   <HBox layoutX="378.0" layoutY="240.0" prefHeight="52.0" prefWidth="853.0" style="-fx-background-color: #F3F3F3;">
-      <children>
-         <Label prefHeight="39.0" prefWidth="86.0" text="vegetables">
-            <HBox.margin>
-               <Insets left="70.0" />
-            </HBox.margin>
-         </Label>
-         <Label prefHeight="39.0" prefWidth="76.0" text="Fruits">
-            <HBox.margin>
-               <Insets left="70.0" />
-            </HBox.margin>
-         </Label>
-         <Label prefHeight="39.0" prefWidth="76.0" text="Fruits">
-            <HBox.margin>
-               <Insets left="70.0" />
-            </HBox.margin>
-         </Label>
-         <Label prefHeight="39.0" prefWidth="76.0" text="Fruits">
-            <HBox.margin>
-               <Insets left="70.0" />
-            </HBox.margin>
-         </Label>
-      </children>
-   </HBox>
-   <HBox alignment="CENTER_LEFT" layoutX="378.0" layoutY="96.0" prefHeight="110.0" prefWidth="853.0" spacing="60.0">
-      <children>
-         <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
-            <children>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="25000" textFill="#2a73ff">
-                  <font>
-                     <Font name="System Bold" size="26.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="Total Vegetables Orders" />
-            </children>
-         </VBox>
-         <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
-            <children>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="25000" textFill="#26bfbc">
-                  <font>
-                     <Font name="System Bold" size="26.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="Total Vegetables Orders" />
-            </children>
-         </VBox>
-         <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
-            <children>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="25000" textFill="#fa5f7e">
-                  <font>
-                     <Font name="System Bold" size="26.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="Total Vegetables Orders" />
-            </children>
-         </VBox>
-         <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
-            <children>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="25000" textFill="#de0000">
-                  <font>
-                     <Font name="System Bold" size="26.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" prefHeight="39.0" prefWidth="147.0" text="Total Vegetables Orders" />
-            </children>
-         </VBox>
-      </children>
+   </VBox>
+
+   <!-- Header -->
+   <Label layoutX="370.0" layoutY="40.0" text="Farm Orders"
+          style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2A2A2A;" />
+
+   <!-- Stats Cards -->
+   <HBox layoutX="360.0" layoutY="100.0" spacing="40.0" prefHeight="110.0" prefWidth="900.0">
       <padding>
-         <Insets left="50.0" />
+         <Insets left="20.0" />
       </padding>
+      <children>
+         <VBox alignment="CENTER" spacing="8.0">
+            <Label text="25000" textFill="#2a73ff" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+            <Label text="Total Vegetables Orders" />
+         </VBox>
+         <VBox alignment="CENTER" spacing="8.0">
+            <Label text="18000" textFill="#26bfbc" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+            <Label text="Total Fruit Orders" />
+         </VBox>
+         <VBox alignment="CENTER" spacing="8.0">
+            <Label text="7600" textFill="#fa5f7e" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+            <Label text="Total Dairy Orders" />
+         </VBox>
+         <VBox alignment="CENTER" spacing="8.0">
+            <Label text="9100" textFill="#de0000" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+            <Label text="Total Grain Orders" />
+         </VBox>
+      </children>
    </HBox>
-   <VBox layoutX="378.0" layoutY="305.0" prefHeight="433.0" prefWidth="853.0" />
+
+   <!-- Category Filters -->
+   <HBox layoutX="360.0" layoutY="240.0" spacing="50.0" prefHeight="52.0" prefWidth="900.0"
+         style="-fx-background-color: #F3F3F3; -fx-padding: 10;">
+      <children>
+         <Button fx:id="produitButton" text="Produit" style="-fx-font-size: 16px; -fx-background-color: transparent; -fx-text-fill: #2A2A2A;" onAction="#handleProduitButtonClick" />
+         <Label text="Farm" style="-fx-font-size: 16px;" />
+         <Label text="Soil" style="-fx-font-size: 16px;" />
+         <Label text="Article" style="-fx-font-size: 16px;" />
+      </children>
+   </HBox>
+
+   <!-- Dynamic Content Area -->
+   <VBox fx:id="contentContainer" layoutX="360.0" layoutY="310.0" prefHeight="420.0" prefWidth="900.0"
+         style="-fx-background-color: #ffffff;" />
 
 </AnchorPane>

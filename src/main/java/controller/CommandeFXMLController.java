@@ -37,10 +37,10 @@ public class CommandeFXMLController implements Initializable {
     @FXML private TextField adressField;
     @FXML private ComboBox<String> paimentCombo;
     
-    @FXML private Button addButton;
+
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
-    @FXML private Button clearButton;
+
     
     @FXML private TableView<Commande> commandeTable;
     @FXML private TableColumn<Commande, Integer> idColumn;
@@ -104,7 +104,6 @@ public class CommandeFXMLController implements Initializable {
                 }
             }
         );
-        
         // Charger toutes les commandes
         loadAllCommandes();
         
@@ -116,23 +115,7 @@ public class CommandeFXMLController implements Initializable {
     }
     
     // Méthode pour définir le produit à commander
-    public void setProduitACommander(Produit produit) {
-        this.produitACommander = produit;
-        
-        // Si un produit est fourni, le précharger dans la commande
-        if (produit != null) {
-            selectedProduits.clear();
-            selectedProduits.add(produit);
-            produitsListView.setItems(selectedProduits);
-            
-            // Préremplir les champs avec les infos du produit
-            quantiteField.setText("1");
-            prixField.setText(String.valueOf(produit.getPrix()));
-            typeCommandeCombo.setValue("Achat direct");
-            statusCombo.setValue("En attente");
-            paimentCombo.setValue("Paiement à la livraison");
-        }
-    }
+
     
     private void setupProduitButtons() {
         addProduitButton.setOnAction(event -> {
@@ -511,7 +494,7 @@ public class CommandeFXMLController implements Initializable {
             }
         });
     }
-    
+
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

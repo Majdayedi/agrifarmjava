@@ -31,38 +31,33 @@ public class LoginController {
         User user = userService.loginUser(email, password);
 
         if (user != null) {
-            Session.getInstance().setUser(user); // Store globally
+            // Store the user in session
+            Session.getInstance().setUser(user);
 
             // Show a success alert
             AlertHelper.showAlert("Success", "Welcome, " + user.getFirstName() + "!");
 
-            try {
-                // Load the home view
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/home.fxml"));
-                Parent homeView = loader.load();
-                
-                // Get the current stage
-                Stage stage = (Stage) emailField.getScene().getWindow();
-                
-                // Create new scene with home view
-                Scene scene = new Scene(homeView);
-                
-                // Set the scene to the stage
-                stage.setTitle("AgriFarm - Home");
-                stage.setScene(scene);
-                stage.setMaximized(true); // Optional: maximize the window for better view
-                stage.show();
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-                AlertHelper.showAlert("Error", "Error loading home page: " + e.getMessage());
+            Stage stage = (Stage) emailField.getScene().getWindow();
+
+            if (user.getRoles().contains("ROLE_ADMIN")) {
+                // Redirect to Admin Dashboard
+                SceneManager.switchScene(stage, "/controller/adminDashboard.fxml", controller -> {
+                    if (controller instanceof AdminDashboardController) {
+                        ((AdminDashboardController) controller).setUser(user);
+                    }
+                });
+            } else {
+                // Redirect to User Dashboard
+                SceneManager.switchScene(stage, "/home.fxml", controller -> {
+                    if (controller instanceof UserDashboardController) {
+                        ((UserDashboardController) controller).setUser(user);
+                    }
+                });
             }
         } else {
             AlertHelper.showAlert("Error", "Invalid email or password.");
         }
     }
-
-
 
     @FXML
     private void goToRegister() {

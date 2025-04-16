@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.ArticleDashboardController"
+      prefHeight="600.0" prefWidth="800.0">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Admin Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Manage Comments" onAction="#handleManageComments"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Back to Home" onAction="#handleBack"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+    </HBox>
+
+    <!-- Articles Table -->
+    <TableView fx:id="articlesTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+            <TableColumn fx:id="contentColumn" text="Content" prefWidth="250"/>
+            <TableColumn fx:id="dateColumn" text="Created At" prefWidth="150"/>
+            <TableColumn fx:id="commentCountColumn" text="Comments" prefWidth="80"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+</VBox> 

@@ -48,8 +48,6 @@ public class MarketplaceService implements Initializable {
     @FXML
     private TextField searchField;
 
-    @FXML
-    private Button searchButton;
 
     @FXML
     private ComboBox<String> filterCategoryCombo;
@@ -61,16 +59,7 @@ public class MarketplaceService implements Initializable {
     private Label statisticsLabel;
 
     @FXML
-    private Button refreshButton;
-
-    @FXML
     private Button agricoleButton;
-
-    @FXML
-    private Button adminButton;
-
-    @FXML
-    private Button logoutButton;
 
     @FXML
     private Button panierButton;
@@ -151,52 +140,9 @@ public class MarketplaceService implements Initializable {
         }
     }
 
-    @FXML
-    private void handleAdminButtonAction(ActionEvent event) {
-        try {
-            // Load the Admin view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/admin.fxml"));
-            Parent adminView = loader.load();
 
-            // Get current stage
-            Stage stage = (Stage) adminButton.getScene().getWindow();
 
-            // Create new scene with Admin view
-            Scene scene = new Scene(adminView);
 
-            // Set the scene to the stage
-            stage.setScene(scene);
-            stage.setTitle("AgriFarm - Administration");
-            stage.show();
-
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading Admin view", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
-                    "Impossible de charger la vue Admin",
-                    "Une erreur s'est produite: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleLogoutButtonAction(ActionEvent event) {
-        // Show confirmation dialog
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Confirmation de déconnexion");
-        confirmDialog.setHeaderText("Êtes-vous sûr de vouloir vous déconnecter ?");
-        confirmDialog.setContentText("Toutes les modifications non enregistrées seront perdues.");
-
-        confirmDialog.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    // Close the application for now
-                    Stage stage = (Stage) logoutButton.getScene().getWindow();
-                    stage.close();
-                } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "Error during logout", e);
-                }
-            }
-        });
-    }
 
     @FXML
     private void handleSearchButtonAction() {
@@ -594,7 +540,6 @@ public class MarketplaceService implements Initializable {
                     "Une erreur s'est produite: " + e.getMessage());
         }
     }
-
     /**
      * Ouvre la vue du panier
      */

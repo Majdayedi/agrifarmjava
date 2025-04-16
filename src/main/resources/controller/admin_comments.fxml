@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.AdminCommentsController"
+      spacing="10"
+      style="-fx-background-color: white;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="backButton" text="Back" onAction="#handleBack"
+                style="-fx-background-color: #6c757d; -fx-text-fill: white;"/>
+        <Label text="Comments Management" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <!-- Total Comments Counter -->
+    <Label fx:id="totalCommentsLabel" text="Total Comments: 0" 
+           style="-fx-font-size: 16; -fx-text-fill: #666;"/>
+
+    <!-- Comments Container -->
+    <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true" style="-fx-background-color: transparent;">
+        <VBox fx:id="commentsContainer" spacing="10" style="-fx-background-color: transparent;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+
+</VBox> 
