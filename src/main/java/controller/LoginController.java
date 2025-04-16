@@ -36,19 +36,26 @@ public class LoginController {
             // Show a success alert
             AlertHelper.showAlert("Success", "Welcome, " + user.getFirstName() + "!");
 
-            Stage stage = (Stage) emailField.getScene().getWindow();
-
-            // Check if the user is an admin or a normal user
-            if (user.getRoles().contains("ROLE_ADMIN")) {
-                // Redirect to Admin Dashboard
-                SceneManager.switchScene(stage, "/controller/adminDashboard.fxml", (AdminDashboardController controller) -> {
-                    controller.setUser(user); // Pass user to the controller
-                });
-            } else {
-                // Redirect to User Dashboard
-                SceneManager.switchScene(stage, "/controller/userDashboard.fxml", (UserDashboardController controller) -> {
-                    controller.setUser(user); // Pass user to the controller
-                });
+            try {
+                // Load the home view
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/home.fxml"));
+                Parent homeView = loader.load();
+                
+                // Get the current stage
+                Stage stage = (Stage) emailField.getScene().getWindow();
+                
+                // Create new scene with home view
+                Scene scene = new Scene(homeView);
+                
+                // Set the scene to the stage
+                stage.setTitle("AgriFarm - Home");
+                stage.setScene(scene);
+                stage.setMaximized(true); // Optional: maximize the window for better view
+                stage.show();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                AlertHelper.showAlert("Error", "Error loading home page: " + e.getMessage());
             }
         } else {
             AlertHelper.showAlert("Error", "Invalid email or password.");

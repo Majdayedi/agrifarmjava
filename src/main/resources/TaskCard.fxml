@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+
+<VBox  xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" spacing="5" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
+    <Label fx:id="taskName" style="-fx-font-weight: bold;"/>
+    <Label text="Responsible:"/>
+    <HBox spacing="5">
+        <Label fx:id="responsibleLabel"/>
+        <Label fx:id="managerLabel" visible="false"/>
+    </HBox>
+    <Label fx:id="workersLabel" text="Workers: 0"/>
+    <Label fx:id="costLabel" text="Total Cost: 0"/>
+    <Separator/>
+    <Label text="Task Date:"/>
+    <Label fx:id="taskDateLabel"/>
+    <Label text="Deadline:"/>
+    <Label fx:id="deadlineLabel"/>
+    <HBox spacing="5">
+        <Button fx:id="deleteBtn" text="Delete" style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+        <Button fx:id="editBtn" text="Edit" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>

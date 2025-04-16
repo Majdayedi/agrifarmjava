@@ -1,5 +1,3 @@
-
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +10,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Load FXML file
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/controller/register.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/controller/login.fxml")));
 
         // Create scene
         Scene scene = new Scene(root, 520, 440);
@@ -21,7 +19,7 @@ public class Main extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm());
 
         // Set stage
-        stage.setTitle("Register");
+        stage.setTitle("AgriFarm - Login");
         stage.setScene(scene);
         stage.show();
     }
