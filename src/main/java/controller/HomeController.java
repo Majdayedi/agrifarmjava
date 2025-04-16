@@ -62,10 +62,15 @@ public class HomeController {
     @FXML
     public void navigateToArticles() {
         try {
-            // For now, let's display a message that this feature is coming soon
-            showAlert("Articles feature is coming soon!");
-        } catch (Exception e) {
-            showAlert("Error: " + e.getMessage());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_form.fxml"));
+            Parent articlesView = loader.load();
+            
+            Scene currentScene = articlesButton.getScene();
+            Stage primaryStage = (Stage) currentScene.getWindow();
+            primaryStage.setTitle("Articles");
+            primaryStage.setScene(new Scene(articlesView, 900, 600));
+        } catch (IOException e) {
+            showAlert("Error loading Articles view: " + e.getMessage());
             e.printStackTrace();
         }
     }

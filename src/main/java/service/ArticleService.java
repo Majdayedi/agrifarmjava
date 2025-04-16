@@ -16,16 +16,49 @@ public class ArticleService {
         this.connection = Connections.getConnection();
     }
 
-    // Helper method to generate slug from title
-    private String generateSlug(String title) {
+    // Check if slug exists in database
+    private boolean slugExists(String slug) throws SQLException {
+        String query = "SELECT COUNT(*) FROM article WHERE slug = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, slug);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Helper method to generate unique slug from title
+    private String generateSlug(String title) throws SQLException {
         if (title == null || title.isEmpty()) {
             return "";
         }
-        return title.toLowerCase()
+        
+        // Create base slug
+        String baseSlug = title.toLowerCase()
                 .replaceAll("[^a-z0-9\\s-]", "") // Remove all special characters except spaces and hyphens
                 .replaceAll("\\s+", "-")         // Replace spaces with hyphens
                 .replaceAll("-+", "-")           // Replace multiple hyphens with single hyphen
                 .trim();
+        
+        // If base slug is empty after cleanup, use a default
+        if (baseSlug.isEmpty()) {
+            baseSlug = "article";
+        }
+        
+        // Check if the slug already exists
+        String uniqueSlug = baseSlug;
+        int counter = 1;
+        
+        while (slugExists(uniqueSlug)) {
+            // Append counter to make slug unique
+            uniqueSlug = baseSlug + "-" + counter;
+            counter++;
+        }
+        
+        return uniqueSlug;
     }
 
     // 🔹 CREATE
@@ -37,6 +70,22 @@ public class ArticleService {
         // Generate slug from title if not set
         if (article.getSlug() == null || article.getSlug().isEmpty()) {
             article.setSlug(generateSlug(article.getTitle()));
+        } else {
+            // Even if slug is provided, ensure it's unique
+            String providedSlug = article.getSlug();
+            if (slugExists(providedSlug)) {
+                // Generate a unique version of the provided slug
+                String baseSlug = providedSlug;
+                int counter = 1;
+                String uniqueSlug = baseSlug;
+                
+                while (slugExists(uniqueSlug)) {
+                    uniqueSlug = baseSlug + "-" + counter;
+                    counter++;
+                }
+                
+                article.setSlug(uniqueSlug);
+            }
         }
 
         String query = "INSERT INTO article (title, content, featured_text, image, slug, created_at) VALUES (?, ?, ?, ?, ?, ?)";
@@ -112,6 +161,20 @@ public class ArticleService {
         // Update slug if title has changed
         if (article.getSlug() == null || article.getSlug().isEmpty()) {
             article.setSlug(generateSlug(article.getTitle()));
+        } else {
+            // Check if there's another article with this slug (not this one)
+            String query = "SELECT COUNT(*) FROM article WHERE slug = ? AND id != ?";
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setString(1, article.getSlug());
+                ps.setInt(2, article.getId());
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        // Another article has this slug, generate a unique one
+                        article.setSlug(generateSlug(article.getTitle()));
+                    }
+                }
+            }
         }
 
         String query = "UPDATE article SET title = ?, content = ?, featured_text = ?, image = ?, slug = ? WHERE id = ?";

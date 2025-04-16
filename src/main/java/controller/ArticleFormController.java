@@ -109,12 +109,19 @@ public class ArticleFormController {
             article.setFeaturedText(featuredText);
             article.setImage(finalImagePath);
 
+            // We don't set the slug manually, letting the service generate a unique one
+
             articleService.add(article);
             showAlert("Success", "Article added successfully!");
             goToHomePage();
 
         } catch (SQLException e) {
-            showAlert("Error", "Failed to add article: " + e.getMessage());
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("Duplicate entry") && errorMessage.contains("UNIQ_")) {
+                showAlert("Error", "An article with a similar title already exists. Please use a different title.");
+            } else {
+                showAlert("Error", "Failed to add article: " + errorMessage);
+            }
         } catch (IOException e) {
             showAlert("Error", "Failed to save image or navigate to home page: " + e.getMessage());
         }

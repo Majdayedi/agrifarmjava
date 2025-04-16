@@ -97,7 +97,7 @@ public class ProduitFXMLController implements Initializable {
     
     @FXML private void handleAddButtonAction(ActionEvent event) {
         if (!validateInputs()) return;
-        
+                
         try {
                 Produit produit = new Produit(
                         nomField.getText(),
@@ -140,8 +140,8 @@ public class ProduitFXMLController implements Initializable {
             if (!newImage.equals(selectedProduit.getImage_file_name())) {
                 copyImageIfNeeded(newImage);
                 selectedProduit.setImage_file_name(newImage);
-            }
-            
+                }
+                
             if (produitService.update(selectedProduit)) {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Product updated successfully");
                     clearFields();
@@ -176,7 +176,7 @@ public class ProduitFXMLController implements Initializable {
                         deleteButton.setDisable(true);
                     } else {
                     showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete product");
-                }
+                    }
                 }
             });
     }
@@ -212,7 +212,7 @@ public class ProduitFXMLController implements Initializable {
         if (containsSQLInjection(keyword)) {
             showAlert(Alert.AlertType.WARNING, "Warning", "Search contains invalid characters");
                 return;
-        }
+            }
         
         produitData.clear();
         produitData.addAll(produitService.searchByName(keyword));
@@ -247,7 +247,7 @@ public class ProduitFXMLController implements Initializable {
             produitData.clear();
         produitData.addAll(produitService.readAll());
             displayProductCards();
-    }
+        }
     
     private void displayProductCards() {
         productCardsPane.getChildren().clear();
@@ -278,7 +278,7 @@ public class ProduitFXMLController implements Initializable {
                 
                 if (imageFile.exists()) {
                     imageView.setImage(new Image(new FileInputStream(imageFile)));
-                }
+            }
             }
         } catch (Exception e) {
             // Image loading failed, continue with no image
