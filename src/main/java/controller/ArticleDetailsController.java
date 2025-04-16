@@ -303,4 +303,23 @@ public class ArticleDetailsController {
             commentaireViewControllerController.setAdminMode(isAdmin);
         }
     }
+    
+    /**
+     * Initializes the controller with the given article ID.
+     * This method loads the article from the database and sets it for display.
+     * 
+     * @param articleId The ID of the article to display
+     */
+    public void initData(int articleId) {
+        try {
+            Article article = articleService.getById(articleId);
+            if (article != null) {
+                setArticle(article);
+            } else {
+                showAlert("Error", "Article not found.");
+            }
+        } catch (SQLException e) {
+            showAlert("Error", "Failed to load article: " + e.getMessage());
+        }
+    }
 } 
