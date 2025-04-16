@@ -79,21 +79,21 @@ public class EditArticleController {
 
             articleService.update(currentArticle);
             showAlert("Success", "Article updated successfully!");
-            goToHomePage();
+            goToArticleDetails();
 
         } catch (SQLException e) {
             showAlert("Error", "Failed to update article: " + e.getMessage());
         } catch (IOException e) {
-            showAlert("Error", "Failed to navigate to home page: " + e.getMessage());
+            showAlert("Error", "Failed to navigate to article details page: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleCancel() {
         try {
-            goToHomePage();
+            goToArticleDetails();
         } catch (IOException e) {
-            showAlert("Error", "Failed to navigate to home page: " + e.getMessage());
+            showAlert("Error", "Failed to navigate to article details page: " + e.getMessage());
         }
     }
 
@@ -131,11 +131,20 @@ public class EditArticleController {
         alert.showAndWait();
     }
 
-    private void goToHomePage() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/home.fxml"));
+    /**
+     * Navigate to the article details page for the current article
+     */
+    private void goToArticleDetails() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_details.fxml"));
         Parent root = loader.load();
+        
+        // Get the controller and pass the article
+        ArticleDetailsController detailsController = loader.getController();
+        detailsController.setArticle(currentArticle);
+        
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.setScene(new Scene(root));
+        stage.setTitle("Article Details");
         stage.show();
     }
 }

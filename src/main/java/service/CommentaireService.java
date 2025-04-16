@@ -7,6 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.sql.DatabaseMetaData;
 
 public class CommentaireService {
     private static final Logger logger = Logger.getLogger(CommentaireService.class.getName());
@@ -18,6 +19,7 @@ public class CommentaireService {
     }
 
     private void createTableIfNotExists() throws SQLException {
+        // First, create the table if it doesn't exist
         String createTableSQL = "CREATE TABLE IF NOT EXISTS commentaire (" +
                 "id INT PRIMARY KEY AUTO_INCREMENT, " +
                 "article_id INT NOT NULL, " +
@@ -29,8 +31,32 @@ public class CommentaireService {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createTableSQL);
             logger.info("✅ Commentaire table verified");
+            
+            // Now check if the created_at column exists, and add it if it doesn't
+            try {
+                DatabaseMetaData metaData = connection.getMetaData();
+                ResultSet columns = metaData.getColumns(null, null, "commentaire", "created_at");
+                
+                // If the column doesn't exist, add it
+                if (!columns.next()) {
+                    logger.info("Adding missing created_at column to commentaire table");
+                    stmt.execute("ALTER TABLE commentaire ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                    logger.info("✅ Added created_at column to commentaire table");
+                }
+                columns.close();
+            } catch (SQLException e) {
+                logger.warning("Failed to check or add created_at column: " + e.getMessage());
+                // Try direct approach if metadata approach fails
+                try {
+                    stmt.execute("ALTER TABLE commentaire ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                    logger.info("✅ Added created_at column to commentaire table (direct approach)");
+                } catch (SQLException e2) {
+                    // If this also fails, it might be because the column already exists or another error
+                    logger.warning("Failed to add created_at column (direct approach): " + e2.getMessage());
+                }
+            }
         } catch (SQLException e) {
-            logger.severe("❌ Failed to create commentaire table: " + e.getMessage());
+            logger.severe("❌ Failed to create or modify commentaire table: " + e.getMessage());
             throw e;
         }
     }

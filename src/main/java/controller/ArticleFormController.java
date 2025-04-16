@@ -113,7 +113,9 @@ public class ArticleFormController {
 
             articleService.add(article);
             showAlert("Success", "Article added successfully!");
-            goToHomePage();
+            
+            // Navigate to article details page instead of home page
+            goToArticleDetails(article.getId());
 
         } catch (SQLException e) {
             String errorMessage = e.getMessage();
@@ -123,7 +125,7 @@ public class ArticleFormController {
                 showAlert("Error", "Failed to add article: " + errorMessage);
             }
         } catch (IOException e) {
-            showAlert("Error", "Failed to save image or navigate to home page: " + e.getMessage());
+            showAlert("Error", "Failed to save image or navigate to article details page: " + e.getMessage());
         }
     }
 
@@ -149,6 +151,21 @@ public class ArticleFormController {
         Parent root = loader.load();
         Stage stage = (Stage) submitButton.getScene().getWindow();
         stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    // Add a new method to navigate to article details
+    private void goToArticleDetails(int articleId) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_details.fxml"));
+        Parent root = loader.load();
+        
+        // Get the controller and pass the article ID
+        ArticleDetailsController detailsController = loader.getController();
+        detailsController.initData(articleId);
+        
+        Stage stage = (Stage) submitButton.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Article Details");
         stage.show();
     }
 }
