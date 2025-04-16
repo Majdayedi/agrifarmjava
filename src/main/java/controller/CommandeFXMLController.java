@@ -37,10 +37,10 @@ public class CommandeFXMLController implements Initializable {
     @FXML private TextField adressField;
     @FXML private ComboBox<String> paimentCombo;
     
-    @FXML private Button addButton;
+
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
-    @FXML private Button clearButton;
+
     
     @FXML private TableView<Commande> commandeTable;
     @FXML private TableColumn<Commande, Integer> idColumn;
@@ -104,7 +104,6 @@ public class CommandeFXMLController implements Initializable {
                 }
             }
         );
-        
         // Charger toutes les commandes
         loadAllCommandes();
         
@@ -495,7 +494,6 @@ public class CommandeFXMLController implements Initializable {
             }
         });
     }
-
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
