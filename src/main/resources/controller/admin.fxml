@@ -22,16 +22,7 @@
                </HBox.margin>
             </Button>
             <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 20;" text="AGRIFARM" />
-            <HBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="10.0">
-               <children>
-                  <Button fx:id="produitButton" mnemonicParsing="false" onAction="#handleAgricoleButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Produits" />
-                  <Button fx:id="adminButton" mnemonicParsing="false" styleClass="nav-button-active" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Administration" />
-                  <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#handleMarketplaceButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Marketplace" />
-               </children>
-               <HBox.margin>
-                  <Insets left="50.0" />
-               </HBox.margin>
-            </HBox>
+
          </children>
       </HBox>
    </top>

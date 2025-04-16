@@ -222,25 +222,25 @@ public class AdminController implements Initializable {
     @FXML
     private void navigateToHome(ActionEvent event) {
         try {
-            // Load the Home/Produit view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/produit.fxml"));
-            Parent homeView = loader.load();
+            // Load the Admin Dashboard view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/AdminDashboard.fxml"));
+            Parent adminDashboardView = loader.load();
             
             // Get current stage
             Stage stage = (Stage) homeButton.getScene().getWindow();
             
-            // Create new scene with Home view
-            Scene scene = new Scene(homeView);
+            // Create new scene with Admin Dashboard view
+            Scene scene = new Scene(adminDashboardView);
             
             // Set the scene to the stage
             stage.setScene(scene);
-            stage.setTitle("AgriFarm - Accueil");
+            stage.setTitle("AgriFarm - Admin Dashboard");
             stage.show();
             
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading Home view", e);
+            LOGGER.log(Level.SEVERE, "Error loading Admin Dashboard view", e);
             showAlert(Alert.AlertType.ERROR, "Erreur de Navigation", 
-                     "Impossible de charger la vue d'accueil", 
+                     "Impossible de charger la vue du tableau de bord admin", 
                      "Une erreur s'est produite: " + e.getMessage());
         }
     }
