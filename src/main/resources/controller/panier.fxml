@@ -18,7 +18,7 @@
             <HBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="agricoleButton" mnemonicParsing="false" onAction="#handleAgricoleButtonAction" styleClass="nav-button" text="Agricole (CRUD)" />
-                  <Button fx:id="adminButton" mnemonicParsing="false" onAction="#handleAdminButtonAction" styleClass="nav-button" text="Administration" />
+
                   <Button fx:id="marketplaceButton" mnemonicParsing="false" onAction="#handleMarketplaceButtonAction" styleClass="nav-button" text="Marketplace" />
                </children>
                <HBox.margin>

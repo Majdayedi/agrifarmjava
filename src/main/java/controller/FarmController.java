@@ -30,7 +30,9 @@ public class FarmController {
     private Button addFarmBtn;
 
     @FXML
+    private Button cropButton;
 
+    @FXML
     private Button homeButton;
 
     private final FarmService farmService = new FarmService();

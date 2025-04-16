@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import entite.User;
 import service.UserService;
 import utils.AlertHelper;
+import utils.SceneManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,6 +103,15 @@ public class ManageUsersController {
         } else {
             AlertHelper.showAlert("Warning", "No user selected.");
         }
+    }
+    @FXML
+    private void handleBackToDashboard() {
+        if (admin == null) return;
+
+        Stage stage = (Stage) userTable.getScene().getWindow();
+        SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", (AdminDashboardController controller) -> {
+            controller.setUser(admin);
+        });
     }
 
     public void setAdmin(User user) {

@@ -24,6 +24,7 @@ public class AdminDashboardController {
     @FXML private Button manageUsersButton;
     @FXML private Button logoutButton;
     @FXML private Button viewProfileButton;
+    @FXML private Button produitButton;
 
     @FXML private ImageView profileImageView;
 
@@ -115,4 +116,20 @@ public class AdminDashboardController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void handleProduitButtonClick() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/admin.fxml")); // ⚠️ change path if needed
+            Parent root = loader.load();
+
+            Stage stage = (Stage) produitButton.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Gestion des Produits");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
