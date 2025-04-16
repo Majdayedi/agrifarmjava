@@ -12,14 +12,15 @@ public class Field {
     private double outcome;
     private double profit;
     private String description;
-    private int crop;
+    private Crop crop;  // Changed from int to Crop
     private List<Task> tasks;
 
     public Field() {
     }
 
+    // Updated constructor
     public Field(int id, Farm farm, double surface, String name, double budget,
-                double income, double outcome, double profit, String description, int crop) {
+                 double income, double outcome, double profit, String description, Crop crop) {
         this.id = id;
         this.farm = farm;
         this.surface = surface;
@@ -105,11 +106,12 @@ public class Field {
         this.description = description;
     }
 
-    public int getCrop() {
+    // Updated getter and setter for Crop
+    public Crop getCrop() {
         return crop;
     }
 
-    public void setCrop(int crop) {
+    public void setCrop(Crop crop) {
         this.crop = crop;
     }
 
@@ -132,6 +134,7 @@ public class Field {
                 ", outcome=" + outcome +
                 ", profit=" + profit +
                 ", description='" + description + '\'' +
+                ", crop=" + (crop != null ? crop.toString() : "null") +
                 '}';
     }
-} 
+}

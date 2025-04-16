@@ -125,7 +125,7 @@ public class CropController {
     }
 
     @FXML
-    private void showAddCropForm() {
+    public void showAddCropForm() {
         try {
             // Load the FXML file
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/add_crop.fxml"));
@@ -351,7 +351,7 @@ public class CropController {
         }
     }
 
-    private void loadAllCrops() {
+    public void loadAllCrops() {
         try {
             List<Crop> allCrops = cropCRUD.getAllCrops();
             if (cropsTable != null) {

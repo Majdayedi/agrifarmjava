@@ -33,7 +33,28 @@ public class CropCRUD {
         }
     }
 
-    // Read
+    public Crop getLastAddedCrop() throws SQLException {
+        String sql = "SELECT * FROM crop ORDER BY id DESC LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                return new Crop(
+                        rs.getInt("id"),
+                        rs.getString("crop_event"),
+                        rs.getString("type_crop"),
+                        rs.getString("methode_crop"),
+                        rs.getString("date_plantation"),
+                        rs.getString("heure_plantation"),
+                        rs.getString("date_crop"),
+                        rs.getString("heure_crop")
+                );
+            }
+        }
+        return null; // Return null if no crops exist
+    }
     public List<Crop> getAllCrops() throws SQLException {
         List<Crop> crops = new ArrayList<>();
         String sql = "SELECT * FROM crop";

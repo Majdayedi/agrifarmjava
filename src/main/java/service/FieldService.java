@@ -16,7 +16,25 @@ public class FieldService implements IService<Field> {
     public FieldService() {
         cnx = Connections.getInstance().getConnection();
     }
+    /**
+     * Retrieves a list of all crop IDs that are assigned to fields
+     * @return List of crop IDs (may contain duplicates if same crop is in multiple fields)
+     */
+    public List<Integer> getCropIds() {
+        List<Integer> cropIds = new ArrayList<>();
+        String query = "SELECT crop_id FROM field WHERE crop_id IS NOT NULL";
 
+        try (PreparedStatement pst = cnx.prepareStatement(query);
+             ResultSet rs = pst.executeQuery()) {
+
+            while (rs.next()) {
+                cropIds.add(rs.getInt("crop_id"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving assigned crop IDs: " + e.getMessage(), e);
+        }
+        return cropIds;
+    }
     @Override
     public void create(Field field) {
         String requete = "INSERT INTO field (farm_id, surface, name, budget, income, outcome, " +
@@ -32,7 +50,7 @@ public class FieldService implements IService<Field> {
             pst.setDouble(6, field.getOutcome());
             pst.setDouble(7, field.getProfit());
             pst.setString(8, field.getDescription());
-            pst.setObject(9,  field.getCrop());
+            pst.setObject(9,  field.getCrop().getId());
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -62,7 +80,7 @@ public class FieldService implements IService<Field> {
             pst.setDouble(6, field.getOutcome());
             pst.setDouble(7, field.getProfit());
             pst.setString(8, field.getDescription());
-            pst.setObject(9, field.getCrop());
+            pst.setObject(9, field.getCrop().getId());
             pst.setInt(10, field.getId());
 
             pst.executeUpdate();

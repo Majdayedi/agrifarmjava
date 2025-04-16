@@ -1,5 +1,6 @@
 package controller;
 
+import com.sun.javafx.menu.MenuItemBase;
 import entite.Farm;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import javafx.scene.Node;
 
 public class FarmController {
+    public Button cropButton;
     @FXML
     private GridPane farmgrid;
     
@@ -46,9 +48,9 @@ public class FarmController {
         
         // Add Farm button handler
         addFarmBtn.setOnAction(e -> handleAddFarm());
-        
-        // Add Crop button handler
+
         cropButton.setOnAction(e -> handleCropButton());
+
     }
 
     private BorderPane getMainContainer() {

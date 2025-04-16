@@ -4,18 +4,26 @@
 <?import javafx.scene.control.*?>
 
 <VBox  xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml" spacing="5" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
+       xmlns:fx="http://javafx.com/fxml" spacing="5" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
     <Label fx:id="taskName" style="-fx-font-weight: bold;"/>
     <Label text="Responsible:"/>
     <HBox spacing="5">
         <Label fx:id="responsibleLabel"/>
         <Label fx:id="managerLabel" visible="false"/>
     </HBox>
-    <Label fx:id="workersLabel" text="Workers: 0"/>
-    <Label fx:id="costLabel" text="Total Cost: 0"/>
+    <Label fx:id="workersLabel" text="Workers:"/>
+    <Label fx:id="workers" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+
+    <Label fx:id="costLabel" text="Total Cost:"/>
+    <Label fx:id="paymentworker" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
     <Separator/>
     <Label text="Task Date:"/>
     <Label fx:id="taskDateLabel"/>
+    <Label text="Duration:"/>
+    <Label fx:id="durationLabel"/>
+
     <Label text="Deadline:"/>
     <Label fx:id="deadlineLabel"/>
     <HBox spacing="5">
