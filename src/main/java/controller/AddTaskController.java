@@ -108,11 +108,11 @@ public class AddTaskController {
             task.setPriority(priorityComboBox.getValue());
             task.setEstimatedDuration(estimatedDurationField.getText());
 
-            if (deadlinePicker.getValue() != null && !deadlinePicker.getValue().toString().isEmpty()) {
+
 
                 if (deadlinePicker.getValue().isBefore(LocalDate.now())) {
                     // Deadline is before today
-                }
+
 
                     showAlert(Alert.AlertType.ERROR, "Invalid Date", "Please select a valid deadline date.");
 

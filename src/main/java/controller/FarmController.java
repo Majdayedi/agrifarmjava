@@ -31,8 +31,6 @@ public class FarmController {
     @FXML
     private Button addFarmBtn;
 
-    @FXML
-    private Button cropButton;
 
     @FXML
     private Button homeButton;
