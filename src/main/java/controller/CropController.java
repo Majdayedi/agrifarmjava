@@ -73,11 +73,13 @@ public class CropController {
     public void initialize() {
         System.out.println("Initializing CropController...");
         try {
-            // Initialize combo boxes if they exist
+            // Initialize combo boxes
             if (typeCropCombo != null) {
+                typeCropCombo.getItems().clear();
                 typeCropCombo.getItems().addAll(CROP_TYPES);
             }
             if (methodCropCombo != null) {
+                methodCropCombo.getItems().clear();
                 methodCropCombo.getItems().addAll(CROP_METHODS);
             }
             if (filterTypeCombo != null) {
@@ -87,21 +89,25 @@ public class CropController {
                 filterTypeCombo.setOnAction(event -> applyFilter());
             }
 
-            // Initialize spinners if they exist
+            // Initialize spinners
             if (plantationHourSpinner != null) {
-                plantationHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+                SpinnerValueFactory<Integer> plantationHourFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0);
+                plantationHourSpinner.setValueFactory(plantationHourFactory);
             }
             if (plantationMinuteSpinner != null) {
-                plantationMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+                SpinnerValueFactory<Integer> plantationMinuteFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
+                plantationMinuteSpinner.setValueFactory(plantationMinuteFactory);
             }
             if (cropHourSpinner != null) {
-                cropHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+                SpinnerValueFactory<Integer> cropHourFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0);
+                cropHourSpinner.setValueFactory(cropHourFactory);
             }
             if (cropMinuteSpinner != null) {
-                cropMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+                SpinnerValueFactory<Integer> cropMinuteFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
+                cropMinuteSpinner.setValueFactory(cropMinuteFactory);
             }
 
-            // Set up search field listener if it exists
+            // Set up search field listener
             if (searchField != null) {
                 searchField.textProperty().addListener((observable, oldValue, newValue) -> {
                     if (!newValue.isEmpty()) {
@@ -112,15 +118,15 @@ public class CropController {
                 });
             }
 
-            // Load initial data
-            loadAllCrops();
+            // Only load crops if we're in the main view (where cropCardsPane exists)
+            if (cropCardsPane != null || cropsTable != null) {
+                loadAllCrops();
+            }
+
             System.out.println("CropController initialized successfully");
         } catch (Exception e) {
             System.err.println("Error initializing CropController: " + e.getMessage());
             e.printStackTrace();
-            if (resultArea != null) {
-                resultArea.setText("Error initializing: " + e.getMessage());
-            }
         }
     }
 
@@ -202,39 +208,38 @@ public class CropController {
                     cropTime
                 );
 
-                if (isUpdateMode) {
-                    cropCRUD.updateCrop(crop);
-                    if (resultArea != null) {
-                        resultArea.setText("Crop updated successfully!");
-                    }
-                } else {
-                    cropCRUD.createCrop(crop);
-                    if (resultArea != null) {
-                        resultArea.setText("Crop created successfully!");
-                    }
-                }
+                // Save the crop
+                cropCRUD.createCrop(crop);
+                
+                // Show success message
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Success");
+                alert.setHeaderText(null);
+                alert.setContentText("Crop created successfully!");
+                alert.showAndWait();
 
-                // Close the window
-                Stage stage = (Stage) cropEventField.getScene().getWindow();
-                stage.close();
-
-                // Get the main stage and refresh its view
-                Stage mainStage = (Stage) stage.getOwner();
-                if (mainStage != null) {
-                    Scene mainScene = mainStage.getScene();
-                    if (mainScene != null) {
-                        // Get the controller from the main view
-                        CropController mainController = (CropController) mainScene.getUserData();
-                        if (mainController != null) {
-                            mainController.loadAllCrops();
-                        }
+                // Get the current window
+                Stage currentStage = (Stage) cropEventField.getScene().getWindow();
+                
+                // Close the current window
+                currentStage.close();
+                
+                // Get the owner window and refresh it
+                if (currentStage.getOwner() != null) {
+                    Scene ownerScene = currentStage.getOwner().getScene();
+                    if (ownerScene != null && ownerScene.getUserData() instanceof CropController) {
+                        CropController mainController = (CropController) ownerScene.getUserData();
+                        mainController.loadAllCrops();
                     }
                 }
             }
         } catch (SQLException e) {
-            if (resultArea != null) {
-                resultArea.setText("Error saving crop: " + e.getMessage());
-            }
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error creating crop");
+            alert.setContentText("An error occurred while saving the crop: " + e.getMessage());
+            alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -358,14 +363,17 @@ public class CropController {
                 // If we're in admin view, update the table
                 ObservableList<Crop> data = FXCollections.observableArrayList(allCrops);
                 cropsTable.setItems(data);
-            } else {
+            } else if (cropCardsPane != null) {
                 // If we're in card view, update the cards
                 cropData.clear();
                 cropData.addAll(allCrops);
                 displayCropCards();
             }
         } catch (SQLException e) {
-            resultArea.setText("Error loading crops: " + e.getMessage());
+            if (resultArea != null) {
+                resultArea.setText("Error loading crops: " + e.getMessage());
+            }
+            e.printStackTrace();
         }
     }
 
