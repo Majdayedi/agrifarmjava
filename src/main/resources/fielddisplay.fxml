@@ -6,6 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.FieldController">
     <!-- Contenu principal -->
@@ -13,19 +14,21 @@
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <content>
                 <VBox>
-                    <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-
-                    <children>
-                        <Button fx:id="addFieldBtn" styleClass="add-button"  text="+ Add Field">
-                            <HBox.margin>
-                                <Insets right="20.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
+                    <HBox alignment="CENTER_LEFT">
+                        <children>
+                            <Button fx:id="backButton" text="← Back"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/> <!-- This pushes the add button to the right -->
+                            <Button fx:id="addFieldBtn" styleClass="add-button" text="+ Add Field">
+                                <HBox.margin>
+                                    <Insets right="20.0" />
+                                </HBox.margin>
+                            </Button>
+                        </children>
                     </HBox>
-                <GridPane fx:id="fieldgrid" hgap="10" vgap="10">
-                    <!-- Grille des champs -->
-                </GridPane>
+                    <GridPane fx:id="fieldgrid" hgap="10" vgap="10">
+                        <!-- Grille des champs -->
+                    </GridPane>
                 </VBox>
             </content>
         </ScrollPane>

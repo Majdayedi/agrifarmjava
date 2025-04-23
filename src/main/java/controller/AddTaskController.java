@@ -43,7 +43,7 @@ public class AddTaskController {
     @FXML
     public void initialize() {
         // Initialize form controls
-        statusComboBox.getItems().addAll("To Do", "In Progress", "Done");
+        statusComboBox.getItems().addAll("TODO", "INPROG", "DONE");
         priorityComboBox.getItems().addAll("Low", "Medium", "High");
 
         // Set up workers spinner
@@ -154,12 +154,8 @@ public class AddTaskController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/taskdisplay.fxml"));
             BorderPane taskGrid = loader.load();
-
-            // Get the controller and load tasks for the current field
             TaskController taskController = loader.getController();
             taskController.LoadTasks(currentField);
-
-            // Replace only the center content
             BorderPane mainContainer = getMainContainer();
             if (mainContainer != null) {
                 mainContainer.setCenter(taskGrid);
