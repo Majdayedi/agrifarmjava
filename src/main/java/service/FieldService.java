@@ -50,7 +50,7 @@ public class FieldService implements IService<Field> {
             pst.setDouble(6, field.getOutcome());
             pst.setDouble(7, field.getProfit());
             pst.setString(8, field.getDescription());
-            pst.setObject(9,  field.getCrop().getId());
+            pst.setInt(9,  field.getCrop().getId());
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -173,6 +173,7 @@ public class FieldService implements IService<Field> {
         field.setOutcome(rs.getDouble("outcome"));
         field.setProfit(rs.getDouble("profit"));
         field.setDescription(rs.getString("description"));
+        field.setCrop(new CropCRUD().getCropById(rs.getInt("crop_id")));
 
         // You'll need to set the farm and crop relationships here
         // This would require additional queries or joins

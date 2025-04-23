@@ -11,7 +11,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="681.0" prefWidth="784.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FarmController">
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.effect.DropShadow?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="681.0" prefWidth="784.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FarmController">
 
     <!-- Menu latéral gauche -->
     <left>
@@ -86,10 +89,14 @@
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="80.0" style="-fx-background-color: #13af02;">
             <children>
-                <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="← Retour">
-                    <HBox.margin>
-                        <Insets right="20.0" left="10.0" />
-                    </HBox.margin>
+                <Button fx:id="homeButton" onAction="#navigateToHome"
+                        style="-fx-background-color: transparent; -fx-padding: 20;">
+                    <graphic>
+                        <ImageView fitWidth="36" fitHeight="36" preserveRatio="true">
+                            <Image url="@/img/barn.png"/>
+                        </ImageView>
+                    </graphic>
+
                 </Button>
                 <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 20;" text="AGRIFARM" />
             </children>

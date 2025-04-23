@@ -24,14 +24,10 @@
 /* Farm Cards */
 .farm-card {
     -fx-background-color: white;
-    -fx-background-radius: 0;
-        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 5, 0.0, 0, 1);
-
-    -fx-padding: 15;
-    -fx-pref-width: 250;
-    -fx-pref-height: 300;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-padding: 10;
+    -fx-spacing: 5;
 }
 
 .farm-card:hover {
@@ -54,28 +50,28 @@
 
 /* Buttons */
 .action-button {
-    -fx-background-color: #2E7D32;
+    -fx-background-color: #3498db;
     -fx-text-fill: white;
-    -fx-pref-width: 80;
-    -fx-background-radius: 0;
+    -fx-font-weight: bold;
+    -fx-padding: 5 15;
+    -fx-background-radius: 5;
 }
 
 .action-button:hover {
-    -fx-background-color: derive(#2E7D32, 10%);
+    -fx-background-color: #2980b9;
 }
 
 .delete-button {
     -fx-background-color: #e74c3c;
     -fx-text-fill: white;
-    -fx-background-radius: 0;
-    -fx-min-width: 25;
-    -fx-min-height: 25;
-    -fx-padding: 0;
-    -fx-border-width: 0;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
 }
 
 .delete-button:hover {
-    -fx-background-color: derive(#e74c3c, 10%);
+    -fx-background-color: #c0392b;
 }
 
 /* Title */
@@ -284,3 +280,75 @@
 
 .delete-button:hover {
   -fx-background-color: #D32F26;}
+
+/* Field Card Styles */
+.farm-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.farm-crop {
+    -fx-font-size: 14px;
+    -fx-text-fill: #27ae60;
+    -fx-font-style: italic;
+}
+
+.farm-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+    -fx-wrap-text: true;
+}
+
+.button-container {
+    -fx-padding: 10 0 0 0;
+}
+/* Task Card Styles */
+.task-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-min-width: 250;
+    -fx-max-width: 300;
+}
+
+.task-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
+.task-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.task-status {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.task-status[text="TODO"] {
+    -fx-text-fill: #d9534f;
+}
+
+.task-status[text="INPROG"] {
+    -fx-text-fill: #f0ad4e;
+}
+
+.task-status[text="DONE"] {
+    -fx-text-fill: #5cb85c;
+}
+
+.task-details {
+    -fx-spacing: 10;
+}
+
+.task-details .label {
+    -fx-font-size: 12px;
+}
+
+.task-details .label:first-child {
+    -fx-font-weight: bold;
+}

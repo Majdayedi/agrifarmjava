@@ -1,16 +1,20 @@
 package controller;
 
+import entite.Farm;
 import entite.Field;
 import entite.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -20,15 +24,19 @@ import service.TaskService;
 import java.io.IOException;
 import java.util.List;
 
+
 public class TaskController {
 
+    public ScrollPane mainContainer;
     @FXML private VBox todoColumn;
     @FXML private VBox inProgressColumn;
     @FXML private VBox doneColumn;
     @FXML private Button addTaskBtn;
     @FXML private Button deleteBtn;
+    @FXML private Button backButton;
     private final TaskService taskService = new TaskService();
     private Field currentField;
+    private Farm currentFarm;
 
     @FXML
     public void initialize() {
@@ -36,6 +44,8 @@ public class TaskController {
 
         if (addTaskBtn != null) {
             addTaskBtn.setOnAction(event -> handleAddTask(currentField));
+        } if (backButton != null) {
+            backButton.setOnAction(event -> handleBack(currentFarm));
         }
     }
 
@@ -103,14 +113,14 @@ public class TaskController {
     private void applyStatusStyle(Label statusLabel, String status) {
         if (status == null || statusLabel == null) return;
 
-        String normalizedStatus = status.trim().toLowerCase();
+        String normalizedStatus = status.trim().toUpperCase();
         String style = "";
 
-        if (normalizedStatus.contains("todo") || normalizedStatus.contains("to do")) {
+        if (normalizedStatus.equals("TODO")) {
             style = "-fx-text-fill: #d9534f; -fx-font-weight: bold;"; // Red
-        } else if (normalizedStatus.contains("progres") || normalizedStatus.contains("progress")) {
+        } else if (normalizedStatus.equals("INPROG")) {
             style = "-fx-text-fill: #f0ad4e; -fx-font-weight: bold;"; // Orange
-        } else if (normalizedStatus.contains("done")) {
+        } else if (normalizedStatus.equals("DONE")) {
             style = "-fx-text-fill: #5cb85c; -fx-font-weight: bold;"; // Green
         } else {
             style = "-fx-text-fill: #777777;"; // Gray
@@ -127,13 +137,13 @@ public class TaskController {
             return;
         }
 
-        String status = task.getStatus().trim().toLowerCase();
+        String status = task.getStatus().trim().toUpperCase();
 
-        if (status.contains("todo") || status.contains("to do")) {
+        if (status.equals("TODO")) {
             todoColumn.getChildren().add(taskCard);
-        } else if (status.contains("progres") || status.contains("progress")) {
+        } else if (status.equals("INPROG")) {
             inProgressColumn.getChildren().add(taskCard);
-        } else if (status.contains("done")) {
+        } else if (status.equals("DONE")) {
             doneColumn.getChildren().add(taskCard);
         } else {
             System.out.println("Unknown task status: " + task.getStatus());
@@ -141,22 +151,16 @@ public class TaskController {
         }
     }
 
-    private void removeTaskFromAllColumns(Pane taskCard) {
+    private void removeTaskFromAllColumns(Node taskCard) {
         todoColumn.getChildren().remove(taskCard);
         inProgressColumn.getChildren().remove(taskCard);
         doneColumn.getChildren().remove(taskCard);
     }
 
     private void clearTaskColumns() {
-        if (todoColumn.getChildren().size() > 1) {
-            todoColumn.getChildren().remove(1, todoColumn.getChildren().size());
-        }
-        if (inProgressColumn.getChildren().size() > 1) {
-            inProgressColumn.getChildren().remove(1, inProgressColumn.getChildren().size());
-        }
-        if (doneColumn.getChildren().size() > 1) {
-            doneColumn.getChildren().remove(1, doneColumn.getChildren().size());
-        }
+        todoColumn.getChildren().clear();
+        inProgressColumn.getChildren().clear();
+        doneColumn.getChildren().clear();
     }
 
     private void setupDragAndDrop(Pane taskCard, Task task) {
@@ -172,9 +176,9 @@ public class TaskController {
         setupColumnDragOver(inProgressColumn);
         setupColumnDragOver(doneColumn);
 
-        setupColumnDropHandler(todoColumn, "To-Do", task);
-        setupColumnDropHandler(inProgressColumn, "In Progress", task);
-        setupColumnDropHandler(doneColumn, "Done", task);
+        setupColumnDropHandler(todoColumn, "TODO");
+        setupColumnDropHandler(inProgressColumn, "INPROG");
+        setupColumnDropHandler(doneColumn, "DONE");
     }
 
     private void setupColumnDragOver(VBox column) {
@@ -186,17 +190,32 @@ public class TaskController {
         });
     }
 
-    private void setupColumnDropHandler(VBox column, String newStatus, Task task) {
+    private void setupColumnDropHandler(VBox column, String newStatus) {
         column.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
+            
             if (db.hasString()) {
-                task.setStatus(newStatus);
-                if (taskService.update(task)) {
-                    LoadTasks(currentField);
-                    success = true;
+                try {
+                    int taskId = Integer.parseInt(db.getString());
+                    Task task = taskService.getTaskById(taskId);
+                    if (task != null) {
+                        // Update the task status
+                        task.setStatus(newStatus);
+                        if (taskService.updateStatus(task, newStatus)) {
+                            // Remove the task from all columns first
+                            Node draggedNode = (Node) event.getGestureSource();
+                            removeTaskFromAllColumns(draggedNode);
+                            // Add the task to the new column
+                            column.getChildren().add(draggedNode);
+                            success = true;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid task ID in dragboard: " + db.getString());
                 }
             }
+            
             event.setDropCompleted(success);
             event.consume();
         });
@@ -237,14 +256,7 @@ public class TaskController {
     }
 
 
-    // Helper method to show alerts
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+
     private void handleDeleteTask(Task task, Pane taskCard) {
         taskService.delete(task);
         removeTaskFromAllColumns(taskCard);
@@ -254,18 +266,58 @@ public class TaskController {
     }
 
     private void handleEditTask(Task task, Pane taskCard) {
-            if (task.getStatus().equals("to do") ){
-                taskService.updateStatus(task,"In progres");
-
-            }
-            else if (task.getStatus().equals("In progres") ){
-            taskService.updateStatus(task,"done");
-
-        }
+            
 
         removeTaskFromAllColumns(taskCard);
         LoadTasks(currentField);
 
 
+    }
+
+    @FXML
+    private void handleBack(Farm farm) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fielddisplay.fxml"));
+            Pane fieldDisplay = loader.load();
+
+            // Get the FieldController and pass the farm
+            FieldController fieldController = loader.getController();
+            if (fieldController != null) {
+                fieldController.loadField(farm);
+            }
+
+            // Replace main content
+            BorderPane mainContainer = getMainContainer();
+            if (mainContainer != null) {
+                mainContainer.setCenter(fieldDisplay);
+            } else {
+                showError("Error", "Could not find main container");
+            }
+        } catch (IOException e) {
+            showError("Error", "Could not navigate back: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showError(String title, String message) {
+        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.setTitle("Error");
+        errorAlert.setHeaderText(title);
+        errorAlert.setContentText(message);
+        errorAlert.showAndWait();
+    }
+
+    private BorderPane getMainContainer() {
+        Node current = mainContainer;
+        while (current != null && !(current instanceof BorderPane)) {
+            current = current.getParent();
+        }
+        return (BorderPane) current;
+    }
+
+
+
+    public void setCurrentFarm(Farm farm) {
+        this.currentFarm = farm;
     }
 }

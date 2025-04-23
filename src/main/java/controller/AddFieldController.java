@@ -117,7 +117,6 @@ public class AddFieldController {
         incomeField.setText(String.valueOf(field.getIncome()));
         outcomeField.setText(String.valueOf(field.getOutcome()));
         descriptionField.setText(field.getDescription());
-        // Associer le champ à la culture (exemple)
     }
 
     public void setFarm(Farm farm) {
@@ -175,10 +174,11 @@ public class AddFieldController {
             field.setName(nameField.getText());
             field.setSurface(Double.parseDouble(surfaceField.getText()));
             field.setBudget(Double.parseDouble(budgetField.getText()));
-            field.setIncome(Double.parseDouble(incomeField.getText()));
-            field.setOutcome(Double.parseDouble(outcomeField.getText()));
+            field.setIncome(0);
+            field.setOutcome(0);
             field.setDescription(descriptionField.getText());
             field.setFarm(currentFarm);
+            System.out.println(lastCrop);
             field.setCrop(lastCrop);
 
             fieldService.create(field);
