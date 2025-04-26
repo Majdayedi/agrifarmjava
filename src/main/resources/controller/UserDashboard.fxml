@@ -19,6 +19,6 @@
         <Button text="Edit Profile" onAction="#handleEditProfile"/>
         <Button text="View Profile" onAction="#handleViewProfile"/>
         <Button text="Logout" onAction="#handleLogout"/>
-
+        <Button text="Back to Dashboard" prefWidth="200" styleClass="dashboard-button"/>
     </VBox>
 </VBox>

@@ -1,19 +1,18 @@
 package controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
+import entite.User;
+import utils.AlertHelper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
-import entite.User;
 import service.UserService;
-import utils.AlertHelper;
-import utils.SceneManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -103,15 +102,6 @@ public class ManageUsersController {
         } else {
             AlertHelper.showAlert("Warning", "No user selected.");
         }
-    }
-    @FXML
-    private void handleBackToDashboard() {
-        if (admin == null) return;
-
-        Stage stage = (Stage) userTable.getScene().getWindow();
-        SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", (AdminDashboardController controller) -> {
-            controller.setUser(admin);
-        });
     }
 
     public void setAdmin(User user) {

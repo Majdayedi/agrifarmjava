@@ -1,17 +1,25 @@
 package controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.control.CheckBox;
 import entite.User;
 import service.UserService;
-import utils.AlertHelper;
-import utils.SceneManager;
-import utils.Session;
+import utils.*;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+
+
+import java.io.File;
+import java.util.List;
+
+import static utils.AlertHelper.showAlert;
 
 public class LoginController {
 
@@ -21,7 +29,20 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    private CheckBox rememberMeCheckBox;
+
     private final UserService userService = new UserService();
+
+    @FXML
+    public void initialize() {
+        // Load saved credentials if they exist
+        if (CredentialManager.isRememberMeEnabled()) {
+            emailField.setText(CredentialManager.getSavedEmail());
+            passwordField.setText(CredentialManager.getSavedPassword());
+            rememberMeCheckBox.setSelected(true);
+        }
+    }
 
     @FXML
     private void handleLogin() {
@@ -31,31 +52,35 @@ public class LoginController {
         User user = userService.loginUser(email, password);
 
         if (user != null) {
-            // Store the user in session
-            Session.getInstance().setUser(user);
+            if (!user.isVerified()) {
+                showAlert("Account Not Verified", "Please verify your email before logging in.");
 
-            // Show a success alert
-            AlertHelper.showAlert("Success", "Welcome, " + user.getFirstName() + "!");
+                // Optional: Redirect to verification scene
+                Stage stage = (Stage) emailField.getScene().getWindow();
+                SceneManager.switchScene(stage, "/controller/verification.fxml", (VerificationController controller) -> {
+                    // You can optionally pass the user's email or ID
+                });
+                return;
+            }
 
+            // Save credentials if Remember Me is checked
+            CredentialManager.saveCredentials(email, password, rememberMeCheckBox.isSelected());
+
+            Session.getInstance().setUser(user); // Store globally
+            showAlert("Success", "Welcome, " + user.getFirstName() + "!");
             Stage stage = (Stage) emailField.getScene().getWindow();
 
             if (user.getRoles().contains("ROLE_ADMIN")) {
-                // Redirect to Admin Dashboard
-                SceneManager.switchScene(stage, "/controller/adminDashboard.fxml", controller -> {
-                    if (controller instanceof AdminDashboardController) {
-                        ((AdminDashboardController) controller).setUser(user);
-                    }
+                SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", (AdminDashboardController controller) -> {
+                    controller.setUser(user);
                 });
             } else {
-                // Redirect to User Dashboard
-                SceneManager.switchScene(stage, "/home.fxml", controller -> {
-                    if (controller instanceof UserDashboardController) {
-                        ((UserDashboardController) controller).setUser(user);
-                    }
+                SceneManager.switchScene(stage, "/controller/UserDashboard.fxml", (UserDashboardController controller) -> {
+                    controller.setUser(user);
                 });
             }
         } else {
-            AlertHelper.showAlert("Error", "Invalid email or password.");
+            showAlert("Error", "Invalid email or password.");
         }
     }
 
@@ -71,5 +96,73 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @FXML
+    private void handleFaceLogin() {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME); // Load OpenCV
+
+        try {
+            // Capture current face (not saved to disk)
+            Mat currentFace = WebcamUtil.captureAndReturnFace();
+            if (currentFace == null || currentFace.empty()) {
+                showAlert("Face Login Failed", "No face detected.");
+                return;
+            }
+
+            List<User> allUsers = userService.getAllUsers();
+
+            for (User user : allUsers) {
+                boolean matchFound = false;
+
+                // Try up to 5 samples for each user
+                for (int i = 1; i <= 5; i++) {
+                    File faceFile = new File("src/main/resources/faces/" + user.getEmail() + "_" + i + ".jpg");
+                    if (!faceFile.exists()) continue;
+
+                    Mat storedMat = Imgcodecs.imread(faceFile.getAbsolutePath());
+                    if (storedMat.empty()) continue;
+
+                    if (FaceRecognitionUtil.compareFaces(currentFace, storedMat)) {
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                if (matchFound) {
+                    if (!user.isVerified()) {
+                        showAlert("Login Failed", "Please verify your email first.");
+                        return;
+                    }
+
+                    Session.getInstance().setUser(user);
+                    showAlert("Login Successful", "Welcome, " + user.getFirstName() + "!");
+                    Stage stage = (Stage) emailField.getScene().getWindow();
+
+                    if (user.getRoles().contains("ROLE_ADMIN")) {
+                        SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", controller -> {
+                            ((AdminDashboardController) controller).setUser(user);
+                        });
+                    } else {
+                        SceneManager.switchScene(stage, "/controller/UserDashboard.fxml", controller -> {
+                            ((UserDashboardController) controller).setUser(user);
+                        });
+                    }
+                    return;
+                }
+            }
+
+            showAlert("Login Failed", "No matching face found.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "An error occurred: " + e.getMessage());
+        }
+    }
+
+
+
+
+    @FXML
+    private void goToForgotPassword() {
+        SceneManager.switchScene((Stage) emailField.getScene().getWindow(), "/controller/forgot-password.fxml");
     }
 }
