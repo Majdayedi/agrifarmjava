@@ -43,7 +43,7 @@ public class AddTaskController {
     @FXML
     public void initialize() {
         // Initialize form controls
-        statusComboBox.getItems().addAll("TODO", "INPROG", "DONE");
+        statusComboBox.getItems().addAll("to do", "In progres", "done");
         priorityComboBox.getItems().addAll("Low", "Medium", "High");
 
         // Set up workers spinner
@@ -182,4 +182,5 @@ public class AddTaskController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
 }

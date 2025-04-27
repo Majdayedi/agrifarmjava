@@ -37,9 +37,7 @@
                     <Label text="Budget:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                     <TextField fx:id="budgetField" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                     
-                    <Label text="Weather:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                    <TextField fx:id="weatherField" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                    
+
                     <Label text="Location:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
                     <TextField fx:id="locationField" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
                     

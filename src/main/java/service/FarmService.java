@@ -1,6 +1,7 @@
 package service;
 
 import entite.Farm;
+import entite.Task;
 import utils.Connections;
 
 import java.sql.*;
@@ -159,4 +160,22 @@ public class FarmService implements IService<Farm> {
         farm.setLat(rs.getFloat("lat"));
         return farm;
     }
+    public boolean updateWeather(Farm farm) {
+        String sql = "UPDATE farm SET weather = ? WHERE id = ?";
+        try (PreparedStatement pst = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pst.setString(1, farm.getWeather());
+            pst.setInt(2, farm.getId());
+
+            int rowsUpdated = pst.executeUpdate();
+            if (rowsUpdated > 0) {
+                farm.setWeather(farm.getWeather());
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating task status: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

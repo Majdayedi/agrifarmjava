@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.CategoryAxis?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.WeatherForecastController"
+        stylesheets="@css/weather.css"
+      style="-fx-background-color: linear-gradient(to bottom right, rgba(0,121,220,0.96), #A1C0DF);"
+      spacing="20">
+    <padding>
+        <Insets top="0" right="0" bottom="0" left="0"/>
+    </padding>
+
+<HBox>
+    <Label fx:id="warningLabel"
+           styleClass="alert,alert-info"
+           style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: white; -fx-padding: 10; -fx-background-radius: 5;"
+           wrapText="true"/>
+
+    <!-- Page Title -->
+    <Label text="Weather Forecast" 
+           style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;"
+           alignment="CENTER"/>
+</HBox>
+    <VBox  style="-fx-background: transparent; -fx-background-color: transparent;">
+        <HBox fx:id="forecastCards" spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <!-- Cards will be added dynamically -->
+        </HBox>
+    </VBox>
+
+    <!-- Detailed Dashboard -->
+    <VBox fx:id="detailsDashboard" visible="false" spacing="10">
+        <VBox styleClass="card" style="-fx-background-color: rgba(255,255,255,0.1); -fx-background-radius: 10;">
+            <Label fx:id="detailsDate" 
+                   styleClass="card-header"
+                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 10;"
+                   alignment="CENTER"/>
+            
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <!-- Temperature Chart -->
+                <LineChart fx:id="temperatureChart" style="-fx-background-color: transparent;">
+                    <xAxis>
+                        <CategoryAxis label="Time" style="-fx-text-fill: white;"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Temperature (°C)" style="-fx-text-fill: white;"/>
+                    </yAxis>
+                </LineChart>
+
+                <!-- Detailed Weather Info -->
+                <GridPane fx:id="detailsGrid" hgap="10" vgap="10">
+                    <!-- Details will be added dynamically -->
+                </GridPane>
+
+                <Button text="Close" 
+                        onAction="#hideDetails"
+                        style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: white; -fx-background-radius: 5;"/>
+            </VBox>
+        </VBox>
+    </VBox>
+
+    <!-- No Forecast Data Message -->
+    <Label fx:id="noDataLabel" 
+           text="No forecast data available."
+           style="-fx-text-fill: white;"
+           visible="false"
+           alignment="CENTER"/>
+
+</VBox> 

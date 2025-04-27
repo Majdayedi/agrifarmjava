@@ -12,11 +12,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.web.WebView;
 import javafx.scene.web.WebEngine;
+import service.CommandeService;
 import service.FarmService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import netscape.javascript.JSObject;
-
+import entite.Field;
+import service.FieldService;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -47,6 +49,7 @@ public class AddFarmController {
     private WebEngine webEngine;
     private double currentLat = 0;
     private double currentLon = 0;
+    private FieldService fieldservice= new FieldService();
 
     @FXML
     public void initialize() {
@@ -247,20 +250,19 @@ public class AddFarmController {
     public void setFarm(Farm farm) {
         this.currentFarm = farm;
         if (farm != null) {
-            nameField.setText(farm.getName());
+        nameField.setText(farm.getName());
             surfaceField.setText(String.valueOf(farm.getSurface()));
-            addressField.setText(farm.getAdress());
-            budgetField.setText(String.valueOf(farm.getBudget()));
-            weatherField.setText(farm.getWeather());
+        addressField.setText(farm.getAdress());
+        budgetField.setText(String.valueOf(farm.getBudget()));
             locationField.setText(farm.getLocation());
             longitudeField.setText(String.valueOf(farm.getLon()));
             latitudeField.setText(String.valueOf(farm.getLat()));
-            descriptionField.setText(farm.getDescription());
-            bircheck.setSelected(farm.isBir());
-            irrigationCheck.setSelected(farm.isIrrigation());
-            photoCheck.setSelected(farm.isPhotovoltaic());
-            fence.setSelected(farm.isFence());
-            cabincheck.setSelected(farm.isCabin());
+        descriptionField.setText(farm.getDescription());
+        bircheck.setSelected(farm.isBir());
+        irrigationCheck.setSelected(farm.isIrrigation());
+        photoCheck.setSelected(farm.isPhotovoltaic());
+        fence.setSelected(farm.isFence());
+        cabincheck.setSelected(farm.isCabin());
 
             // Update map marker
             if (farm.getLat() != 0 && farm.getLon() != 0) {
@@ -292,7 +294,7 @@ public class AddFarmController {
             farm.setSurface(Float.parseFloat(surfaceField.getText()));
             farm.setAdress(addressField.getText());
             farm.setBudget(Float.parseFloat(budgetField.getText()));
-            farm.setWeather(weatherField.getText());
+            farm.setWeather(" ");
             farm.setLocation(locationField.getText());
             farm.setLat((float) currentLat);
             farm.setLon((float) currentLon);
@@ -306,7 +308,10 @@ public class AddFarmController {
             if (currentFarm != null) {
                 farmService.update(farm);
             } else {
-                farmService.create(farm);
+            farmService.create(farm);
+            Field field = new Field(farm, 0, "Main field", 0.0, 0, 0, 0, "",null);
+            fieldservice.create(field);
+
             }
 
             refreshMainView();
@@ -314,6 +319,7 @@ public class AddFarmController {
             showError("Input Error", "Please enter valid numbers for numeric fields");
         } catch (Exception e) {
             showError("Error", "Could not save farm: " + e.getMessage());
+            System.out.println("Could not save farm: " + e.getMessage());;
         }
     }
 
