@@ -6,18 +6,22 @@
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      styleClass="farm-card">
-    
+      styleClass="farm-card"
+      minWidth="320" maxWidth="320" prefWidth="320" minHeight="200" maxHeight="500" prefHeight="500" spacing="10" style="-fx-padding: 18; -fx-background-radius: 16;">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+
     <StackPane>
         <!-- Farm Image -->
         <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
             <Image url="@img/icon-1.png"/>
         </ImageView>
         
-        <!-- Delete Button (Top Right) -->
         <Button fx:id="deleteBtn" text="X" styleClass="delete-button" StackPane.alignment="TOP_RIGHT">
             <StackPane.margin>
-                <Insets top="5" right="5"/>
+                <Insets top="0" right="0"/>
             </StackPane.margin>
         </Button>
     </StackPane>
@@ -28,6 +32,7 @@
         </padding>
         
         <Label fx:id="farmName" styleClass="farm-name"/>
+        <Label fx:id="farmweather" styleClass="farm-type"/>
         <Label fx:id="farmLocation" styleClass="farm-location"/>
         
         <GridPane vgap="5" hgap="10">

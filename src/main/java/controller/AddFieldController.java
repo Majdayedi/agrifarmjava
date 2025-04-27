@@ -1,6 +1,5 @@
 package controller;
 
-import controller.CropController;
 import entite.Crop;
 import entite.Field;
 import entite.Farm;
@@ -8,17 +7,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.CheckBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
 import service.CropCRUD;
 import service.FarmService;
 import service.FieldService;
+import service.WeatherService;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,12 +36,19 @@ public class AddFieldController {
     @FXML private TextField incomeField;
     @FXML private TextField outcomeField;
     @FXML private TextArea descriptionField;
+    @FXML private Label weatherTemp;
+    @FXML private Label weatherDesc;
+    @FXML private ImageView weatherIcon;
 
     private Farm currentFarm; // La ferme associée au champ
     private Field currentField; // Le champ en cours de modification
-
+    WeatherService.Weather weather;
+    public void setFirst(WeatherService.Weather first) {
+        this.weather= first;
+    }
     @FXML
     public void initialize() {
+
 
     }
 
@@ -86,7 +93,7 @@ public class AddFieldController {
 
             // Récupérer le contrôleur et charger les champs
             FieldController fieldController = loader.getController();
-            fieldController.loadField(currentFarm);
+            fieldController.loadField(currentFarm, weather);
 
             // Remplacer uniquement le contenu central
             BorderPane mainContainer = getMainContainer();
@@ -235,4 +242,16 @@ public class AddFieldController {
     }
 
 
+    public void setWeather(WeatherService.Weather weather) {
+        this.weather = weather;
+        updateWeatherCard();
+    }
+
+    private void updateWeatherCard() {
+        if (weather != null) {
+            weatherTemp.setText(String.format("%.1f°C", weather.getTemperature()));
+            weatherDesc.setText(weather.getDescription());
+            weatherIcon.setImage(new Image("http://openweathermap.org/img/wn/" + weather.getIcon() + "@2x.png"));
+        }
+    }
 }

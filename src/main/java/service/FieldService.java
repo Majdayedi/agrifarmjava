@@ -1,5 +1,7 @@
 package service;
 
+import entite.Crop;
+import entite.Farm;
 import entite.Field;
 import utils.Connections;
 
@@ -50,7 +52,12 @@ public class FieldService implements IService<Field> {
             pst.setDouble(6, field.getOutcome());
             pst.setDouble(7, field.getProfit());
             pst.setString(8, field.getDescription());
-            pst.setInt(9,  field.getCrop().getId());
+            if (field.getCrop() == null) {
+                pst.setNull(9, Types.INTEGER);
+            } else {
+                pst.setInt(9, field.getCrop().getId());
+            }
+
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -140,6 +147,30 @@ public class FieldService implements IService<Field> {
             closeResources();
         }
         return null;
+    }
+    public List<String> getCropList(Farm farm) {
+        List<String> crops = new ArrayList<>();
+        crops.add("Select Crop");
+        String query = "SELECT DISTINCT c.type_crop " +
+                "FROM crop c " +
+                "INNER JOIN field f ON c.id = f.crop_id " +
+                "WHERE f.farm_id = ?";
+
+        try {
+            pst = cnx.prepareStatement(query);
+            pst.setInt(1, farm.getId()); // now it uses field id
+            rs = pst.executeQuery();
+
+            while (rs.next()) {
+                String crop = rs.getString("type_crop");
+                crops.add(crop);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading crops by field: " + e.getMessage(), e);
+        } finally {
+            closeResources();
+        }
+        return crops;
     }
 
     public List<Field> getFieldsByFarm(int farmId) {
