@@ -364,4 +364,47 @@ public class FarmController {
             }
         }
     }
+
+    public void loadFarms1() {
+        // Clear existing content in the grid before refreshing
+        farmgrid.getChildren().clear();
+
+        List<Farm> farms = farmService.readAll();
+        int col = 0, row = 0;
+
+        try {
+            for (Farm farm : farms) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/farmcontainer.fxml"));
+                Pane card = loader.load();
+
+
+                ((Label)card.lookup("#farmName")).setText(farm.getName());
+                ((Label)card.lookup("#farmweather")).setText(farm.getWeather());
+
+                ((Label)card.lookup("#farmLocation")).setText(farm.getAdress());
+                ((Label)card.lookup("#farmSurface")).setText(String.format("%.2f ha", farm.getSurface()));
+                ((Label)card.lookup("#farmBudget")).setText(String.format("$%.2f", farm.getBudget()));
+
+                // Get buttons and add event handlers
+                Button deleteBtn = (Button) card.lookup("#deleteBtn");
+                Button modifyBtn = (Button) card.lookup("#modifyBtn");
+                Button detailsBtn = (Button) card.lookup("#detailsBtn");
+
+                // Setup delete button
+                deleteBtn.setOnAction(e -> handleDelete(farm, card));
+
+                // Setup modify button
+                modifyBtn.setOnAction(e -> handleModify(farm));
+
+                detailsBtn.setOnAction(e -> handleDetails(farm, weather));
+
+                farmgrid.add(card, col % 3, row);
+                col++;
+                if (col % 3 == 0) row++;
+            }
+        } catch (Exception e) {
+            showError("Error Loading Farms", "Failed to load farms: " + e.getMessage());
+        }
+    }
+
 }
