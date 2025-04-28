@@ -228,7 +228,6 @@ import service.WeatherService.Weather;
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/addfield.fxml"));
                 Pane addForm = loader.load();
 
-                // Récupérer le contrôleur et passer l'objet Farm
                 AddFieldController addFieldController = loader.getController();
                 addFieldController.setFarm(farm);
                 addFieldController.setFirst(weather);

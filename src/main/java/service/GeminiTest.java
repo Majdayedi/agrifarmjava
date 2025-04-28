@@ -64,7 +64,8 @@ public class GeminiTest {
                 "   - Task sequencing\n" +
                 "   - Critical path\n" +
                 "   - Seasonal considerations\n" +
-                "\nFor each task, provide:\n" +
+                        "5.  tratement based on the discease\n" +
+                "For each task, provide:\n" +
                 "- A clear, specific short task name\n" +
                 "- Brief description of the work (max 255 characters)\n" +
                 "- Required resources and materials\n" +
