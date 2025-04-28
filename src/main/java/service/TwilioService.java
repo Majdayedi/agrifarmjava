@@ -11,10 +11,12 @@ import java.util.Properties;
 public class TwilioService {
     private static String TWILIO_PHONE_NUMBER;
 
+
     // List of severe weather conditions that should trigger alerts
     private static final List<String> SEVERE_WEATHER_CONDITIONS = Arrays.asList(
             "light rain", "thunderstorm", "hail", "extreme heat", "frost",
             "strong winds", "blizzard", "tornado", "dense fog", "extreme cold"
+
     );
 
     static {
@@ -29,6 +31,7 @@ public class TwilioService {
                 TWILIO_PHONE_NUMBER = props.getProperty("twilio.phone.number");
 
                 Twilio.init(id, tok);
+
             } else {
                 System.err.println("Unable to find config.properties");
             }
@@ -68,6 +71,7 @@ public class TwilioService {
                     new PhoneNumber(toPhoneNumber),
                     new PhoneNumber(TWILIO_PHONE_NUMBER),
                     message
+
             ).create();
             System.out.println("SMS sent successfully to " + toPhoneNumber);
         } catch (Exception e) {
@@ -88,6 +92,7 @@ public class TwilioService {
                 farmName,
                 weatherDescription,
                 temperature
+
         );
         sendSMS(toPhoneNumber, message);
     }
