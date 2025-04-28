@@ -1,3 +1,4 @@
+
 package service;
 
 import entite.SoilData;
@@ -23,7 +24,7 @@ public class SoilDataCRUD {
             // Check if date column exists
             DatabaseMetaData metaData = connection.getMetaData();
             ResultSet columns = metaData.getColumns(null, null, "soildata", "date");
-            
+
             if (!columns.next()) {
                 // Column doesn't exist, add it
                 String alterTableSQL = "ALTER TABLE soildata ADD COLUMN date DATE DEFAULT CURRENT_DATE";
@@ -46,7 +47,7 @@ public class SoilDataCRUD {
             statement.setInt(5, soilData.getCrop_id());
             statement.setString(6, soilData.getDate());
             statement.executeUpdate();
-            
+
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     soilData.setId(generatedKeys.getInt(1));
@@ -63,13 +64,13 @@ public class SoilDataCRUD {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     SoilData soilData = new SoilData(
-                        resultSet.getInt("id"),
-                        resultSet.getDouble("humidite"),
-                        resultSet.getDouble("niveau_ph"),
-                        resultSet.getDouble("niveau_nutriment"),
-                        resultSet.getString("type_sol"),
-                        resultSet.getInt("crop_id"),
-                        resultSet.getString("date")
+                            resultSet.getInt("id"),
+                            resultSet.getDouble("humidite"),
+                            resultSet.getDouble("niveau_ph"),
+                            resultSet.getDouble("niveau_nutriment"),
+                            resultSet.getString("type_sol"),
+                            resultSet.getInt("crop_id"),
+                            resultSet.getString("date")
                     );
                     soilDataList.add(soilData);
                 }
@@ -99,4 +100,4 @@ public class SoilDataCRUD {
             statement.executeUpdate();
         }
     }
-} 
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.CropCalendarController"
+      spacing="10"
+      style="-fx-background-color: white; -fx-border-color: #4CAF50; -fx-border-width: 2px;">
+
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <padding>
+            <Insets bottom="10.0"/>
+        </padding>
+
+        <Label text="Crop Calendar for Tunisia"
+               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+        <ProgressIndicator fx:id="loadingIndicator" visible="false"/>
+    </HBox>
+
+    <TableView fx:id="calendarTable" VBox.vgrow="ALWAYS"
+               style="-fx-background-color: #F9FDF9; -fx-border-color: #81C784; -fx-border-radius: 4px;">
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+
+        <columns>
+            <TableColumn fx:id="cropNameColumn" text="Crop Name" prefWidth="150.0"
+                         style="-fx-background-color: #A5D6A7; -fx-font-weight: bold;"/>
+            <TableColumn fx:id="regionColumn" text="Region" prefWidth="150.0"
+                         style="-fx-background-color: #C8E6C9;"/>
+            <TableColumn fx:id="additionalInfoColumn" text="Type" prefWidth="100.0"
+                         style="-fx-background-color: #E8F5E9;"/>
+            <TableColumn fx:id="plantingDateColumn" text="Planting Period" prefWidth="150.0"
+                         style="-fx-background-color: #C8E6C9;"/>
+            <TableColumn fx:id="harvestDateColumn" text="Harvest Period" prefWidth="150.0"
+                         style="-fx-background-color: #A5D6A7;"/>
+            <TableColumn fx:id="growingPeriodColumn" text="Growing Period (Days)" prefWidth="120.0"
+                         style="-fx-alignment: CENTER-RIGHT; -fx-font-weight: bold; -fx-background-color: #81C784;"/>
+        </columns>
+    </TableView>
+</VBox>

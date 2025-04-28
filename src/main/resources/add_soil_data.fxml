@@ -16,7 +16,7 @@
     <Label text="Soil Data Form" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
     <GridPane vgap="15" hgap="15" alignment="CENTER">
-        <Label text="Humidité (%):" style="-fx-font-size: 14px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label text="Humidité ():" style="-fx-font-size: 14px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="humiditeField" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
         <Label text="Niveau pH:" style="-fx-font-size: 14px;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>

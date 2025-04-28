@@ -44,7 +44,11 @@
         <HBox spacing="10" alignment="CENTER">
             <Button fx:id="detailsBtn" text="Details" styleClass="handleDelete"/>
             <Button fx:id="modifyBtn" text="Modify" styleClass="handleModify"/>
-
+        </HBox>
+        
+        <!-- HBox for QR code and verify buttons -->
+        <HBox fx:id="buttonBox" spacing="10" alignment="CENTER">
+            <!-- This will be populated from the controller -->
         </HBox>
     </VBox>
 </VBox>

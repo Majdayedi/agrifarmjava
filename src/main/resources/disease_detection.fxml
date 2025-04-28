@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane fitToWidth="true" pannable="true" vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.DiseaseDetectionController"
+            stylesheets="@css/styleCrop.css">
+
+    <content>
+        <VBox spacing="20" style="-fx-background-color: white;">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="🌱 Plant Disease Detection" styleClass="header-label"/>
+                <Button text="Back to Crops" onAction="#backToCrops" styleClass="back-button"/>
+            </HBox>
+
+            <!-- Description -->
+            <Label text="Upload an image of your plant to detect possible diseases and pests."
+                   wrapText="true" styleClass="description-label"/>
+
+            <!-- Image Upload Section -->
+            <TitledPane text="Upload Plant Image" expanded="true" styleClass="section-pane">
+                <VBox spacing="15">
+                    <GridPane vgap="15" hgap="15">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+
+                        <Label text="Select Image:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <TextField fx:id="imagePathField" promptText="No file selected" prefWidth="300" editable="false"/>
+                            <Button text="Browse..." onAction="#browseImage" styleClass="secondary-button"/>
+                        </HBox>
+                    </GridPane>
+                </VBox>
+            </TitledPane>
+
+            <!-- Image Preview Section -->
+            <TitledPane text="Image Preview" expanded="false" styleClass="section-pane">
+                <VBox alignment="CENTER" spacing="10">
+                    <ImageView fx:id="imagePreview" fitWidth="400" fitHeight="300" preserveRatio="true"/>
+                    <Label fx:id="noImageLabel" text="No image selected" visible="true" styleClass="info-label"/>
+                </VBox>
+            </TitledPane>
+
+            <!-- Detect Button -->
+            <HBox alignment="CENTER">
+                <Button fx:id="detectButton" text="🔍 Detect Disease" onAction="#detectDisease"
+                        styleClass="primary-button" disable="true"/>
+            </HBox>
+
+            <!-- Ask for Help Button -->
+            <HBox alignment="CENTER">
+                <Button fx:id="helpButton" text="💬 Ask for Help" onAction="#showChatbot"
+                        styleClass="secondary-button" disable="true"/>
+            </HBox>
+
+            <!-- Detection Results Section -->
+            <TitledPane text="Detection Results" expanded="false" styleClass="section-pane">
+                <VBox spacing="10">
+                    <HBox fx:id="loadingBox" alignment="CENTER" visible="false" spacing="10">
+                        <ProgressIndicator />
+                        <Label text="Analyzing image..." styleClass="info-label"/>
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true" prefHeight="250" fx:id="resultsScrollPane">
+                        <VBox fx:id="resultsContainer" spacing="10">
+                            <Label fx:id="noResultsLabel"
+                                   text="No results available. Please upload an image."
+                                   wrapText="true" styleClass="info-label"/>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+            </TitledPane>
+
+            <!-- Chatbot Assistant Section -->
+            <TitledPane text="Chatbot Assistant" expanded="false" fx:id="chatbotPane" styleClass="section-pane">
+                <VBox spacing="10">
+                    <ListView fx:id="chatMessages" prefHeight="200"/>
+
+                    <HBox spacing="10">
+                        <TextField fx:id="chatInput" promptText="Type your question..." style="-fx-pref-width: 300;"/>
+                        <Button text="Send" onAction="#handleChatMessage" styleClass="small-button"/>
+                    </HBox>
+
+                    <HBox fx:id="chatbotLoadingBox" alignment="CENTER" spacing="10" visible="false">
+                        <ProgressIndicator progress="-1" prefWidth="20" prefHeight="20"/>
+                        <Label text="Thinking..." styleClass="info-label"/>
+                    </HBox>
+                </VBox>
+            </TitledPane>
+
+        </VBox>
+    </content>
+</ScrollPane>
