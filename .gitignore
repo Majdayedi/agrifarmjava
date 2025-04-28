@@ -24,6 +24,11 @@ Thumbs.db
 .idea/compiler.xml
 .idea/libraries/
 
+.idea/src/main/java/service/TwilioService.java
+.idea/src/main/resources/config.properties
+
+
+
 ### Eclipse ###
 .apt_generated
 .classpath
