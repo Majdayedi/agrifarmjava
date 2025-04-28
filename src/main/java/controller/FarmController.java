@@ -16,6 +16,8 @@ import service.FarmService;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.io.IOException;
@@ -23,7 +25,7 @@ import javafx.scene.Node;
 import service.WeatherService;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import service.TwilioService;
 public class FarmController {
     public Button cropButton;
     public Button weatherBtn;
@@ -166,6 +168,15 @@ public class FarmController {
                 WeatherForecastController first = new WeatherForecastController();
                 first.now(forecast, farm);
                 taks(forecast);
+                List<String> dangerousWeathers = Arrays.asList(
+                        "light rain", "thunderstorm", "hail", "extreme heat",
+                        "frost", "strong winds", "blizzard", "tornado",
+                        "dense fog", "extreme cold"
+                );
+
+                if (dangerousWeathers.contains(farm.getWeather())) {
+                    TwilioService.sendWeatherAlert("+21655771406", farm.getName(), weather.getDescription(), weather.getTemperature());
+                }
 
                 ((Label)card.lookup("#farmName")).setText(farm.getName());
                 ((Label)card.lookup("#farmweather")).setText(farm.getWeather());
@@ -187,7 +198,6 @@ public class FarmController {
 
                 detailsBtn.setOnAction(e -> handleDetails(farm, weather));
 
-                // Add to grid
                 farmgrid.add(card, col % 3, row);
                 col++;
                 if (col % 3 == 0) row++;
