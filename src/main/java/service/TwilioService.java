@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class TwilioService {
-
+    private static String TWILIO_PHONE_NUMBER;
 
 
     // List of severe weather conditions that should trigger alerts
@@ -26,12 +26,12 @@ public class TwilioService {
             InputStream input = TwilioService.class.getClassLoader().getResourceAsStream("config.properties");
             if (input != null) {
                 props.load(input);
+                String id = props.getProperty("twilio.account.sid");
+                String tok = props.getProperty("twilio.auth.token");
+                TWILIO_PHONE_NUMBER = props.getProperty("twilio.phone.number");
 
+                Twilio.init(id, tok);
 
-
-                // Initialize Twilio with credentials
-                Twilio.init("twilio.account.sid", "twilio.auth.token");
-                
             } else {
                 System.err.println("Unable to find config.properties");
             }
@@ -69,7 +69,7 @@ public class TwilioService {
         try {
             Message.creator(
                     new PhoneNumber(toPhoneNumber),
-                    new PhoneNumber("twilio.phone.number"),
+                    new PhoneNumber(TWILIO_PHONE_NUMBER),
                     message
 
             ).create();

@@ -1,5 +1,7 @@
-# Ignore configuration files containing sensitive data
-src/main/resources/config.properties
+
+# Sensitive configuration files
+config.properties
+
 
 # IDE files
 .idea/
@@ -7,14 +9,16 @@ src/main/resources/config.properties
 *.iws
 *.ipr
 
-# Compiled files
+# Build directories
 target/
+build/
 *.class
 
-# Logs
+# Log files
 *.log
 
-# OS specific files
+# System files
+
 .DS_Store
 Thumbs.db
 
@@ -23,10 +27,6 @@ Thumbs.db
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
-
-.idea/src/main/java/service/TwilioService.java
-.idea/src/main/resources/config.properties
-
 
 
 ### Eclipse ###
@@ -38,18 +38,5 @@ Thumbs.db
 .springBeans
 .sts4-cache
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
 ### VS Code ###
 .vscode/
-
-### Mac OS ###
-.DS_Store
