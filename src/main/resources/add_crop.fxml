@@ -30,7 +30,6 @@
                 
                 <Label text="Method:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                 <ComboBox fx:id="methodCropCombo" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                
                 <Label text="Plantation Date:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                 <DatePicker fx:id="plantationDatePicker" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                 

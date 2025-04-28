@@ -37,4 +37,57 @@
 
 .text-area .content {
     -fx-background-color: white;
-} 
+}
+
+.header-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32; /* Dark Green */
+}
+
+.description-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4e5d6c;
+}
+
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c; /* Green */
+}
+
+.primary-button {
+    -fx-background-color: #388e3c;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 20;
+}
+
+.secondary-button {
+    -fx-background-color: #81c784;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 6 16 6 16;
+    -fx-background-radius: 20;
+}
+
+.small-button {
+    -fx-background-color: #66bb6a;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 4 12 4 12;
+    -fx-background-radius: 15;
+}
+
+.section-pane {
+    -fx-background-color: white;
+    -fx-border-color: #c8e6c9;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+}
+
+.info-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #757575;
+}

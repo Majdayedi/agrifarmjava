@@ -45,6 +45,7 @@
             <Label text="Income:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
             <Label fx:id="incomef" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
+
             <Label text="Outcome:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
             <Label fx:id="outcomef" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
         </GridPane>
@@ -52,6 +53,10 @@
         <HBox spacing="10" alignment="CENTER" styleClass="button-container">
             <Button fx:id="detailsBtn" text="Details" styleClass="action-button"/>
             <Button fx:id="modifyBtn" text="Modify" styleClass="action-button"/>
+
+        </HBox>
+      <HBox fx:id="buttonBox" spacing="10" alignment="CENTER">
+            <!-- This will be populated from the controller -->
         </HBox>
     </VBox>
 </VBox>
