@@ -144,4 +144,151 @@
 .date-label {
     -fx-font-size: 12px;
     -fx-text-fill: #95a5a6;
-} 
+}
+/* Add Comment Form Styles */
+.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.section-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+}
+
+.rating-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #f39c12;
+}
+
+.slider {
+    -fx-show-tick-labels: true;
+    -fx-show-tick-marks: true;
+}
+
+.slider .track {
+    -fx-background-color: #ecf0f1;
+}
+
+.slider .thumb {
+    -fx-background-color: #f39c12;
+}
+
+.text-area {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+}
+
+.text-area:focused {
+    -fx-border-color: #3498db;
+}
+
+.button-primary {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4px;
+}
+
+.button-primary:hover {
+    -fx-background-color: #2980b9;
+}
+
+.button-secondary {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4px;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+/* Comments Section Styles */
+.comments-section {
+    -fx-padding: 15;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5;
+    -fx-background-color: white;
+}
+
+.comments-header {
+    -fx-padding: 0 0 10 0;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.comment-count {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+}
+
+.average-rating {
+    -fx-font-size: 14px;
+    -fx-text-fill: #f39c12;
+}
+
+.add-comment-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+}
+
+.add-comment-button:hover {
+    -fx-background-color: #1976D2;
+}
+
+.comments-scroll {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+}
+
+.comments-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.comments-container {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+}
+
+.comment-box {
+    -fx-padding: 10;
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+}
+
+.comment-box:hover {
+    -fx-background-color: #f0f2f5;
+}
+
+.rating-label {
+    -fx-text-fill: #f39c12;
+    -fx-font-size: 14px;
+}
+
+.comment-text {
+    -fx-font-size: 14px;
+    -fx-wrap-text: true;
+    -fx-text-fill: #2c3e50;
+}
+
+.date-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #95a5a6;
+}

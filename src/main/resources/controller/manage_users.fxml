@@ -32,6 +32,6 @@
             <Button fx:id="deleteButton" text="Delete" onAction="#handleDeleteUser" styleClass="dashboard-button" prefWidth="120"/>
         </HBox>
 
-        <Button text="Back to Dashboard" onAction="#handleBackToDashboard" prefWidth="200" styleClass="dashboard-button"/>
+        <Button text="Back to Dashboard" prefWidth="200" styleClass="dashboard-button"/>
     </VBox>
 </AnchorPane>

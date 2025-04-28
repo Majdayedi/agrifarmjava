@@ -10,7 +10,7 @@
       alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="controller.ViewProfileController"
-      stylesheets="@/css/StylesUser.css"
+      stylesheets="@styles.css"
       styleClass="dashboard-vbox">
 
     <!-- User Profile Title -->

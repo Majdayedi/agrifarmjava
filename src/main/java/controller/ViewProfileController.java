@@ -73,3 +73,4 @@ public class ViewProfileController {
                 (AdminDashboardController controller) -> controller.setUser(currentUser));
     }
 }
+
