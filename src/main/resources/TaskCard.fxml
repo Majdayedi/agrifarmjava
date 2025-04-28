@@ -2,32 +2,49 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox  xmlns="http://javafx.com/javafx"
-       xmlns:fx="http://javafx.com/fxml" spacing="5" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
-    <Label fx:id="taskName" style="-fx-font-weight: bold;"/>
-    <Label text="Responsible:"/>
-    <HBox spacing="5">
-        <Label fx:id="responsibleLabel"/>
-        <Label fx:id="managerLabel" visible="false"/>
-    </HBox>
-    <Label fx:id="workersLabel" text="Workers:"/>
-    <Label fx:id="workers" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+<VBox fx:id="cardRoot" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      styleClass="task-card" spacing="5">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
 
+    <VBox spacing="5" styleClass="task-details">
+        <Label fx:id="taskName" styleClass="task-name"/>
+        <Label fx:id="taskStatus" styleClass="task-status"/>
 
-    <Label fx:id="costLabel" text="Total Cost:"/>
-    <Label fx:id="paymentworker" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <GridPane vgap="5" hgap="10">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
 
-    <Separator/>
-    <Label text="Task Date:"/>
-    <Label fx:id="taskDateLabel"/>
-    <Label text="Duration:"/>
-    <Label fx:id="durationLabel"/>
+            <Label text="Responsible:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label fx:id="responsibleLabel"/>
+                <Label fx:id="managerLabel" visible="false"/>
+            </HBox>
 
-    <Label text="Deadline:"/>
-    <Label fx:id="deadlineLabel"/>
-    <HBox spacing="5">
-        <Button fx:id="deleteBtn" text="Delete" style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
-        <Button fx:id="editBtn" text="Edit" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-    </HBox>
+            <Label text="Workers:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <Label fx:id="workers" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+            <Label text="Total Cost:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <Label fx:id="paymentworker" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+            <Label text="Task Date:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <Label fx:id="taskDateLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+            <Label text="Duration:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <Label fx:id="durationLabel" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+            <Label text="Deadline:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+            <Label fx:id="deadlineLabel" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        </GridPane>
+
+        <HBox spacing="10" alignment="CENTER" styleClass="button-container">
+            <Button fx:id="deleteBtn" text="Delete" styleClass="delete-button"/>
+            <Button fx:id="editBtn" text="Edit" styleClass="action-button"/>
+        </HBox>
+    </VBox>
 </VBox>

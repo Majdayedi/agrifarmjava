@@ -11,7 +11,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="681.0" prefWidth="784.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FarmController">
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.control.TextField?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="681.0" prefWidth="784.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FarmController">
 
     <!-- Menu latéral gauche -->
     <left>
@@ -42,37 +46,42 @@
 
             <center>
 
-                    <Label style="-fx-text-fill: #2c3e50; -fx-font-size: 24; -fx-font-weight: bold;" text="Farms" />
+                <Label style="-fx-text-fill: #2c3e50; -fx-font-size: 24; -fx-font-weight: bold;" text="Farms" />
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
 
 
                     <content>
                         <VBox>
-                            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                                <children>
-                                    <Button fx:id="addFarmBtn" styleClass="add-button" text="+ Add Farm">
-                                        <HBox.margin>
-                                            <Insets right="20.0" />
-                                        </HBox.margin>
-                                    </Button>
-                                </children>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <TextField fx:id="searchField" promptText="Search farms..." prefWidth="200"
+                                           style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                                <Button fx:id="searchButton" text="Search"
+                                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
                             </HBox>
-                        <GridPane fx:id="farmgrid" prefHeight="410.0" prefWidth="632.0" hgap="10" vgap="10">
-                            <padding>
-                                <Insets top="115" right="15" bottom="15" left="15" />
-                            </padding>
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
 
-                        </GridPane>
+                            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                <Button fx:id="addFarmBtn" styleClass="add-button" text="+ Add Farm">
+                                    <HBox.margin>
+                                        <Insets right="20.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </HBox>
+                            <GridPane fx:id="farmgrid" prefHeight="610.0" prefWidth="632.0" hgap="30" vgap="30">
+                                <padding>
+                                    <Insets top="115" right="15" bottom="15" left="15" />
+                                </padding>
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+
+                            </GridPane>
                         </VBox>
 
                     </content>
@@ -86,13 +95,25 @@
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="80.0" style="-fx-background-color: #13af02;">
             <children>
-                <Button fx:id="homeButton" mnemonicParsing="false" onAction="#navigateToHome" styleClass="return-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="← Retour">
-                    <HBox.margin>
-                        <Insets right="20.0" left="10.0" />
-                    </HBox.margin>
+                <Button fx:id="homeButton" onAction="#navigateToHome"
+                        style="-fx-background-color: transparent; -fx-padding: 20;">
+                    <graphic>
+                        <ImageView fitWidth="36" fitHeight="36" preserveRatio="true">
+                            <Image url="@/img/barn.png"/>
+                        </ImageView>
+                    </graphic>
+
                 </Button>
                 <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 20;" text="AGRIFARM" />
             </children>
         </HBox>
     </top>
+
+    <VBox fx:id="weatherCard" alignment="CENTER" spacing="6" style="-fx-background-color: linear-gradient(to bottom right, rgba(0,121,220,0.96), #A1C0DF); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 2);">
+        <ImageView fx:id="weatherIcon" fitWidth="36" fitHeight="36" />
+        <Label fx:id="weatherTemp" style="-fx-text-fill: #ffffff; -fx-font-size: 18; -fx-font-weight: bold;" />
+        <Label fx:id="weatherDesc" style="-fx-text-fill: #ffffff; -fx-font-size: 13;" />
+        <Button fx:id="weatherBtn" text="Show Details"
+                style="-fx-background-color: #ffffff; -fx-text-fill: rgba(0,121,220,0.96); -fx-font-weight: bold; -fx-background-radius: 5;"/>
+    </VBox>
 </BorderPane>

@@ -7,4 +7,102 @@
 .read-only-field:focused {
     -fx-background-color: #f0f0f0;
     -fx-border-color: #cccccc;
+}
+
+/* Weather Forecast Styles */
+.alert {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-text-fill: white;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+}
+
+.card {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.card:hover {
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+
+.card-header {
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+    -fx-padding: 10;
+}
+
+.chart {
+    -fx-background-color: transparent;
+}
+
+.chart-title {
+    -fx-text-fill: white;
+}
+
+.axis-label {
+    -fx-text-fill: white;
+}
+
+.axis {
+    -fx-tick-label-fill: white;
+}
+
+.chart-legend {
+    -fx-text-fill: white;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255,255,255,0.1);
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(255,255,255,0.1);
+}
+
+.chart-series-line {
+    -fx-stroke: white;
+    -fx-stroke-width: 2;
+}
+
+.chart-line-symbol {
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.button:hover {
+    -fx-background-color: rgba(255,255,255,0.2);
+}
+
+.scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: rgba(255,255,255,0.2);
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: rgba(255,255,255,0.3);
 } 

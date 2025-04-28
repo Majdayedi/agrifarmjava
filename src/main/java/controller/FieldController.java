@@ -1,24 +1,29 @@
-package controller;
+    package controller;
 
-import entite.Farm;
-import entite.Field;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Stage;
-import service.FieldService;
+    import entite.Farm;
+    import entite.Field;
+    import javafx.fxml.FXML;
+    import javafx.fxml.FXMLLoader;
+    import javafx.scene.Node;
+    import javafx.scene.control.Button;
+    import javafx.scene.control.Label;
+    import javafx.scene.control.TextField;
+    import javafx.scene.control.ComboBox;
+    import javafx.scene.image.Image;
+    import javafx.scene.image.ImageView;
+    import javafx.scene.layout.GridPane;
+    import javafx.scene.layout.Pane;
+    import javafx.scene.layout.BorderPane;
+    import service.FieldService;
 
-import java.util.List;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import java.io.IOException;
-import java.io.InputStream;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.util.List;
+    import javafx.stage.Stage;
+    import javafx.scene.Parent;
+    import javafx.scene.Scene;
+    import service.WeatherService;
+import service.WeatherService.Weather;
 
 // QR Code imports
 import com.google.zxing.BarcodeFormat;
@@ -35,184 +40,195 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javafx.stage.Modality;
+    public class FieldController {
 
-public class FieldController {
-    private final FieldService fieldService = new FieldService();
-    private Field selectedField;
+        private final FieldService fieldService = new FieldService();
+        public Button weatherBtn;
+        public ImageView weatherIcon;
+        public Label weatherTemp;
+        public Label weatherDesc;
+  private Field selectedField;
     private final Map<Integer, String> fieldAccessCodes = new HashMap<>();
 
-    @FXML
-    private GridPane fieldgrid;
-    private Farm currentFarm;
+        @FXML
+        private GridPane fieldgrid;
+        private Farm currentFarm;
 
-    @FXML
-    private Button addFieldBtn;
-    
-    // FXML elements for dynamically loaded cards
-    @FXML
-    private HBox buttonBox;
 
-    @FXML
-    public void initialize() {
-        fieldgrid.setHgap(30);
-        fieldgrid.setVgap(200);
-    }
+        @FXML
+        private Button addFieldBtn;
 
-    private void handleAddField(Farm farm) {
-        try {
+        @FXML
+        private Button backButton;
+
+        @FXML
+        private TextField searchField;
+        @FXML
+        private Button searchButton;
+
+        @FXML
+        private ComboBox<String> cropTypeCombo;
+        @FXML
+        private TextField surfaceMinField;
+        @FXML
+        private TextField surfaceMaxField;
+        @FXML
+        private Button filterButton;
+        private WeatherService.Weather weather;
+        public void setFirst(WeatherService.Weather first) {
+            this.weather= first;
+        }
+        @FXML
+        public void initialize() {
+
+            fieldgrid.setHgap(30);
+            fieldgrid.setVgap(200);
+
+            if (backButton != null) {
+                backButton.setOnAction(e -> handleBackToFarm());
+            }
+            setupSearch();
+
+        }
+
+        private void setupSearch() {
+            if (searchField != null) {
+                searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue.isEmpty()) {
+                        if (currentFarm != null) loadField(currentFarm, weather);
+                    } else {
+                        searchFields(newValue);
+                    }
+                });
+            }
+            if (searchButton != null) {
+                searchButton.setOnAction(e -> searchFields(searchField.getText()));
+            }
+        }
+
+        private void setupFilters() {
+            FieldService fieldService = new FieldService();
+            List <String> cropTypes = fieldService.getCropList(currentFarm);
+
+
+            cropTypeCombo.getItems().addAll(cropTypes);
+            cropTypeCombo.getSelectionModel().selectFirst();
+            filterButton.setOnAction(e -> applyFilters());
+        }
+
+        private void searchFields(String searchText) {
+            fieldgrid.getChildren().clear();
+            if (currentFarm == null) return;
+            List<Field> fields = fieldService.getFieldsByFarm(currentFarm.getId());
+            int col = 0, row = 0;
+            try {
+                for (Field field : fields) {
+                    if (matchesSearch(field, searchText)) {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/field.fxml"));
+                        Pane card = loader.load();
+                        ((Label) card.lookup("#Namef")).setText(field.getName());
+                        ((Label) card.lookup("#Surfacef")).setText(String.format("%.2f ha", field.getSurface()));
+                        ((Label) card.lookup("#Budgetf")).setText(String.format("$%.2f", field.getBudget()));
+                        ((Label) card.lookup("#incomef")).setText(String.format("$%.2f", field.getIncome()));
+                        ((Label) card.lookup("#outcomef")).setText(String.format("$%.2f", field.getOutcome()));
+                        ((Label) card.lookup("#cropf")).setText(field.getCrop() != null ? field.getCrop().getTypeCrop() : "No Crop");
+                        ((Label) card.lookup("#descriptionf")).setText(field.getDescription());
+                        Button deleteBtn = (Button) card.lookup("#deleteBtn");
+                        Button modifyBtn = (Button) card.lookup("#modifyBtn");
+                        Button detailsBtn = (Button) card.lookup("#detailsBtn");
+                        deleteBtn.setOnAction(e -> handleDelete(field, card));
+                        modifyBtn.setOnAction(e -> handleModify(field));
+                        detailsBtn.setOnAction(e -> handleDetails(field));
+                        fieldgrid.add(card, col % 3, row);
+                        col++;
+                        if (col % 3 == 0) row++;
+                    }
+                }
+            } catch (Exception e) {
+                showError("Error Loading Fields", "Failed to load fields: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        private boolean matchesSearch(Field field, String searchText) {
+            if (searchText == null || searchText.isEmpty()) return true;
+            String searchLower = searchText.toLowerCase();
+            return field.getName().toLowerCase().contains(searchLower)
+                || String.valueOf(field.getSurface()).contains(searchText)
+                || String.valueOf(field.getBudget()).contains(searchText)
+                || String.valueOf(field.getIncome()).contains(searchText)
+                || String.valueOf(field.getOutcome()).contains(searchText)
+                || (field.getCrop() != null && field.getCrop().getTypeCrop().toLowerCase().contains(searchLower))
+                || (field.getDescription() != null && field.getDescription().toLowerCase().contains(searchLower));
+        }
+
+        @FXML
+        private void handleSearch() {
+            searchFields(searchField.getText());
+        }
+
+        public void setFarm(Farm farm) {
+            this.currentFarm = farm;
+        }
+        public void loadField(Farm farm, Weather first) {
+            // Debug: Print farm ID
             System.out.println("Debug - Farm ID: " + farm.getId());
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/addfield.fxml"));
-            Pane addForm = loader.load();
+            // Clear existing content in the grid before refreshing
+            fieldgrid.getChildren().clear();
+            setFarm(farm);
+            setFirst(first);
+            fieldgrid.setStyle("-fx-padding: 20; -fx-background-color: #f0f0f0;");
+            Image image = new Image("http://openweathermap.org/img/wn/" + weather.getIcon() + "@2x.png");
 
-            // Récupérer le contrôleur et passer l'objet Farm
-            AddFieldController addFieldController = loader.getController();
-            addFieldController.setFarm(farm);
-
-            BorderPane mainContainer = getMainContainer();
-            if (mainContainer != null) {
-                mainContainer.setCenter(addForm);
-            } else {
-                showError("Error", "Could not find main container");
+            weatherIcon.setImage(image);
+            weatherTemp.setText(String.format("%.1f°C", weather.getTemperature()));
+            weatherDesc.setText(weather.getDescription());
+            setupFilters();
+            // Set up the add field button
+            if (addFieldBtn != null) {
+                addFieldBtn.setOnAction(e -> handleAddField(currentFarm));
             }
-        } catch (IOException e) {
-            showError("Error", "Could not load add field form: " + e.getMessage());
-        }
-    }
+            weatherBtn.setOnAction(e -> handleWeather());
 
-    public void setFarm(Farm farm) {
-        this.currentFarm = farm;
-    }
 
-    public void loadField(Farm farm) {
-        // Debug: Afficher l'ID de la ferme
-        System.out.println("Debug - Farm ID: " + farm.getId());
+            // Load fields for the farm
+            List<Field> fields = fieldService.getFieldsByFarm(farm.getId());
+            int col = 0, row = 0;
 
-        // Clear existing content in the grid before refreshing
-        fieldgrid.getChildren().clear();
-        setFarm(farm);
-        addFieldBtn.setOnAction(e -> handleAddField(currentFarm));
+            try {
+                for (Field field : fields) {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/field.fxml"));
+                    Pane card = loader.load();
 
-        List<Field> fields = fieldService.getFieldsByFarm(farm.getId());
-        int col = 0, row = 0;
+                    // Set field data
+                    ((Label) card.lookup("#Namef")).setText(field.getName());
+                    ((Label) card.lookup("#Surfacef")).setText(String.format("%.2f ha", field.getSurface()));
 
-        try {
-            for (Field field : fields) {
-                System.out.println("Debug - Loading field: " + field.getName() + " (ID: " + field.getId() + ")");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/field.fxml"));
-                // We're not using a controller for the field card, so we load it directly
-                Pane card = loader.load();
+                    ((Label) card.lookup("#Budgetf")).setText(String.format("$%.2f", field.getBudget()));
 
-                // Set field data with null checking
-                setLabelTextSafely(card, "#Namef", field.getName());
-                setLabelTextSafely(card, "#Surfacef", String.format("%.2f ha", field.getSurface()));
-                
-                // Fix the income/outcome labels which are in the same grid cell in the FXML
-                Label incomeLabel = (Label) card.lookup("#incomef");
-                Label outcomeLabel = (Label) card.lookup("#outcomef");
-                
-                try {
-                    if (incomeLabel != null && outcomeLabel != null) {
-                        // Find the GridPane correctly - search for it using traversal
-                        System.out.println("Debug - Attempting to find GridPane for field: " + field.getName());
-                        GridPane gridPane = findGridPaneInCard(card);
-                        System.out.println("Debug - GridPane lookup result: " + (gridPane != null ? "found" : "not found"));
-                        
-                        if (gridPane != null) {
-                            // Log the current structure of the GridPane
-                            // Log the current structure of the GridPane
-                            Integer incomeRow = GridPane.getRowIndex(incomeLabel);
-                            Integer outcomeRow = GridPane.getRowIndex(outcomeLabel);
-                            Integer incomeCol = GridPane.getColumnIndex(incomeLabel);
-                            Integer outcomeCol = GridPane.getColumnIndex(outcomeLabel);
-                            
-                            System.out.println("Debug - GridPane structure before changes:");
-                            System.out.println("  - incomeLabel: row=" + (incomeRow != null ? incomeRow : "default(0)") + 
-                                              ", col=" + (incomeCol != null ? incomeCol : "default(0)"));
-                            System.out.println("  - outcomeLabel: row=" + (outcomeRow != null ? outcomeRow : "default(0)") + 
-                                              ", col=" + (outcomeCol != null ? outcomeCol : "default(0)"));
-                            
-                            // Log all children of GridPane
-                            // Log all children of GridPane
-                            System.out.println("Debug - GridPane children count: " + gridPane.getChildren().size());
-                            for (Node child : gridPane.getChildren()) {
-                                Integer gridRowIndex = GridPane.getRowIndex(child);
-                                Integer gridColIndex = GridPane.getColumnIndex(child);
-                                System.out.println("  - Child: " + child.getClass().getSimpleName() + 
-                                                  " at row=" + (gridRowIndex != null ? gridRowIndex : "default(0)") + 
-                                                  ", col=" + (gridColIndex != null ? gridColIndex : "default(0)"));
-                            }
-                            try {
-                                GridPane.setRowIndex(outcomeLabel, 2);
-                                // Also set a column index to ensure it's in the right position
-                                if (GridPane.getColumnIndex(outcomeLabel) == null) {
-                                    GridPane.setColumnIndex(outcomeLabel, 1);
-                                }
-                                System.out.println("Debug - Repositioned outcomeLabel to row 2");
-                            } catch (Exception e) {
-                                System.err.println("Warning: Failed to reposition outcomeLabel: " + e.getMessage());
-                            }
-                            
-                            // Add a new label for "Outcome:" in the left column
-                            try {
-                                Label outcomeTextLabel = new Label("Outcome:");
-                                GridPane.setRowIndex(outcomeTextLabel, 2);
-                                GridPane.setColumnIndex(outcomeTextLabel, 0);
-                                gridPane.getChildren().add(outcomeTextLabel);
-                                System.out.println("Debug - Added 'Outcome:' label to GridPane");
-                            } catch (Exception e) {
-                                System.err.println("Warning: Failed to add outcome text label: " + e.getMessage());
-                            }
-                        } else {
-                            System.err.println("Warning: GridPane not found in field card for field: " + field.getName());
-                        }
-                        
-                        // Set the text for the labels even if GridPane adjustments failed
-                        incomeLabel.setText(String.format("$%.2f", field.getIncome()));
-                        outcomeLabel.setText(String.format("$%.2f", field.getOutcome()));
-                    } else {
-                        System.err.println("Warning: Income or outcome labels not found for field: " + field.getName());
-                    }
-                } catch (Exception e) {
-                    System.err.println("Error handling income/outcome labels: " + e.getMessage());
-                    e.printStackTrace();
-                }
+                    ((Label) card.lookup("#incomef")).setText(String.format("$%.2f", field.getIncome()));
+                    ((Label) card.lookup("#outcomef")).setText(String.format("$%.2f", field.getOutcome()));
+                    System.out.println(field.toString());
+                    ((Label) card.lookup("#cropf")).setText(field.getCrop() != null ? field.getCrop().getTypeCrop() : "No Crop");
 
-                // Debug logging for card structure
-                System.out.println("Debug - Card structure loaded for field: " + field.getName());
+                    ((Label) card.lookup("#descriptionf")).setText(field.getDescription());
 
-                // Get buttons and add event handlers with null checking
-                Button deleteBtn = (Button) card.lookup("#deleteBtn");
-                Button modifyBtn = (Button) card.lookup("#modifyBtn");
-                Button detailsBtn = (Button) card.lookup("#detailsBtn");
 
-                // Log button discovery status
-                System.out.println("Debug - Button discovery: deleteBtn=" + (deleteBtn != null) + 
-                                  ", modifyBtn=" + (modifyBtn != null) + 
-                                  ", detailsBtn=" + (detailsBtn != null));
+                    // Get buttons and add event handlers
+                    Button deleteBtn = (Button) card.lookup("#deleteBtn");
+                    Button modifyBtn = (Button) card.lookup("#modifyBtn");
+                    Button detailsBtn = (Button) card.lookup("#detailsBtn");
 
-                // Setup delete button
-                if (deleteBtn != null) {
+                    // Setup delete button
                     deleteBtn.setOnAction(e -> handleDelete(field, card));
-                } else {
-                    System.err.println("Warning: deleteBtn not found in field card for field: " + field.getName());
-                }
 
-                // Setup modify button
-                if (modifyBtn != null) {
+                    // Setup modify button
                     modifyBtn.setOnAction(e -> handleModify(field));
-                } else {
-                    System.err.println("Warning: modifyBtn not found in field card for field: " + field.getName());
-                }
 
-                // Setup details button
-                if (detailsBtn != null) {
+                    // Setup details button
                     detailsBtn.setOnAction(e -> handleDetails(field));
-                } else {
-                    System.err.println("Warning: detailsBtn not found in field card for field: " + field.getName());
-                }
-
-                // Add QR code and verify buttons
+		   // Add QR code and verify buttons
                 Button qrCodeButton = new Button("QR Code");
                 qrCodeButton.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white;");
                 qrCodeButton.setOnAction(e -> showQRCode(field));
@@ -224,27 +240,293 @@ public class FieldController {
                 // Add QR code and verify buttons to the buttonBox
                 setupButtonBox(card, field, qrCodeButton, verifyButton);
 
-                // Add to grid
-                fieldgrid.add(card, col % 3, row);
-                col++;
-                if (col % 3 == 0) row++;
+                    // Add to grid
+                    fieldgrid.add(card, col % 3, row);
+                    col++;
+                    if (col % 3 == 0) row++;
+                }
+            } catch (Exception e) {
+                showError("Error Loading Fields", "Failed to load fields: " + e.getMessage());
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            showError("Error Loading Fields", "Failed to load fields: " + e.getMessage());
-            e.printStackTrace(); // Print the stack trace for better debugging
         }
-    }
+        private void handleAddField(Farm farm) {
+            try {
+                System.out.println("Debug - Farm ID: " + farm.getId());
 
-    /**
-     * Sets up the buttonBox in the card, adding the QR code and verify buttons.
-     * If the buttonBox doesn't exist in the FXML, creates one programmatically.
-     * 
-     * @param card The field card pane
-     * @param field The field data
-     * @param qrCodeButton The QR code button to add
-     * @param verifyButton The verify button to add
-     */
-    private void setupButtonBox(Pane card, Field field, Button qrCodeButton, Button verifyButton) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/addfield.fxml"));
+                Pane addForm = loader.load();
+
+                // Récupérer le contrôleur et passer l'objet Farm
+                AddFieldController addFieldController = loader.getController();
+                addFieldController.setFarm(farm);
+                addFieldController.setFirst(weather);
+
+                BorderPane mainContainer = getMainContainer();
+                if (mainContainer != null) {
+                    mainContainer.setCenter(addForm);
+                } else {
+                    showError("Error", "Could not find main container");
+                }
+            } catch (IOException e) {
+                showError("Error", "Could not load add field form: " + e.getMessage());
+            }
+        }
+
+        private void handleModify(Field field) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/updatefield.fxml"));
+                Pane modifyForm = loader.load();
+
+                // Récupérer le contrôleur et passer l'objet Field
+                AddFieldController addFieldController = loader.getController();
+                addFieldController.setField(field);
+
+                BorderPane mainContainer = getMainContainer();
+                if (mainContainer != null) {
+                    mainContainer.setCenter(modifyForm);
+                } else {
+                    showError("Error", "Could not find main container");
+                }
+            } catch (IOException e) {
+                showError("Error", "Could not load modify field form: " + e.getMessage());
+            }
+        }
+        @FXML
+        private void handleWeather() {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/WeatherForecast.fxml"));
+                Pane weatherPane = loader.load();
+                WeatherForecastController controller = loader.getController();
+                controller.setFirst(weather);
+                controller.initialize(currentFarm);
+                BorderPane mainContainer = getMainContainer();
+                if (mainContainer != null) {
+                    mainContainer.setCenter(weatherPane);
+                } else {
+                    showError("Error", "Could not find main container");
+                }
+            } catch (IOException e) {
+                showError("Error", "Could not load weather forecast: " + e.getMessage());
+            }
+        }
+
+        private void handleDetails(Field field) {
+            try {
+                // Use getResourceAsStream for more reliable loading
+                InputStream fxmlStream = getClass().getResourceAsStream("/TaskDetails.fxml");
+                if (fxmlStream == null) {
+                    System.err.println("Error: TaskDetails.fxml not found in resources");
+                    return;
+                }
+
+                FXMLLoader loader = new FXMLLoader();
+                Pane details = loader.load(fxmlStream);
+
+                // Pass both the field and farm to TaskController
+                TaskController taskController = loader.getController();
+                if (taskController != null) {
+                    taskController.LoadTasks(field);
+                    taskController.setCurrentFarm(currentFarm);
+                    taskController.setFirst(weather);// Pass the farm object
+                } else {
+                    System.err.println("Error: TaskController not initialized");
+                }
+
+                // Replace main content
+                BorderPane mainContainer = getMainContainer();
+                if (mainContainer != null) {
+                    mainContainer.setCenter(details);
+                } else {
+                    showError("Error", "Could not find main container");
+                }
+            } catch (IOException e) {
+                showError("Error", "Could not load task details: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        private void handleDelete(Field field, Pane card) {
+            fieldService.delete(field);
+            fieldgrid.getChildren().remove(card);
+        }
+
+        private BorderPane getMainContainer() {
+            Node current = fieldgrid;
+            while (current != null && !(current instanceof BorderPane)) {
+                current = current.getParent();
+            }
+            return (BorderPane) current;
+        }
+
+        private void showError(String title, String message) {
+            System.err.println(title + ": " + message);
+        }
+        @FXML
+        private void handleBack(Farm farm) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/farmdisplay.fxml"));
+                Pane fieldDisplay = loader.load();
+
+                // Get the FieldController and pass the farm
+                FieldController fieldController = loader.getController();
+                if (fieldController != null) {
+                    fieldController.loadField(farm, weather);
+                }
+
+                // Replace main content
+                BorderPane mainContainer = getMainContainer();
+                if (mainContainer != null) {
+                    mainContainer.setCenter(fieldDisplay);
+                } else {
+                    showError("Error", "Could not find main container");
+                }
+            } catch (IOException e) {
+                showError("Error", "Could not navigate back: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        private void handleBackToFarm() {
+            try {
+                // Get the current stage
+                Stage stage = (Stage) backButton.getScene().getWindow();
+                
+                // Load the farm display view
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/farmdisplay.fxml"));
+                Parent root = loader.load();
+                
+                // Get the controller and load farms
+                FarmController controller = loader.getController();
+                controller.loadFarms1();
+                
+                // Set the new scene
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                showError("Error", "Could not navigate back to farm: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        public void setCurrentFarm(Farm farm) {
+            this.currentFarm = farm;
+        }
+
+        private void applyFilters() {
+            // Read user input
+            String cropType = cropTypeCombo.getValue();
+            String minSurfaceStr = surfaceMinField.getText();
+            String maxSurfaceStr = surfaceMaxField.getText();
+
+            // Convert surface input to numbers (if given)
+            Double minSurface = null, maxSurface = null;
+            try {
+                if (minSurfaceStr != null && !minSurfaceStr.isEmpty()) {
+                    minSurface = Double.valueOf(minSurfaceStr);
+                }
+            } catch (NumberFormatException e) {
+                showError("Invalid Input", "Min Surface must be a number.");
+                return;
+            }
+
+            try {
+                if (maxSurfaceStr != null && !maxSurfaceStr.isEmpty()) {
+                    maxSurface = Double.valueOf(maxSurfaceStr);
+                }
+            } catch (NumberFormatException e) {
+                showError("Invalid Input", "Max Surface must be a number.");
+                return;
+            }
+
+            // Debug info
+            System.out.println("Filtering: cropType='" + cropType + "', minSurface=" + minSurface + ", maxSurface=" + maxSurface);
+
+            // Clear the current grid
+            fieldgrid.getChildren().clear();
+            if (currentFarm == null) return;
+
+            // Fetch fields from the service
+            List<Field> fields = fieldService.getFieldsByFarm(currentFarm.getId());
+
+            int col = 0, row = 0;
+
+            try {
+                for (Field field : fields) {
+                    // --- Apply Filters ---
+
+                    // Filter by crop type
+                    if (cropType != null && !cropType.trim().equalsIgnoreCase("Select crop")) {
+                        String fieldCrop = (field.getCrop() != null) ? field.getCrop().getTypeCrop() : "No Crop";
+                        if (!fieldCrop.equalsIgnoreCase(cropType)) {
+                            continue; // Skip this field
+                        }
+                    }
+
+                    // Filter by minimum surface
+                    if (minSurface != null && field.getSurface() < minSurface) {
+                        continue; // Skip this field
+                    }
+
+                    // Filter by maximum surface
+                    if (maxSurface != null && field.getSurface() > maxSurface) {
+                        continue; // Skip this field
+                    }
+
+                    // --- If passed all filters, load and display the field card ---
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/field.fxml"));
+                    Pane card = loader.load();
+
+                    // Fill card labels
+                    ((Label) card.lookup("#Namef")).setText(field.getName());
+                    ((Label) card.lookup("#Surfacef")).setText(String.format("%.2f ha", field.getSurface()));
+                    ((Label) card.lookup("#Budgetf")).setText(String.format("$%.2f", field.getBudget()));
+                    ((Label) card.lookup("#incomef")).setText(String.format("$%.2f", field.getIncome()));
+                    ((Label) card.lookup("#outcomef")).setText(String.format("$%.2f", field.getOutcome()));
+                    ((Label) card.lookup("#cropf")).setText(field.getCrop() != null ? field.getCrop().getTypeCrop() : "No Crop");
+                    ((Label) card.lookup("#descriptionf")).setText(field.getDescription());
+
+                    // Setup button actions
+                    Button deleteBtn = (Button) card.lookup("#deleteBtn");
+                    Button modifyBtn = (Button) card.lookup("#modifyBtn");
+                    Button detailsBtn = (Button) card.lookup("#detailsBtn");
+
+                    deleteBtn.setOnAction(e -> handleDelete(field, card));
+                    modifyBtn.setOnAction(e -> handleModify(field));
+                    detailsBtn.setOnAction(e -> handleDetails(field));
+
+
+                    // Add the card to the grid
+                    fieldgrid.add(card, col % 3, row);
+
+                    col++;
+                    if (col % 3 == 0) {
+                        row++;
+                    }
+                }
+            } catch (Exception e) {
+                showError("Error Loading Fields", "Failed to load fields: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        // Add this method to receive weather data and update the UI
+        public void setWeather(WeatherService.Weather weather) {
+            this.weather = weather;
+            updateWeatherCard();
+        }
+
+        // Add this helper method to update the weather card UI
+        private void updateWeatherCard() {
+            if (weather != null) {
+                weatherTemp.setText(String.format("%.1f°C", weather.getTemperature()));
+                weatherDesc.setText(weather.getDescription());
+                weatherIcon.setImage(new Image("http://openweathermap.org/img/wn/" + weather.getIcon() + "@2x.png"));
+            }
+        }
+private void setupButtonBox(Pane card, Field field, Button qrCodeButton, Button verifyButton) {
         try {
             // Try to find existing buttonBox
             HBox buttonBox = (HBox) card.lookup("#buttonBox");
@@ -308,162 +590,6 @@ public class FieldController {
         } catch (Exception e) {
             System.err.println("Error setting up buttonBox for field " + field.getName() + ": " + e.getMessage());
             e.printStackTrace();
-        }
-    }
-
-    private void handleModify(Field field) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/updatefield.fxml"));
-            Pane modifyForm = loader.load();
-
-            // Récupérer le contrôleur et passer l'objet Field
-            AddFieldController addFieldController = loader.getController();
-            addFieldController.setField(field);
-
-            BorderPane mainContainer = getMainContainer();
-            if (mainContainer != null) {
-                mainContainer.setCenter(modifyForm);
-            } else {
-                showError("Error", "Could not find main container");
-            }
-        } catch (IOException e) {
-            showError("Error", "Could not load modify field form: " + e.getMessage());
-        }
-    }
-
-    private void handleDetails(Field field) {
-        try {
-            // Use getResourceAsStream for more reliable loading
-            InputStream fxmlStream = getClass().getResourceAsStream("/TaskDetails.fxml");
-            if (fxmlStream == null) {
-                System.err.println("Error: TaskDetails.fxml not found in resources");
-                return;
-            }
-
-            FXMLLoader loader = new FXMLLoader();
-            Pane details = loader.load(fxmlStream);
-
-            // Pass the field to TaskController
-            TaskController taskController = loader.getController();
-            if (taskController != null) {
-                taskController.LoadTasks(field);
-            } else {
-                System.err.println("Error: TaskController not initialized");
-            }
-
-            // Replace main content
-            BorderPane mainContainer = getMainContainer();
-            if (mainContainer != null) {
-                mainContainer.setCenter(details);
-            } else {
-                showError("Error", "Could not find main container");
-            }
-        } catch (IOException e) {
-            showError("Error", "Could not load task details: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void handleDelete(Field field, Pane card) {
-        fieldService.delete(field);
-        fieldgrid.getChildren().remove(card);
-    }
-
-    private BorderPane getMainContainer() {
-        Node current = fieldgrid;
-        while (current != null && !(current instanceof BorderPane)) {
-            current = current.getParent();
-        }
-        return (BorderPane) current;
-    }
-
-    private void showError(String title, String message) {
-        System.err.println(title + ": " + message);
-    }
-    
-    /**
-     * Sets text for a Label safely, checking for null values
-     */
-    private void setLabelTextSafely(Pane container, String selector, String text) {
-        Label label = (Label) container.lookup(selector);
-        if (label != null) {
-            label.setText(text);
-        } else {
-            System.err.println("Warning: Label with selector '" + selector + "' not found");
-        }
-    }
-    
-    /**
-     * Finds the first child of a specific type in the node hierarchy
-     */
-    private Node findFirstChildOfType(Pane container, Class<?> type) {
-        for (Node node : container.getChildren()) {
-            if (type.isInstance(node)) {
-                return node;
-            } else if (node instanceof Pane) {
-                Node result = findFirstChildOfType((Pane) node, type);
-                if (result != null) {
-                    return result;
-                }
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Finds the GridPane inside a field card using proper traversal
-     * @param card The field card pane
-     * @return The GridPane if found, null otherwise
-     */
-    private GridPane findGridPaneInCard(Pane card) {
-        System.out.println("Debug - Searching for GridPane in field card");
-        
-        try {
-            // Try looking up GridPane within .farm-details VBox first
-            VBox farmDetails = (VBox) card.lookup(".farm-details");
-            if (farmDetails != null) {
-                System.out.println("Debug - Found .farm-details VBox, searching for GridPane inside");
-                
-                // Log the structure of farmDetails for debugging
-                System.out.println("Debug - .farm-details children count: " + farmDetails.getChildren().size());
-                int childIndex = 0;
-                
-                for (Node child : farmDetails.getChildren()) {
-                    System.out.println("Debug - Child " + childIndex + " type: " + child.getClass().getSimpleName());
-                    childIndex++;
-                    
-                    if (child instanceof GridPane) {
-                        System.out.println("Debug - Found GridPane in .farm-details children");
-                        return (GridPane) child;
-                    }
-                }
-            } else {
-                System.out.println("Debug - .farm-details VBox not found");
-            }
-            
-            // Try with CSS selectors
-            for (Node node : card.lookupAll("GridPane")) {
-                if (node instanceof GridPane) {
-                    System.out.println("Debug - Found GridPane using CSS selector");
-                    return (GridPane) node;
-                }
-            }
-            
-            // If not found, try general DOM traversal
-            System.out.println("Debug - Performing recursive search for GridPane");
-            Node result = findFirstChildOfType(card, GridPane.class);
-            if (result != null) {
-                System.out.println("Debug - Found GridPane using recursive search");
-                return (GridPane) result;
-            }
-            
-            // Fallback - no GridPane found
-            System.out.println("Debug - Failed to find GridPane, returning null");
-            return null;
-        } catch (Exception e) {
-            System.err.println("Error finding GridPane: " + e.getMessage());
-            e.printStackTrace();
-            return null;
         }
     }
 
@@ -574,4 +700,83 @@ public class FieldController {
             }
         });
     }
-}
+
+ private GridPane findGridPaneInCard(Pane card) {
+        System.out.println("Debug - Searching for GridPane in field card");
+        
+        try {
+            // Try looking up GridPane within .farm-details VBox first
+            VBox farmDetails = (VBox) card.lookup(".farm-details");
+            if (farmDetails != null) {
+                System.out.println("Debug - Found .farm-details VBox, searching for GridPane inside");
+                
+                // Log the structure of farmDetails for debugging
+                System.out.println("Debug - .farm-details children count: " + farmDetails.getChildren().size());
+                int childIndex = 0;
+                
+                for (Node child : farmDetails.getChildren()) {
+                    System.out.println("Debug - Child " + childIndex + " type: " + child.getClass().getSimpleName());
+                    childIndex++;
+                    
+                    if (child instanceof GridPane) {
+                        System.out.println("Debug - Found GridPane in .farm-details children");
+                        return (GridPane) child;
+                    }
+                }
+            } else {
+                System.out.println("Debug - .farm-details VBox not found");
+            }
+            
+            // Try with CSS selectors
+            for (Node node : card.lookupAll("GridPane")) {
+                if (node instanceof GridPane) {
+                    System.out.println("Debug - Found GridPane using CSS selector");
+                    return (GridPane) node;
+                }
+            }
+            
+            // If not found, try general DOM traversal
+            System.out.println("Debug - Performing recursive search for GridPane");
+            Node result = findFirstChildOfType(card, GridPane.class);
+            if (result != null) {
+                System.out.println("Debug - Found GridPane using recursive search");
+                return (GridPane) result;
+            }
+            
+            // Fallback - no GridPane found
+            System.out.println("Debug - Failed to find GridPane, returning null");
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error finding GridPane: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+private void setLabelTextSafely(Pane container, String selector, String text) {
+        Label label = (Label) container.lookup(selector);
+        if (label != null) {
+            label.setText(text);
+        } else {
+            System.err.println("Warning: Label with selector '" + selector + "' not found");
+        }
+    }
+    
+    /**
+     * Finds the first child of a specific type in the node hierarchy
+     */
+    private Node findFirstChildOfType(Pane container, Class<?> type) {
+        for (Node node : container.getChildren()) {
+            if (type.isInstance(node)) {
+                return node;
+            } else if (node instanceof Pane) {
+                Node result = findFirstChildOfType((Pane) node, type);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+    
+
+    }

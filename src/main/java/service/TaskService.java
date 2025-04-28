@@ -26,7 +26,6 @@ public class TaskService implements IService<Task> {
         try {
             pst = cnx.prepareStatement(requete);
             pst.setInt(1, task.getField().getId());
-
             pst.setString(2, task.getName());
             pst.setString(3, task.getDescription());
             pst.setString(4, task.getStatus());
@@ -237,21 +236,41 @@ public class TaskService implements IService<Task> {
     }
 
     public boolean updateStatus(Task task, String status) {
-        String sql = "UPDATE task SET status=? WHERE id=?";
-
-        try (PreparedStatement pst = cnx.prepareStatement(sql)) {
+        String sql = "UPDATE task SET status = ? WHERE id = ?";
+        try {
+            pst = cnx.prepareStatement(sql);
             pst.setString(1, status);
             pst.setInt(2, task.getId());
-
+            
             int rowsUpdated = pst.executeUpdate();
             if (rowsUpdated > 0) {
-                task.setStatus(status); // Update local object
+                task.setStatus(status);
                 return true;
             }
-            return false;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update task status", e);
+            System.err.println("Error updating task status: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources();
         }
-        // No need for finally block - try-with-resources handles closing
+        return false;
+    }
+
+    public Task getTaskById(int taskId) {
+        String query = "SELECT * FROM task WHERE id = ?";
+        try {
+            pst = cnx.prepareStatement(query);
+            pst.setInt(1, taskId);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToTask(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading task by ID: " + e.getMessage(), e);
+        } finally {
+            closeResources();
+        }
+        return null;
     }
 }

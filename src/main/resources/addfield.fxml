@@ -37,6 +37,8 @@
         <TextArea fx:id="descriptionField" GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="2" prefRowCount="3"/>
     </GridPane>
 
+
+
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="Save" onAction="#handleSave" styleClass="save-button"/>
         <Button text="Cancel" onAction="#handleCancel" styleClass="cancel-button"/>
