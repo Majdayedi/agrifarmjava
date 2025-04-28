@@ -23,11 +23,25 @@ public class Task {
     public Task() {
     }
 
-    public Task(int id, Field field, String name, String description, String status,
-                Date date, String ressource, String responsable, String priority,
-                String estimatedDuration, Date deadline, int workers, Timestamp lastUpdated,
-                double paymentWorker, double total) {
-        this.id = id;
+    public Task(String name, String description, String status, Date date, String responsable, 
+                String priority, int workers, double paymentWorker, Field field) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.date = date;
+        this.responsable = responsable;
+        this.priority = priority;
+        this.workers = workers;
+        this.paymentWorker = paymentWorker;
+        this.field = field;
+        this.total = workers * paymentWorker;
+        this.lastUpdated = new Timestamp(System.currentTimeMillis());
+    }
+
+        public Task( Field field, String name, String description, String status,
+                    Date date, String ressource, String responsable, String priority,
+                    String estimatedDuration, Date deadline, int workers, Timestamp lastUpdated,
+                    double paymentWorker, double total) {
         this.field = field;
         this.name = name;
         this.description = description;
@@ -40,7 +54,6 @@ public class Task {
         this.deadline = deadline;
         this.workers = workers;
         this.lastUpdated = lastUpdated;
-        this.paymentWorker = paymentWorker;
         this.paymentWorker = paymentWorker;
         this.total = total;
     }

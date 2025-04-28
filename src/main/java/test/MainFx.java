@@ -18,7 +18,7 @@ public class MainFx extends Application {
     public void start(Stage primaryStage) {
         try {
             // Load the FXML file (make sure the path is correct)
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/controller/login.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/home.fxml")));
 
             // Create the scene with preferred size
             Scene scene = new Scene(root, 520, 440);

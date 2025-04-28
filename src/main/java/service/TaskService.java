@@ -26,7 +26,6 @@ public class TaskService implements IService<Task> {
         try {
             pst = cnx.prepareStatement(requete);
             pst.setInt(1, task.getField().getId());
-
             pst.setString(2, task.getName());
             pst.setString(3, task.getDescription());
             pst.setString(4, task.getStatus());

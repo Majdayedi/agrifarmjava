@@ -19,9 +19,9 @@ public class Field {
     }
 
     // Updated constructor
-    public Field(int id, Farm farm, double surface, String name, double budget,
+    public Field( Farm farm, double surface, String name, double budget,
                  double income, double outcome, double profit, String description, Crop crop) {
-        this.id = id;
+
         this.farm = farm;
         this.surface = surface;
         this.name = name;

@@ -13,7 +13,6 @@
     <!-- Back Button -->
     <Button fx:id="backButton" text="← Back" 
             style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"
-
             AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"/>
 
     <ScrollPane fitToWidth="true" fitToHeight="true"
@@ -27,44 +26,66 @@
                 <!-- Header Section -->
                 <Label text="Manage your tasks efficiently"
                        style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <TextField fx:id="searchField" promptText="Search tasks..." prefWidth="200"
+                               style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <Button fx:id="searchButton" text="Search"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                    <ComboBox fx:id="priorityCombo" promptText="Priority" prefWidth="120"
+                              style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <DatePicker fx:id="deadlinePicker" promptText="Deadline"
+                                style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <Button fx:id="filterButton" text="Filter"
+                            style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                </HBox>
                 <!-- Quick Actions -->
                 <VBox spacing="10">
                     <Label text="Create Farm Tasks"
                            style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
                     <HBox spacing="10">
-                        <Button text="Add Fence Tasks"
+                        <Button fx:id="fenceButton"
+                                text="Add Fence Tasks"
                                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
-                        <Button text="Add Water Tasks"
+                        <Button fx:id="irrigationButton"
+                                text="Add irrigation sys Tasks"
                                 style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
-                        <Button text="Add Irrigation Tasks"
+                        <Button fx:id="cabinButton"
+                                text="build cabin"
                                 style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
+                        <Button fx:id="birButton"
+                                text="A3mel bir"
+                                style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
+                        <Button fx:id="photovoltaicButton" text="Add Photovoltaic Tasks" visible="false"
+                                style="-fx-background-color: #9C27B0; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
                         <Button fx:id="addTaskBtn"
                                 text="Add Task"
                                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
+                        <Button fx:id="generateTasksBtn" text="Generate Tasks with AI"
+                                style="-fx-background-color: #9C27B0; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 120;"/>
                     </HBox>
                 </VBox>
 
-                <!-- Task Columns -->
-                <HBox spacing="30" style="-fx-padding: 10;">
-                    <!-- To-Do Column -->
-                    <VBox spacing="10" style="-fx-background-color: #FFEBEE; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 350;">
-                        <Label text="To Do"
-                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
+                <HBox spacing="30" styleClass="kanban-board" style="-fx-padding: 10;">
+                    <VBox>
+                        <VBox spacing="20" styleClass="kanban-column" style="-fx-background-color: #ff2424; -fx-alignment: center;">
+                            <Label text="To Do" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; ;"
+                                   styleClass="kanban-header todo" maxWidth="Infinity" alignment="CENTER"/>
+                        </VBox>
                         <VBox fx:id="todoColumn" spacing="10" style="-fx-min-width: 350;"/>
                     </VBox>
 
-                    <!-- In Progress Column -->
-                    <VBox spacing="10" style="-fx-background-color: #FFF8E1; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 350;">
-                        <Label text="In Progress"
-                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
+                    <VBox>
+                        <VBox spacing="20" styleClass="kanban-column" style="-fx-background-color: #F0AD4EFF; -fx-alignment: center;">
+                            <Label text="In progress" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; ;"
+                                   styleClass="kanban-header todo" maxWidth="Infinity" alignment="CENTER"/>
+                        </VBox>
                         <VBox fx:id="inProgressColumn" spacing="10" style="-fx-min-width: 350;"/>
                     </VBox>
-
-                    <!-- Done Column -->
-                    <VBox spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-border-radius: 5; -fx-min-width: 350;">
-                        <Label text="Done"
-                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
+                    <VBox>
+                        <VBox spacing="20" styleClass="kanban-column" style="-fx-background-color: #5CB85CFF; -fx-alignment: center;">
+                            <Label text="Done" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; ;"
+                                   styleClass="kanban-header todo" maxWidth="Infinity" alignment="CENTER"/>
+                        </VBox>
                         <VBox fx:id="doneColumn" spacing="10" style="-fx-min-width: 350;"/>
                     </VBox>
                 </HBox>

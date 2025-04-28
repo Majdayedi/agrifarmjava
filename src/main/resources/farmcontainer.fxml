@@ -6,41 +6,43 @@
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      styleClass="farm-card">
-    
-    <StackPane>
-        <!-- Farm Image -->
-        <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@img/icon-1.png"/>
+      styleClass="farm-card"
+      minWidth="320" maxWidth="320" prefWidth="320" minHeight="200" maxHeight="500" prefHeight="500" spacing="10"
+      style="-fx-padding: 18; -fx-background-radius: 16; -fx-background-color: white;">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <StackPane prefWidth="280" prefHeight="100">
+        <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" translateX="50">
+            <Image url="@img/icon-2.png"/>
         </ImageView>
-        
-        <!-- Delete Button (Top Right) -->
         <Button fx:id="deleteBtn" text="X" styleClass="delete-button" StackPane.alignment="TOP_RIGHT">
             <StackPane.margin>
-                <Insets top="5" right="5"/>
+                <Insets top="-10" right="-10"/>
             </StackPane.margin>
         </Button>
-    </StackPane>
-    
-    <VBox spacing="5" styleClass="farm-details">
-        <padding>
-            <Insets top="-10" right="10" bottom="10" left="10"/>
-        </padding>
-        
+
+    <VBox spacing="5" styleClass="farm-details" alignment="TOP_LEFT">
         <Label fx:id="farmName" styleClass="farm-name"/>
+        <Label fx:id="farmweather" styleClass="farm-type"/>
         <Label fx:id="farmLocation" styleClass="farm-location"/>
-        
+
         <GridPane vgap="5" hgap="10">
             <Label text="Surface:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
             <Label fx:id="farmSurface" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-            
+
             <Label text="Budget:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
             <Label fx:id="farmBudget" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
         </GridPane>
-        
-        <HBox spacing="10" alignment="CENTER">
-            <Button fx:id="detailsBtn" text="Details" styleClass="action-button"/>
-            <Button fx:id="modifyBtn" text="Modify" styleClass="action-button"/>
+
+        <!-- Fix the buttons layout -->
+        <HBox spacing="10" alignment="CENTER" prefWidth="Infinity">
+            <Button fx:id="detailsBtn" text="Details" styleClass="action-button" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button fx:id="modifyBtn" text="Modify" styleClass="action-button" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
         </HBox>
     </VBox>
+    </StackPane>
+
 </VBox>

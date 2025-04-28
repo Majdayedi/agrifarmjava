@@ -3,6 +3,7 @@ package controller;
 import entite.Farm;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,11 +13,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.web.WebView;
 import javafx.scene.web.WebEngine;
+import service.CommandeService;
 import service.FarmService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import netscape.javascript.JSObject;
-
+import entite.Field;
+import service.FieldService;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -47,6 +50,7 @@ public class AddFarmController {
     private WebEngine webEngine;
     private double currentLat = 0;
     private double currentLon = 0;
+    private FieldService fieldservice= new FieldService();
 
     @FXML
     public void initialize() {
@@ -176,6 +180,39 @@ public class AddFarmController {
 
     }
 
+    public void handleUpdate(ActionEvent actionEvent) {
+            try {
+                Farm farm = currentFarm != null ? currentFarm : new Farm();
+                farm.setName(nameField.getText());
+                farm.setSurface(Float.parseFloat(surfaceField.getText()));
+                farm.setAdress(addressField.getText());
+                farm.setBudget(Float.parseFloat(budgetField.getText()));
+                farm.setWeather(" ");
+                farm.setLocation(locationField.getText());
+                farm.setLat((float) currentLat);
+                farm.setLon((float) currentLon);
+                farm.setDescription(descriptionField.getText());
+                farm.setBir(bircheck.isSelected());
+                farm.setIrrigation(irrigationCheck.isSelected());
+                farm.setPhotovoltaic(photoCheck.isSelected());
+                farm.setFence(fence.isSelected());
+                farm.setCabin(cabincheck.isSelected());
+
+                if (currentFarm != null) {
+                    farmService.update(farm);
+                }
+
+                refreshMainView();
+            } catch (NumberFormatException e) {
+                showError("Input Error", "Please enter valid numbers for numeric fields");
+            } catch (Exception e) {
+                showError("Error", "Could not save farm: " + e.getMessage());
+                System.out.println("Could not save farm: " + e.getMessage());;
+            }
+        }
+
+
+
     public class JavaConnector {
         private final TextField locationField;
         private final TextField latitudeField;
@@ -247,20 +284,19 @@ public class AddFarmController {
     public void setFarm(Farm farm) {
         this.currentFarm = farm;
         if (farm != null) {
-            nameField.setText(farm.getName());
+        nameField.setText(farm.getName());
             surfaceField.setText(String.valueOf(farm.getSurface()));
-            addressField.setText(farm.getAdress());
-            budgetField.setText(String.valueOf(farm.getBudget()));
-            weatherField.setText(farm.getWeather());
+        addressField.setText(farm.getAdress());
+        budgetField.setText(String.valueOf(farm.getBudget()));
             locationField.setText(farm.getLocation());
             longitudeField.setText(String.valueOf(farm.getLon()));
             latitudeField.setText(String.valueOf(farm.getLat()));
-            descriptionField.setText(farm.getDescription());
-            bircheck.setSelected(farm.isBir());
-            irrigationCheck.setSelected(farm.isIrrigation());
-            photoCheck.setSelected(farm.isPhotovoltaic());
-            fence.setSelected(farm.isFence());
-            cabincheck.setSelected(farm.isCabin());
+        descriptionField.setText(farm.getDescription());
+        bircheck.setSelected(farm.isBir());
+        irrigationCheck.setSelected(farm.isIrrigation());
+        photoCheck.setSelected(farm.isPhotovoltaic());
+        fence.setSelected(farm.isFence());
+        cabincheck.setSelected(farm.isCabin());
 
             // Update map marker
             if (farm.getLat() != 0 && farm.getLon() != 0) {
@@ -292,7 +328,7 @@ public class AddFarmController {
             farm.setSurface(Float.parseFloat(surfaceField.getText()));
             farm.setAdress(addressField.getText());
             farm.setBudget(Float.parseFloat(budgetField.getText()));
-            farm.setWeather(weatherField.getText());
+            farm.setWeather(" ");
             farm.setLocation(locationField.getText());
             farm.setLat((float) currentLat);
             farm.setLon((float) currentLon);
@@ -306,7 +342,10 @@ public class AddFarmController {
             if (currentFarm != null) {
                 farmService.update(farm);
             } else {
-                farmService.create(farm);
+            farmService.create(farm);
+            Field field = new Field(farm, 0, "Main field", 0.0, 0, 0, 0, "",null);
+            fieldservice.create(field);
+
             }
 
             refreshMainView();
@@ -314,6 +353,7 @@ public class AddFarmController {
             showError("Input Error", "Please enter valid numbers for numeric fields");
         } catch (Exception e) {
             showError("Error", "Could not save farm: " + e.getMessage());
+            System.out.println("Could not save farm: " + e.getMessage());;
         }
     }
 
@@ -332,14 +372,23 @@ public class AddFarmController {
 
     private void refreshMainView() {
         try {
+            // Get the current stage
+            Stage stage = (Stage) nameField.getScene().getWindow();
+            // Load the farm display view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/farmdisplay.fxml"));
             Parent root = loader.load();
+
+            // Get the controller and load farms
+            FarmController controller = loader.getController();
+            controller.loadFarms1();
+
+            // Set the new scene
             Scene scene = new Scene(root);
-            Stage stage = (Stage) nameField.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            showError("Error", "Could not refresh view: " + e.getMessage());
+            showError("Error", "Could not navigate back to farm: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
