@@ -3,6 +3,7 @@ package controller;
 import entite.Farm;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -178,6 +179,39 @@ public class AddFarmController {
         });
 
     }
+
+    public void handleUpdate(ActionEvent actionEvent) {
+            try {
+                Farm farm = currentFarm != null ? currentFarm : new Farm();
+                farm.setName(nameField.getText());
+                farm.setSurface(Float.parseFloat(surfaceField.getText()));
+                farm.setAdress(addressField.getText());
+                farm.setBudget(Float.parseFloat(budgetField.getText()));
+                farm.setWeather(" ");
+                farm.setLocation(locationField.getText());
+                farm.setLat((float) currentLat);
+                farm.setLon((float) currentLon);
+                farm.setDescription(descriptionField.getText());
+                farm.setBir(bircheck.isSelected());
+                farm.setIrrigation(irrigationCheck.isSelected());
+                farm.setPhotovoltaic(photoCheck.isSelected());
+                farm.setFence(fence.isSelected());
+                farm.setCabin(cabincheck.isSelected());
+
+                if (currentFarm != null) {
+                    farmService.update(farm);
+                }
+
+                refreshMainView();
+            } catch (NumberFormatException e) {
+                showError("Input Error", "Please enter valid numbers for numeric fields");
+            } catch (Exception e) {
+                showError("Error", "Could not save farm: " + e.getMessage());
+                System.out.println("Could not save farm: " + e.getMessage());;
+            }
+        }
+
+
 
     public class JavaConnector {
         private final TextField locationField;
