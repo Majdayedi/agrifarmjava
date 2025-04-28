@@ -369,7 +369,7 @@ import service.WeatherService.Weather;
                 
                 // Get the controller and load farms
                 FarmController controller = loader.getController();
-                controller.loadFarms();
+                controller.loadFarms1();
                 
                 // Set the new scene
                 Scene scene = new Scene(root);

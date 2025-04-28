@@ -372,14 +372,23 @@ public class AddFarmController {
 
     private void refreshMainView() {
         try {
+            // Get the current stage
+            Stage stage = (Stage) nameField.getScene().getWindow();
+            // Load the farm display view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/farmdisplay.fxml"));
             Parent root = loader.load();
+
+            // Get the controller and load farms
+            FarmController controller = loader.getController();
+            controller.loadFarms1();
+
+            // Set the new scene
             Scene scene = new Scene(root);
-            Stage stage = (Stage) nameField.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            showError("Error", "Could not refresh view: " + e.getMessage());
+            showError("Error", "Could not navigate back to farm: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
