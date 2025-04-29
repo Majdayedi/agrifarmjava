@@ -12,6 +12,9 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.concurrent.Task;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 public class CropCalendarController {
     @FXML private TableView<CropCalendarEntry> calendarTable;
     @FXML private TableColumn<CropCalendarEntry, String> cropNameColumn;
@@ -30,6 +33,8 @@ public class CropCalendarController {
 
     @FXML
     public void initialize() {
+        calendarTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         setupTable();
         loadCalendarData();
     }
