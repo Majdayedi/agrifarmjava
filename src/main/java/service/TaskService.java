@@ -133,10 +133,14 @@ public class TaskService implements IService<Task> {
 
     public List<Task> getTasksByField(int fieldId) {
         List<Task> tasks = new ArrayList<>();
-        String query = "SELECT t.*, f.id AS field_id, f.name AS field_name " +
-                "FROM task t " +
-                "JOIN field f ON t.field_id = f.id " +
-                "WHERE t.field_id = ?";
+        String query = "SELECT t.* FROM task t " +
+                "WHERE t.field_id = ? " +
+                "ORDER BY CASE t.priority " +
+                "    WHEN 'High' THEN 1 " +
+                "    WHEN 'Medium' THEN 2 " +
+                "    WHEN 'Low' THEN 3 " +
+                "    ELSE 4 " +
+                "END ASC";
 
         try {
             pst = cnx.prepareStatement(query);

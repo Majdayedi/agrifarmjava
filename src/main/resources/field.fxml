@@ -6,57 +6,67 @@
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      styleClass="farm-card" spacing="5">
+      styleClass="farm-card" spacing="10">
     <padding>
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
 
-    <StackPane>
-        <!-- Field Image -->
-        <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@img/icon-1.png"/>
-        </ImageView>
-
-        <!-- Delete Button (Top Right) -->
-        <Button fx:id="deleteBtn" text="X" styleClass="delete-button" StackPane.alignment="TOP_RIGHT">
-            <StackPane.margin>
-                <Insets top="5" right="5"/>
-            </StackPane.margin>
-        </Button>
-    </StackPane>
-
-    <VBox spacing="5" styleClass="farm-details">
-        <Label fx:id="Namef" styleClass="farm-name"/>
+    <!-- Top section with image and basic info -->
+    <HBox alignment="TOP_LEFT" spacing="15">
+        <!-- Field Image (left side) -->
+<VBox translateY="20">
+        <Label fx:id="Namef" styleClass="farm-name" style="-fx-background-size: 40"/>
         <Label fx:id="cropf" styleClass="farm-crop"/>
         <Label fx:id="descriptionf" styleClass="farm-description" wrapText="true"/>
+</VBox>
+        <!-- Right side content -->
+        <VBox spacing="5" alignment="TOP_LEFT" style="-fx-padding: 0 0 0 40;">
 
-        <GridPane vgap="5" hgap="10">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
+            <!-- Delete button top-right -->
+            <HBox alignment="TOP_RIGHT">
+                <Button fx:id="deleteBtn" text="X" styleClass="delete-button">
+                    <HBox.margin>
+                        <Insets top="-5" right="-5"/>
+                    </HBox.margin>
+                </Button>
+            </HBox>
+            <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" translateX="-10" >
+                <Image url="@img/icon-1.png"/>
+            </ImageView>
 
-            <Label text="Surface:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <Label fx:id="Surfacef" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <!-- Field info text -->
 
-            <Label text="Budget:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-            <Label fx:id="Budgetf" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </VBox>
+    </HBox>
 
-            <Label text="Income:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-            <Label fx:id="incomef" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <!-- Field Stats (kept exactly the same) -->
+    <GridPane vgap="5" hgap="10" style="-fx-padding: 10 0 0 0;">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
 
+        <Label text="Surface:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="Surfacef" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-            <Label text="Outcome:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-            <Label fx:id="outcomef" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-        </GridPane>
+        <Label text="Budget:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="Budgetf" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <HBox spacing="10" alignment="CENTER" styleClass="button-container">
-            <Button fx:id="detailsBtn" text="Details" styleClass="action-button"/>
-            <Button fx:id="modifyBtn" text="Modify" styleClass="action-button"/>
+        <Label text="Income:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="incomef" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        </HBox>
-      <HBox fx:id="buttonBox" spacing="10" alignment="CENTER">
-            <!-- This will be populated from the controller -->
-        </HBox>
-    </VBox>
+        <Label text="Outcome:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="outcomef" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <!-- Action Buttons (kept exactly the same) -->
+    <HBox spacing="10" alignment="CENTER" styleClass="button-container" style="-fx-padding: 10 0 0 0;">
+        <Button fx:id="detailsBtn" text="Details" styleClass="action-button"/>
+        <Button fx:id="modifyBtn" text="Modify" styleClass="action-button"/>
+    </HBox>
+
+    <!-- QR Code Section (kept exactly the same) -->
+    <HBox fx:id="buttonBox" spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+        <!-- This will be populated from the controller -->
+    </HBox>
 </VBox>
