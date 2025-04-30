@@ -137,9 +137,9 @@ import javafx.stage.Modality;
                         deleteBtn.setOnAction(e -> handleDelete(field, card));
                         modifyBtn.setOnAction(e -> handleModify(field));
                         detailsBtn.setOnAction(e -> handleDetails(field));
-                        fieldgrid.add(card, col % 3, row);
+                        fieldgrid.add(card, col % 5, row);
                         col++;
-                        if (col % 3 == 0) row++;
+                        if (col % 5 == 0) row++;
                     }
                 }
             } catch (Exception e) {

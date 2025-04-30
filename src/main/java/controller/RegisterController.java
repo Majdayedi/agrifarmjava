@@ -180,7 +180,7 @@ public class RegisterController {
     private void startFaceCapture() {
         String email = emailField.getText();
         if (email != null && !email.isEmpty()) {
-            WebcamUtil.captureAndSaveMultipleFacesWithPreview(email, 3, cameraView);
+           WebcamUtil.captureAndSaveMultipleFacesWithPreview(email, 3, cameraView);
         } else {
             showAlert("Error", "Email is required before capturing face.");
         }
