@@ -15,8 +15,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import service.CropCRUD;
@@ -588,15 +586,16 @@ public class CropController {
         card.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
         card.setPrefWidth(300);
         card.setPrefHeight(250);
+        card.getStyleClass().add("card");
 
         // Header with title and delete button
         StackPane header = new StackPane();
         header.setStyle("-fx-background-color: #4CAF50; -fx-background-radius: 10 10 0 0;");
         header.setPrefHeight(40);
-        
+
         Label titleLabel = new Label("Crop #" + crop.getId());
         titleLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
-        
+
         Button deleteButton = new Button("X");
         deleteButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 0; -fx-min-width: 25; -fx-min-height: 25; -fx-padding: 0; -fx-border-width: 0;");
         deleteButton.setOnAction(event -> {
@@ -605,7 +604,7 @@ public class CropController {
                 confirmDialog.setTitle("Confirm Delete");
                 confirmDialog.setHeaderText("Delete Crop");
                 confirmDialog.setContentText("Are you sure you want to delete this crop? This action cannot be undone.");
-                
+
                 if (confirmDialog.showAndWait().get() == ButtonType.OK) {
                     cropCRUD.deleteCrop(crop.getId());
                     loadAllCrops();
@@ -615,63 +614,63 @@ public class CropController {
                 resultArea.setText("Error deleting crop: " + e.getMessage());
             }
         });
-        
+
         StackPane.setAlignment(deleteButton, Pos.TOP_RIGHT);
         StackPane.setMargin(deleteButton, new Insets(5, 5, 0, 0));
-        
+
         header.getChildren().addAll(titleLabel, deleteButton);
-        
+
         // Crop details
         VBox details = new VBox(10);
         details.setAlignment(Pos.CENTER_LEFT);
         details.setPadding(new Insets(20));
         details.setStyle("-fx-background-color: white;");
-        
+
         Label eventLabel = new Label("Event: " + crop.getCropEvent());
         eventLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-        
+
         Label typeLabel = new Label("Type: " + crop.getTypeCrop());
         typeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-        
+
         Label methodLabel = new Label("Method: " + crop.getMethodCrop());
         methodLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-        
+
         Label plantationLabel = new Label("Plantation: " + crop.getPlantationDate() + " " + crop.getHourPlantation());
         plantationLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-        
+
         Label cropLabel = new Label("Crop: " + crop.getCropDate() + " " + crop.getHourCrop());
         cropLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-        
+
         // Action buttons
         HBox buttons = new HBox(10);
         buttons.setAlignment(Pos.CENTER);
         buttons.setPadding(new Insets(10));
         buttons.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 0 0 10 10;");
-        
+
         Button updateButton = new Button("Update");
         updateButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
         updateButton.setOnAction(event -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("add_crop.fxml"));
                 Parent root = loader.load();
-                
+
                 CropController controller = loader.getController();
                 controller.setUpdateMode(true);
                 controller.setSelectedCrop(crop);
                 controller.populateFields(crop);
-                
+
                 Stage stage = new Stage();
                 stage.setTitle("Modify Crop");
                 stage.setScene(new Scene(root));
                 stage.showAndWait();
-                
+
                 // Refresh the main view after the modify window closes
                 loadAllCrops();
             } catch (IOException e) {
                 resultArea.setText("Error loading update form: " + e.getMessage());
             }
         });
-        
+
         Button detailsButton = new Button("Details");
         detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
         detailsButton.setOnAction(event -> {
@@ -684,10 +683,10 @@ public class CropController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("soil_data.fxml"));
                 Parent root = loader.load();
-                
+
                 SoilDataController controller = loader.getController();
                 controller.setCropId(crop.getId());
-                
+
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) soilDataButton.getScene().getWindow();
                 stage.setScene(scene);
@@ -696,16 +695,16 @@ public class CropController {
                 resultArea.setText("Error loading soil data: " + e.getMessage());
             }
         });
-        
+
         Button qrCodeButton = new Button("QR Code");
         qrCodeButton.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
         qrCodeButton.setOnAction(event -> showQRCode(crop));
-        
+
         buttons.getChildren().addAll(updateButton, detailsButton, soilDataButton, qrCodeButton);
-        
+
         details.getChildren().addAll(eventLabel, typeLabel, methodLabel, plantationLabel, cropLabel);
         card.getChildren().addAll(header, details, buttons);
-        
+
         return card;
     }
 
