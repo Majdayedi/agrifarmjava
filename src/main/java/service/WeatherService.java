@@ -11,11 +11,38 @@ import org.json.JSONArray;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WeatherService {
-    private static final String API_KEY = "0cd321130f3328b6320a114997b0b170"; // Replace with your OpenWeatherMap API key
+    private static final Logger LOGGER = Logger.getLogger(WeatherService.class.getName());
+    private static String API_KEY;
     private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast";
     private Farm currentFarm;
+    private static boolean isInitialized = false;
+
+    private static void initializeIfNeeded() {
+        if (!isInitialized) {
+            try {
+                Properties props = new Properties();
+                InputStream input = WeatherService.class.getClassLoader().getResourceAsStream("config.properties");
+                if (input != null) {
+                    props.load(input);
+                    API_KEY = props.getProperty("openweathermap.api.key");
+                    if (API_KEY == null || API_KEY.trim().isEmpty()) {
+                        LOGGER.severe("OpenWeatherMap API key is not configured in config.properties");
+                        return;
+                    }
+                    isInitialized = true;
+                } else {
+                    LOGGER.severe("Unable to find config.properties");
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error loading OpenWeatherMap configuration", e);
+            }
+        }
+    }
 
     public static class Weather {
         private LocalDateTime dateTime;
@@ -86,6 +113,11 @@ public class WeatherService {
     }
 
     public static String getWeatherData(double lat, double lon) throws Exception {
+        initializeIfNeeded();
+        if (!isInitialized) {
+            throw new Exception("Weather service is not properly initialized");
+        }
+
         // Build the API URL with parameters
         String url = String.format("%s?lat=%f&lon=%f&appid=%s&units=metric", BASE_URL, lat, lon, API_KEY);
         

@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class Commande {
     private int id;
+    private int userId; // Nouveau champ pour l'ID de l'utilisateur
     private int quantite;
     private double prix;
     private String type_commande; // Par exemple: "Achat direct", "Précommande", etc.
@@ -27,8 +28,9 @@ public class Commande {
     }
 
     // Constructeur avec paramètres (sans ID)
-    public Commande(int quantite, double prix, String type_commande, String status, 
+    public Commande(int userId, int quantite, double prix, String type_commande, String status, 
                    String adress, String paiment) {
+        this.userId = userId;
         this.quantite = quantite;
         this.prix = prix;
         this.type_commande = type_commande;
@@ -41,9 +43,10 @@ public class Commande {
     }
 
     // Constructeur complet
-    public Commande(int id, int quantite, double prix, String type_commande, String status, 
+    public Commande(int id, int userId, int quantite, double prix, String type_commande, String status, 
                    String adress, String paiment, Date date_creation_commande) {
         this.id = id;
+        this.userId = userId;
         this.quantite = quantite;
         this.prix = prix;
         this.type_commande = type_commande;
@@ -62,6 +65,14 @@ public class Commande {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getQuantite() {

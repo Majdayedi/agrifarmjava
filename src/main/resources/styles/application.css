@@ -399,4 +399,31 @@
     -fx-translate-y: -10;
 }
 
-/* Fin des styles pour le panier */ 
+/* Fin des styles pour le panier */
+
+/* Order card styles */
+.order-card {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 5);
+    -fx-padding: 15;
+    -fx-spacing: 10;
+}
+
+.order-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 8);
+}
+
+.order-card .button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+    -fx-background-radius: 3;
+}
+
+.order-card .button:hover {
+    -fx-background-color: #45a049;
+} 

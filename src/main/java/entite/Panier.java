@@ -156,14 +156,14 @@ public class Panier {
         double total = calculerTotal();
         int quantiteTotale = getNombreTotalArticles();
         
-        Commande commande = new Commande(
-            quantiteTotale,
-            total,
-            typeCommande,
-            "En attente",
-            adresse,
-            typePaiement
-        );
+        // Create a new command with the default constructor and set its properties
+        Commande commande = new Commande();
+        commande.setQuantite(quantiteTotale);
+        commande.setPrix(total);
+        commande.setType_commande(typeCommande);
+        commande.setStatus("En attente");
+        commande.setAdress(adresse);
+        commande.setPaiment(typePaiement);
         
         // Ajouter tous les produits à la commande avec leurs quantités spécifiques
         for (Map.Entry<Produit, Integer> entry : produitsQuantites.entrySet()) {

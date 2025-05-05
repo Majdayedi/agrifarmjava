@@ -100,10 +100,13 @@ public class ArticleDetailsController {
             if (currentArticle.getImage() != null && !currentArticle.getImage().isEmpty()) {
                 try {
                     String imagePath = "file:src/main/resources/uploads/" + currentArticle.getImage().replace("uploads/", "");
-                    Image image = new Image(imagePath, true);
+                    // Load image with background loading and caching enabled
+                    Image image = new Image(imagePath, 400, 300, true, true); // Reduced dimensions
                     articleImage.setImage(image);
-                    articleImage.setFitWidth(600); // Set a reasonable max width
+                    articleImage.setFitWidth(400); // Reduced from 600
                     articleImage.setPreserveRatio(true);
+                    articleImage.setSmooth(true); // Enable image smoothing
+                    articleImage.setCache(true); // Enable caching
                     articleImage.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
                     articleImage.setVisible(true);
                 } catch (Exception e) {
