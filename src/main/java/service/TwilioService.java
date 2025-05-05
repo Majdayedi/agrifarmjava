@@ -7,51 +7,36 @@ import java.util.Arrays;
 import java.util.List;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TwilioService {
-    private static final Logger LOGGER = Logger.getLogger(TwilioService.class.getName());
-    private static String ACCOUNT_SID;
-    private static String AUTH_TOKEN;
-    private static String PHONE_NUMBER;
-    private static boolean isInitialized = false;
+    private static String TWILIO_PHONE_NUMBER;
+
 
     // List of severe weather conditions that should trigger alerts
     private static final List<String> SEVERE_WEATHER_CONDITIONS = Arrays.asList(
             "light rain", "thunderstorm", "hail", "extreme heat", "frost",
             "strong winds", "blizzard", "tornado", "dense fog", "extreme cold"
+
     );
 
-    private static void initializeIfNeeded() {
-        if (!isInitialized) {
-            try {
-                // Load configuration from properties file
-                Properties props = new Properties();
-                InputStream input = TwilioService.class.getClassLoader().getResourceAsStream("config.properties");
-                if (input != null) {
-                    props.load(input);
+    static {
+        try {
+            // Load configuration from properties file
+            Properties props = new Properties();
+            InputStream input = TwilioService.class.getClassLoader().getResourceAsStream("config.properties");
+            if (input != null) {
+                props.load(input);
+                String id = props.getProperty("twilio.account.sid");
+                String tok = props.getProperty("twilio.auth.token");
+                TWILIO_PHONE_NUMBER = props.getProperty("twilio.phone.number");
 
-                    // Get credentials from configuration
-                    ACCOUNT_SID = props.getProperty("twilio.account.sid");
-                    AUTH_TOKEN = props.getProperty("twilio.auth.token");
-                    PHONE_NUMBER = props.getProperty("twilio.phone.number");
+                Twilio.init(id, tok);
 
-                    if (ACCOUNT_SID == null || AUTH_TOKEN == null || PHONE_NUMBER == null) {
-                        LOGGER.severe("Twilio configuration is incomplete in config.properties");
-                        return;
-                    }
-
-                    // Initialize Twilio with credentials
-                    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-                    isInitialized = true;
-                    
-                } else {
-                    LOGGER.severe("Unable to find config.properties");
-                }
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error loading Twilio configuration: " + e.getMessage(), e);
+            } else {
+                System.err.println("Unable to find config.properties");
             }
+        } catch (Exception e) {
+            System.err.println("Error loading Twilio configuration: " + e.getMessage());
         }
     }
 
@@ -82,20 +67,15 @@ public class TwilioService {
      */
     public static void sendSMS(String toPhoneNumber, String message) {
         try {
-            initializeIfNeeded();
-            if (!isInitialized) {
-                LOGGER.severe("Cannot send SMS: Twilio is not properly initialized");
-                return;
-            }
-
             Message.creator(
                     new PhoneNumber(toPhoneNumber),
-                    new PhoneNumber(PHONE_NUMBER),
+                    new PhoneNumber(TWILIO_PHONE_NUMBER),
                     message
+
             ).create();
-            LOGGER.info("SMS sent successfully to " + toPhoneNumber);
+            System.out.println("SMS sent successfully to " + toPhoneNumber);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error sending SMS: " + e.getMessage(), e);
+            System.err.println("Error sending SMS: " + e.getMessage());
         }
     }
 
@@ -112,6 +92,7 @@ public class TwilioService {
                 farmName,
                 weatherDescription,
                 temperature
+
         );
         sendSMS(toPhoneNumber, message);
     }

@@ -1,42 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="controller.SoilDataController"
-      spacing="20"
-      style="-fx-background-color: #f0f0f0;">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controller.SoilDataController"
+           stylesheets="@css/style.css">
 
-    <Label text="Soil Data Form" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+    <!-- 🌄 Blurred Background Image -->
+    <ImageView fx:id="backgroundImage"
+               fitWidth="1000" fitHeight="700" preserveRatio="false">
+        <image>
+            <Image url="@/images/soil.jpg"/> <!-- Replace with your background -->
+        </image>
+        <effect>
+            <GaussianBlur radius="25"/>
+        </effect>
+    </ImageView>
 
-    <GridPane vgap="15" hgap="15" alignment="CENTER">
-        <Label text="Humidité (%):" style="-fx-font-size: 14px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="humiditeField" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <!-- 🧾 Main Form with Frosted Glass Effect -->
+    <VBox alignment="CENTER" spacing="30"
+          style="-fx-background-color: rgba(255,255,255,0.85);
+                 -fx-background-radius: 20;
+                 -fx-padding: 40;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 12, 0.1, 0, 4);"
+          maxWidth="600">
 
-        <Label text="Niveau pH:" style="-fx-font-size: 14px;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="niveauPhField" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <!-- 🔝 Title -->
+        <Label text="Add Soil Data" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
 
-        <Label text="Niveau Nutriments:" style="-fx-font-size: 14px;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="niveauNutrimentField" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <!-- 🔘 Form Fields -->
+        <GridPane vgap="15" hgap="15" alignment="CENTER">
+            <Label text="Humidity:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="humiditeField" prefWidth="250" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Type de Sol:" style="-fx-font-size: 14px;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="typeSolCombo" prefWidth="200" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-    </GridPane>
+            <Label text=" PH level:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="niveauPhField" prefWidth="250" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-    <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
-        <Button text="Save" onAction="#createSoilData" 
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20;"/>
-        <Button text="Cancel" onAction="#closeWindow" 
-                style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20;"/>
-    </HBox>
+            <Label text="Nutriments level:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="niveauNutrimentField" prefWidth="250" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-    <TextArea fx:id="resultArea" editable="false" prefHeight="100" 
-              style="-fx-background-color: white; -fx-border-color: #ddd;"/>
+            <Label text="Soil type:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="typeSolCombo" prefWidth="250" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
 
-</VBox> 
+        <!-- 🔻 Buttons -->
+        <HBox spacing="20" alignment="CENTER">
+            <Button text="Save" onAction="#createSoilData" styleClass="save-button"/>
+            <Button text="Cancel" onAction="#closeWindow" styleClass="cancel-button"/>
+        </HBox>
+
+        <!-- 📋 Result Area -->
+        <TextArea fx:id="resultArea" prefWidth="500" prefHeight="100" wrapText="true"/>
+    </VBox>
+</StackPane>

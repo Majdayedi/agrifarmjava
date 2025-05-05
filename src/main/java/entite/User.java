@@ -1,25 +1,39 @@
 package entite;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 public class User {
+    @SerializedName("id")
     private int id;
+
+    @SerializedName("email")
     private String email;
+
+    @SerializedName("roles")
     private List<String> roles;
+
+    @SerializedName("password")
     private String password;
+
+    @SerializedName("lastName")
     private String lastName;
+
+    @SerializedName("firstName")
     private String firstName;
+
+    @SerializedName("createdAt")
     private LocalDateTime createdAt;
-    private String imageFileName; // New field for profile picture
+
+    @SerializedName("imageFileName")
+    private String imageFileName;
+
+    @SerializedName("isVerified")
+    private boolean isVerified;
 
     // Updated Constructor
-    public User(int id, String email, List<String> roles, String password, String lastName, String firstName, LocalDateTime createdAt, String imageFileName) {
+    public User(int id, String email, List<String> roles, String password, String lastName, String firstName, LocalDateTime createdAt, String imageFileName, boolean isVerified) {
         this.id = id;
         this.email = email;
         this.roles = roles;
@@ -28,14 +42,15 @@ public class User {
         this.firstName = firstName;
         this.createdAt = createdAt;
         this.imageFileName = imageFileName;
+        this.isVerified = isVerified;
     }
 
     // Overloaded constructor without imageFileName (optional use)
-    public User(int id, String email, List<String> roles, String password, String lastName, String firstName, LocalDateTime createdAt) {
-        this(id, email, roles, password, lastName, firstName, createdAt, null);
+    public User(int id, String email, List<String> roles, String password, String lastName, String firstName, LocalDateTime createdAt, boolean isVerified) {
+        this(id, email, roles, password, lastName, firstName, createdAt, null, isVerified);
     }
 
-    // Getters and Setters
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -100,6 +115,14 @@ public class User {
         this.imageFileName = imageFileName;
     }
 
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.isVerified = verified;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -110,18 +133,16 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", createdAt=" + createdAt +
                 ", imageFileName='" + imageFileName + '\'' +
+                ", isVerified=" + isVerified +
                 '}';
     }
 
-    public static List<String> parseRolesFromJson(String json) {
-        Gson gson = new Gson();
+    public static List<String> parseRolesFromJson(String rolesJson) {
         try {
-            // Try parsing as array
-            return gson.fromJson(json, new TypeToken<List<String>>(){}.getType());
-        } catch (JsonSyntaxException e) {
-            // Fallback: treat it as a single string role
-            return Collections.singletonList(json.replace("\"", "").trim());
+            return new com.google.gson.Gson().fromJson(rolesJson, List.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of("ROLE_USER");
         }
     }
-
 }

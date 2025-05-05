@@ -1,41 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox alignment="TOP_CENTER" spacing="20" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SoilDataController">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.SoilDataController"
+      spacing="30"
+      style="-fx-background-color: #f6fbf4; -fx-padding: 30;">
 
-    <HBox alignment="CENTER" spacing="20">
-        <Label text="Soil Data Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+    <!-- 🔝 Title Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="Soil Data Dashboard"
+               style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Close" onAction="#goBackToCrops"
+                style="-fx-background-color: white; -fx-border-color: #ccc;
+                       -fx-font-weight: bold; -fx-text-fill: #2e7d32; -fx-background-radius: 8;
+                       -fx-border-radius: 8; -fx-padding: 8 18;"/>
     </HBox>
 
-    <HBox alignment="CENTER" spacing="20">
-        <Button fx:id="addButton" mnemonicParsing="false" onAction="#showAddSoilDataForm" text="Add New Soil Data" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
-        <Button fx:id="backButton" mnemonicParsing="false" onAction="#goBackToCrops" text="Back to Crops" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
-        <Button fx:id="statisticsButton" mnemonicParsing="false" onAction="#showStatistics" text="Statistics" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
-    </HBox>
+    <!-- ➕ Add Button -->
+    <Button fx:id="addButton" text="+ Add New Soil Data" onAction="#showAddSoilDataForm"
+            style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;
+                   -fx-background-radius: 8; -fx-padding: 10 24; -fx-font-size: 14px;"/>
 
-    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 10;" VBox.vgrow="ALWAYS">
-        <VBox fx:id="soilDataCardsPane" spacing="10" style="-fx-background-color: transparent;">
+    <!-- 📊 Statistics -->
+    <VBox spacing="15">
+        <Label text="Soil Data Statistics"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <HBox spacing="20">
+            <!-- Humidity -->
+            <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.1, 0, 2);">
+                <Label text="Humidity Levels" style="-fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                <BarChart fx:id="humidityChart" prefHeight="200" prefWidth="300">
+                    <xAxis>
+                        <CategoryAxis label="Samples"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Humidity (%)"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+
+            <!-- pH -->
+            <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.1, 0, 2);">
+                <Label text="pH Levels" style="-fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                <BarChart fx:id="phChart" prefHeight="200" prefWidth="300">
+                    <xAxis>
+                        <CategoryAxis label="Samples"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="pH Level"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+
+            <!-- Nutrients -->
+            <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.1, 0, 2);">
+                <Label text="Nutrient Levels" style="-fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                <BarChart fx:id="nutrientChart" prefHeight="200" prefWidth="300">
+                    <xAxis>
+                        <CategoryAxis label="Samples"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Level"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- 🧾 Data Cards Display -->
+    <Label text="Soil Data Records"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: transparent;">
+        <FlowPane fx:id="soilDataCardsPane" hgap="20" vgap="20" style="-fx-background-color: transparent;">
             <padding>
-                <Insets top="5" right="5" bottom="5" left="5"/>
+                <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
-        </VBox>
+        </FlowPane>
     </ScrollPane>
 
-    <TextArea fx:id="resultArea" editable="false" prefRowCount="2" style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5;"/>
-
-    <!-- Hidden ComboBox for initialization -->
-    <ComboBox fx:id="typeSolCombo" visible="false" managed="false"/>
-</VBox> 
+    <!-- 🗒️ Result area for feedback (hidden by default) -->
+    <TextArea fx:id="resultArea" editable="false" wrapText="true" visible="false"
+              style="-fx-background-color: white; -fx-border-color: #ccc; -fx-border-radius: 6; -fx-padding: 10;"/>
+</VBox>

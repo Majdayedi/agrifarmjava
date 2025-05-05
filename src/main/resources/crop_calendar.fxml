@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.CropCalendarController"
+      spacing="20"
+      style="-fx-background-color: #f9fafb; -fx-padding: 20;">
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Crop Calendar for Tunisia"
+               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+        <ProgressIndicator fx:id="loadingIndicator" visible="false"/>
+    </HBox>
+
+    <TableView fx:id="calendarTable"
+               VBox.vgrow="ALWAYS"
+               styleClass="modern-table">
+        <columns>
+            <TableColumn fx:id="cropNameColumn" text="Crop Name" prefWidth="150.0"/>
+            <TableColumn fx:id="regionColumn" text="Region" prefWidth="150.0"/>
+            <TableColumn fx:id="additionalInfoColumn" text="Type" prefWidth="100.0"/>
+            <TableColumn fx:id="plantingDateColumn" text="Planting Period" prefWidth="150.0"/>
+            <TableColumn fx:id="harvestDateColumn" text="Harvest Period" prefWidth="150.0"/>
+            <TableColumn fx:id="growingPeriodColumn" text="Growing Period (Days)" prefWidth="150.0"/>
+        </columns>
+    </TableView>
+</VBox>

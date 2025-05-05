@@ -2,18 +2,16 @@
 
     import entite.Farm;
     import entite.Field;
+    import javafx.collections.ObservableList;
     import javafx.fxml.FXML;
     import javafx.fxml.FXMLLoader;
+    import javafx.geometry.Insets;
+    import javafx.geometry.Pos;
     import javafx.scene.Node;
-    import javafx.scene.control.Button;
-    import javafx.scene.control.Label;
-    import javafx.scene.control.TextField;
-    import javafx.scene.control.ComboBox;
+    import javafx.scene.control.*;
     import javafx.scene.image.Image;
     import javafx.scene.image.ImageView;
-    import javafx.scene.layout.GridPane;
-    import javafx.scene.layout.Pane;
-    import javafx.scene.layout.BorderPane;
+    import javafx.scene.layout.*;
     import service.FieldService;
 
     import java.io.IOException;
@@ -24,6 +22,22 @@
     import javafx.scene.Scene;
     import service.WeatherService;
 import service.WeatherService.Weather;
+
+// QR Code imports
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.embed.swing.SwingFXUtils;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import javafx.stage.Modality;
     public class FieldController {
 
         private final FieldService fieldService = new FieldService();
@@ -31,6 +45,8 @@ import service.WeatherService.Weather;
         public ImageView weatherIcon;
         public Label weatherTemp;
         public Label weatherDesc;
+  private Field selectedField;
+    private final Map<Integer, String> fieldAccessCodes = new HashMap<>();
 
         @FXML
         private GridPane fieldgrid;
@@ -121,9 +137,9 @@ import service.WeatherService.Weather;
                         deleteBtn.setOnAction(e -> handleDelete(field, card));
                         modifyBtn.setOnAction(e -> handleModify(field));
                         detailsBtn.setOnAction(e -> handleDetails(field));
-                        fieldgrid.add(card, col % 3, row);
+                        fieldgrid.add(card, col % 5, row);
                         col++;
-                        if (col % 3 == 0) row++;
+                        if (col % 5 == 0) row++;
                     }
                 }
             } catch (Exception e) {
@@ -210,6 +226,17 @@ import service.WeatherService.Weather;
 
                     // Setup details button
                     detailsBtn.setOnAction(e -> handleDetails(field));
+		   // Add QR code and verify buttons
+                Button qrCodeButton = new Button("QR Code");
+                qrCodeButton.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white;");
+                qrCodeButton.setOnAction(e -> showQRCode(field));
+
+                Button verifyButton = new Button("Verify");
+                verifyButton.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white;");
+                verifyButton.setOnAction(e -> verifyAccessCode(field));
+
+                // Add QR code and verify buttons to the buttonBox
+                setupButtonBox(card, field, qrCodeButton, verifyButton);
 
                     // Add to grid
                     fieldgrid.add(card, col % 3, row);
@@ -228,7 +255,6 @@ import service.WeatherService.Weather;
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/addfield.fxml"));
                 Pane addForm = loader.load();
 
-                // Récupérer le contrôleur et passer l'objet Farm
                 AddFieldController addFieldController = loader.getController();
                 addFieldController.setFarm(farm);
                 addFieldController.setFirst(weather);
@@ -369,7 +395,7 @@ import service.WeatherService.Weather;
                 
                 // Get the controller and load farms
                 FarmController controller = loader.getController();
-                controller.loadFarms();
+                controller.loadFarms1();
                 
                 // Set the new scene
                 Scene scene = new Scene(root);
@@ -497,5 +523,257 @@ import service.WeatherService.Weather;
                 weatherIcon.setImage(new Image("http://openweathermap.org/img/wn/" + weather.getIcon() + "@2x.png"));
             }
         }
+private void setupButtonBox(Pane card, Field field, Button qrCodeButton, Button verifyButton) {
+        try {
+            // Try to find existing buttonBox
+            HBox buttonBox = (HBox) card.lookup("#buttonBox");
+            System.out.println("Debug - ButtonBox lookup result for field " + field.getId() + ": " + 
+                              (buttonBox != null ? "found" : "not found"));
+            
+            if (buttonBox != null) {
+                // If buttonBox exists in FXML, add buttons to it
+                buttonBox.getChildren().addAll(qrCodeButton, verifyButton);
+                System.out.println("Debug - Added buttons to existing buttonBox for field: " + field.getName());
+            } else {
+                // Log error for debugging
+                System.err.println("Warning: buttonBox not found in field.fxml for field: " + field.getName() + 
+                                  " (ID: " + field.getId() + "). Creating one programmatically.");
+                
+                // Create buttonBox programmatically if not found in FXML
+                buttonBox = new HBox(10); // 10 is the spacing
+                buttonBox.setAlignment(Pos.CENTER);
+                buttonBox.setId("buttonBox"); // Set the ID for future reference
+                buttonBox.getStyleClass().add("button-container"); // Add CSS class
+                buttonBox.getChildren().addAll(qrCodeButton, verifyButton);
+                
+                // Find the VBox with the farm-details class as defined in the FXML
+                VBox fieldDetails = (VBox) card.lookup(".farm-details");
+                System.out.println("Debug - VBox farm-details lookup result for field " + field.getId() + ": " + 
+                                  (fieldDetails != null ? "found" : "not found"));
+                
+                if (fieldDetails != null) {
+                    // Add the buttonBox to the VBox with farm-details class
+                    fieldDetails.getChildren().add(buttonBox);
+                    System.out.println("Debug - Added buttonBox to VBox.farm-details for field: " + field.getName());
+                } else {
+                    System.err.println("Warning: Could not find VBox with farm-details class for field: " + field.getName());
+                    
+                    // Try alternative lookup strategies
+                    if (card instanceof VBox) {
+                        boolean added = false;
+                        ObservableList<Node> children = ((VBox) card).getChildren();
+                        for (Node child : children) {
+                            if (child instanceof VBox) {
+                                VBox vbox = (VBox) child;
+                                vbox.getChildren().add(buttonBox);
+                                System.out.println("Debug - Added buttonBox to child VBox for field: " + field.getName());
+                                added = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!added) {
+                            // If we couldn't find a child VBox, add directly to the main VBox
+                            ((VBox) card).getChildren().add(buttonBox);
+                            System.out.println("Debug - Added buttonBox directly to main VBox for field: " + field.getName());
+                        }
+                    } else {
+                        // Last resort - add directly to whatever pane we have
+                        ((Pane) card).getChildren().add(buttonBox);
+                        System.out.println("Debug - Added buttonBox directly to card Pane for field: " + field.getName());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error setting up buttonBox for field " + field.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showQRCode(Field field) {
+        try {
+            // Generate new random code
+            String accessCode = generateRandomCode();
+            fieldAccessCodes.put(field.getId(), accessCode);
+
+            // Generate QR Code
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(accessCode, BarcodeFormat.QR_CODE, 300, 300);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            
+            // Create popup window
+            Stage qrStage = new Stage();
+            qrStage.setTitle("Field Access Code");
+            
+            VBox layout = new VBox(10);
+            layout.setAlignment(Pos.CENTER);
+            layout.setPadding(new Insets(20));
+            
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(300);
+            imageView.setFitHeight(300);
+            
+            Button closeButton = new Button("Close");
+            closeButton.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white;");
+            closeButton.setOnAction(e -> qrStage.close());
+            
+            layout.getChildren().addAll(
+                new Label("Scan this QR code to get the access code"),
+                imageView,
+                closeButton
+            );
+            
+            Scene scene = new Scene(layout);
+            qrStage.setScene(scene);
+            qrStage.initModality(Modality.APPLICATION_MODAL);
+            qrStage.show();
+            
+        } catch (WriterException e) {
+            showError("QR Code Error", "Failed to generate QR code: " + e.getMessage());
+        }
+    }
+
+    private String generateRandomCode() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder code = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < 6; i++) {
+            code.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return code.toString();
+    }
+
+    private void verifyAccessCode(Field field) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Verify Access Code");
+        dialog.setHeaderText("Enter the access code from the QR code");
+
+        ButtonType verifyButtonType = new ButtonType("Verify", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(verifyButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField codeField = new TextField();
+        codeField.setPromptText("Enter access code");
+        grid.add(new Label("Access Code:"), 0, 0);
+        grid.add(codeField, 1, 0);
+
+        dialog.getDialogPane().setContent(grid);
+
+        Node verifyButton = dialog.getDialogPane().lookupButton(verifyButtonType);
+        verifyButton.setDisable(true);
+
+        codeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            verifyButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == verifyButtonType) {
+                return codeField.getText();
+            }
+            return null;
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(code -> {
+            String storedCode = fieldAccessCodes.get(field.getId());
+            if (code.equals(storedCode)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Success");
+                alert.setHeaderText(null);
+                alert.setContentText("Access code verified successfully!");
+                alert.showAndWait();
+                handleDetails(field);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid access code. Please try again.");
+                alert.showAndWait();
+            }
+        });
+    }
+
+ private GridPane findGridPaneInCard(Pane card) {
+        System.out.println("Debug - Searching for GridPane in field card");
+        
+        try {
+            // Try looking up GridPane within .farm-details VBox first
+            VBox farmDetails = (VBox) card.lookup(".farm-details");
+            if (farmDetails != null) {
+                System.out.println("Debug - Found .farm-details VBox, searching for GridPane inside");
+                
+                // Log the structure of farmDetails for debugging
+                System.out.println("Debug - .farm-details children count: " + farmDetails.getChildren().size());
+                int childIndex = 0;
+                
+                for (Node child : farmDetails.getChildren()) {
+                    System.out.println("Debug - Child " + childIndex + " type: " + child.getClass().getSimpleName());
+                    childIndex++;
+                    
+                    if (child instanceof GridPane) {
+                        System.out.println("Debug - Found GridPane in .farm-details children");
+                        return (GridPane) child;
+                    }
+                }
+            } else {
+                System.out.println("Debug - .farm-details VBox not found");
+            }
+            
+            // Try with CSS selectors
+            for (Node node : card.lookupAll("GridPane")) {
+                if (node instanceof GridPane) {
+                    System.out.println("Debug - Found GridPane using CSS selector");
+                    return (GridPane) node;
+                }
+            }
+            
+            // If not found, try general DOM traversal
+            System.out.println("Debug - Performing recursive search for GridPane");
+            Node result = findFirstChildOfType(card, GridPane.class);
+            if (result != null) {
+                System.out.println("Debug - Found GridPane using recursive search");
+                return (GridPane) result;
+            }
+            
+            // Fallback - no GridPane found
+            System.out.println("Debug - Failed to find GridPane, returning null");
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error finding GridPane: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+private void setLabelTextSafely(Pane container, String selector, String text) {
+        Label label = (Label) container.lookup(selector);
+        if (label != null) {
+            label.setText(text);
+        } else {
+            System.err.println("Warning: Label with selector '" + selector + "' not found");
+        }
+    }
+    
+    /**
+     * Finds the first child of a specific type in the node hierarchy
+     */
+    private Node findFirstChildOfType(Pane container, Class<?> type) {
+        for (Node node : container.getChildren()) {
+            if (type.isInstance(node)) {
+                return node;
+            } else if (node instanceof Pane) {
+                Node result = findFirstChildOfType((Pane) node, type);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+    
 
     }

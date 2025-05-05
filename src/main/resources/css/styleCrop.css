@@ -14,6 +14,66 @@
     -fx-border-radius: 5px;
     -fx-border-color: #cccccc;
 }
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0.1, 0, 2);
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+}
+
+.card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.primary-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-transition: all 0.3s ease;
+}
+
+.card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(46,125,50,0.6), 15, 0.2, 0, 0);
+}
+
+
+
+.ghost-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #A5D6A7;
+    -fx-text-fill: #2e7d32;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14;
+}
+
+.muted-label {
+    -fx-text-fill: #777;
+    -fx-font-style: italic;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+}
 
 .button {
     -fx-padding: 8px 16px;
@@ -37,4 +97,57 @@
 
 .text-area .content {
     -fx-background-color: white;
-} 
+}
+
+.header-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32; /* Dark Green */
+}
+
+.description-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4e5d6c;
+}
+
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c; /* Green */
+}
+
+.primary-button {
+    -fx-background-color: #388e3c;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 20;
+}
+
+.secondary-button {
+    -fx-background-color: #81c784;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 6 16 6 16;
+    -fx-background-radius: 20;
+}
+
+.small-button {
+    -fx-background-color: #66bb6a;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 4 12 4 12;
+    -fx-background-radius: 15;
+}
+
+.section-pane {
+    -fx-background-color: white;
+    -fx-border-color: #c8e6c9;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+}
+
+.info-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #757575;
+}

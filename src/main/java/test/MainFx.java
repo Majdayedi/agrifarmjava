@@ -5,11 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.opencv.core.Core;
 
 import java.util.Objects;
 
 public class MainFx extends Application {
-
+static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
     public static void main(String[] args) {
         launch(args);
     }

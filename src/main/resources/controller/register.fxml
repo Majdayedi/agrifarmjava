@@ -8,6 +8,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Separator?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx/8"
@@ -46,9 +48,21 @@
                 GridPane.columnIndex="1" GridPane.rowIndex="7"
                 styleClass="dashboard-button" prefWidth="150"/>
 
+        <Separator GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS"/>
+
+        <Button text="Sign up with Google" onAction="#handleGoogleSignUp"
+                GridPane.columnIndex="1" GridPane.rowIndex="9"
+                styleClass="google-button" prefWidth="150"/>
+
+        <Button fx:id="facebookRegisterBtn" text="Register with Facebook" onAction="#handleFacebookSignUp"/>
+
+
         <Hyperlink text="Back to Login" onAction="#goToLogin"
-                   GridPane.columnIndex="1" GridPane.rowIndex="8"
+                   GridPane.columnIndex="1" GridPane.rowIndex="10"
                    styleClass="hyperlink"/>
+
+        <ImageView fx:id="cameraView" fitWidth="400" fitHeight="300" preserveRatio="true"/>
+
 
     </GridPane>
 </VBox>

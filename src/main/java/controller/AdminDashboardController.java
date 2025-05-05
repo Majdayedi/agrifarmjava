@@ -1,16 +1,18 @@
 package controller;
 
+import entite.User;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import entite.User;
 import utils.SceneManager;
+import utils.Session;
+import utils.CredentialManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +27,6 @@ public class AdminDashboardController {
     @FXML private Button logoutButton;
     @FXML private Button viewProfileButton;
     @FXML private Button produitButton;
-
     @FXML private ImageView profileImageView;
 
     private User currentUser;
@@ -104,6 +105,9 @@ public class AdminDashboardController {
 
     @FXML
     private void handleLogout() {
+        Session.getInstance().setUser(null);
+        CredentialManager.clearCredentials();
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/login.fxml"));
             Parent root = loader.load();

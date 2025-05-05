@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.VerificationController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+    
+    <Label text="Email Verification" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    
+    <Label text="Please enter the verification code sent to your email:" wrapText="true"/>
+    
+    <TextField fx:id="tokenField" promptText="Enter verification code" maxWidth="300"/>
+    
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Verify" onAction="#handleVerification"/>
+        <Button text="Back to Login" onAction="#goToLogin"/>
+    </HBox>
+    
+    <Label text="Didn't receive the code? Check your spam folder or contact support." wrapText="true" style="-fx-text-fill: #666666;"/>
+</VBox> 

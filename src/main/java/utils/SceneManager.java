@@ -30,6 +30,12 @@ public class SceneManager {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load the requested page: " + e.getMessage());
         }
+    }
+
+
+    public static void switchToVerification(Stage stage) {
+        switchScene(stage, "/controller/verification.fxml");
     }
 }
