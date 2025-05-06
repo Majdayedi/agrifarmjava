@@ -14,7 +14,7 @@
             style="-fx-background-color: white;"
             stylesheets="@/css/style.css">
 
-   <!-- LEFT SIDEBAR (optional if you use buttons) -->
+   <!-- LEFT SIDEBAR -->
    <left>
       <VBox fx:id="sidebar"
             alignment="TOP_CENTER"
@@ -23,7 +23,6 @@
             visible="false"
             managed="false"
             style="-fx-background-color: #2e7d32; -fx-padding: 15;">
-         <!-- Sidebar buttons (same as before) -->
          <Button fx:id="farmButton" onAction="#navigateToFarm" styleClass="sidebar-icon-button">
             <graphic>
                <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
@@ -58,7 +57,6 @@
       </VBox>
    </left>
 
-
    <!-- CENTER CONTENT -->
    <center>
       <VBox spacing="20.0" alignment="TOP_CENTER">
@@ -66,13 +64,14 @@
             <Insets top="20" right="20" bottom="20" left="20"/>
          </padding>
 
-         <!-- Top Bar (Profile Picture) -->
+         <!-- Top Bar (Welcome + Profile Picture) -->
          <HBox spacing="20" alignment="CENTER_RIGHT" prefWidth="1000" style="-fx-padding: 10 0 10 0;">
-            <ImageView fitHeight="40" fitWidth="40" preserveRatio="true">
-               <image>
-                  <Image url="@/images/hamza.jpg"/>
-               </image>
-            </ImageView>
+            <Label fx:id="welcomeLabel" text="Welcome, User" textFill="#2e7d32">
+               <font>
+                  <Font size="16.0"/>
+               </font>
+            </Label>
+            <ImageView fx:id="userProfileImage" fitHeight="40" fitWidth="40" preserveRatio="true"/>
          </HBox>
 
          <!-- Title -->
@@ -85,48 +84,38 @@
             </Label>
          </VBox>
 
-         <!-- Cards Section (clickable) -->
+         <!-- Cards Section -->
          <TilePane hgap="20" vgap="20" prefColumns="4" alignment="CENTER">
-
             <VBox styleClass="card" fx:id="farmCard" onMouseClicked="#navigateToFarm" alignment="CENTER">
                <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
-                  <image>
-                     <Image url="@/images/farm.png"/>
-                  </image>
+                  <image><Image url="@/images/farm.png"/></image>
                </ImageView>
                <Label text="Farm" styleClass="card-title"/>
             </VBox>
 
             <VBox styleClass="card" fx:id="marketplaceCard" onMouseClicked="#navigateToMarketplace" alignment="CENTER">
                <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
-                  <image>
-                     <Image url="@/images/marketplace.png"/>
-                  </image>
+                  <image><Image url="@/images/marketplace.png"/></image>
                </ImageView>
                <Label text="Marketplace" styleClass="card-title"/>
             </VBox>
 
             <VBox styleClass="card" fx:id="articlesCard" onMouseClicked="#navigateToArticles" alignment="CENTER">
                <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
-                  <image>
-                     <Image url="@/images/article.png"/>
-                  </image>
+                  <image><Image url="@/images/article.png"/></image>
                </ImageView>
                <Label text="Articles" styleClass="card-title"/>
             </VBox>
 
             <VBox styleClass="card" fx:id="profileCard" onMouseClicked="#navigateToProfile" alignment="CENTER">
                <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
-                  <image>
-                     <Image url="@/images/profile.png"/>
-                  </image>
+                  <image><Image url="@/images/profile.png"/></image>
                </ImageView>
                <Label text="Profile" styleClass="card-title"/>
             </VBox>
-
          </TilePane>
 
-         <!-- Today's Tasks -->
+         <!-- Tasks Section -->
          <VBox spacing="15.0" style="-fx-background-color: #e8f5e9; -fx-background-radius: 10; -fx-padding: 20;" maxWidth="800.0">
             <Label text="Today's Tasks" textFill="#2e7d32">
                <font><Font size="20.0"/></font>

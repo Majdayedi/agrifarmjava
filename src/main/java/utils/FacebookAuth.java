@@ -7,7 +7,7 @@ import java.net.URLEncoder;
 import java.util.UUID;
 
 public class FacebookAuth {
-    private static final String APP_ID = "";
+    private static final String APP_ID = "1641418556562646";
     private static final String REDIRECT_URI = "http://localhost:8888/fb-callback";
 
     public static void launchLogin() throws IOException {

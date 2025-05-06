@@ -68,21 +68,18 @@ public class LoginController {
 
             Session.getInstance().setUser(user); // Store globally
             showAlert("Success", "Welcome, " + user.getFirstName() + "!");
-            Stage stage = (Stage) emailField.getScene().getWindow();
 
-            if (user.getRoles().contains("ROLE_ADMIN")) {
-                SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", (AdminDashboardController controller) -> {
-                    controller.setUser(user);
-                });
-            } else {
-                SceneManager.switchScene(stage, "/controller/UserDashboard.fxml", (UserDashboardController controller) -> {
-                    controller.setUser(user);
-                });
-            }
+            // ✅ Redirect to home.fxml for all users
+            Stage stage = (Stage) emailField.getScene().getWindow();
+            SceneManager.switchScene(stage, "/home.fxml", (HomeController controller) -> {
+                controller.setUser(user); // Optional: if HomeController needs it
+            });
+
         } else {
             showAlert("Error", "Invalid email or password.");
         }
     }
+
 
     @FXML
     private void goToRegister() {
