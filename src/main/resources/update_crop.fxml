@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controller.CropController"
+           stylesheets="@css/style.css">
+
+    <!-- Frosted‐glass background, same as add_crop -->
+    <ImageView fitWidth="1000" fitHeight="700" preserveRatio="false">
+        <image>
+            <Image url="@/images/crop photo.jpg"/>
+        </image>
+    </ImageView>
+
+    <VBox alignment="CENTER" spacing="20"
+          style="-fx-background-color: rgba(255,255,255,0.85);
+               -fx-background-radius: 20;
+               -fx-padding: 30;
+               -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 12, 0.1, 0, 4);"
+          maxWidth="600">
+
+        <Label text="Update Crop"
+               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill:#2c3e50;" />
+
+        <GridPane hgap="20" vgap="15">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+            <Label text="Event:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="cropEventField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="typeCropCombo" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Method:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="methodCropCombo" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Plantation Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="plantationDatePicker" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Plantation Time:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <HBox spacing="5" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                <Spinner fx:id="plantationHourSpinner" min="0" max="23" editable="true"/>
+                <Label text=":"/>
+                <Spinner fx:id="plantationMinuteSpinner" min="0" max="59" editable="true"/>
+            </HBox>
+
+            <Label text="Harvest Date:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="cropDatePicker" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <Label text="Harvest Time:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <HBox spacing="5" GridPane.rowIndex="6" GridPane.columnIndex="1">
+                <Spinner fx:id="cropHourSpinner" min="0" max="23" editable="true"/>
+                <Label text=":"/>
+                <Spinner fx:id="cropMinuteSpinner" min="0" max="59" editable="true"/>
+            </HBox>
+        </GridPane>
+
+        <HBox spacing="20" alignment="CENTER">
+            <Button text="Save Changes" onAction="#updateCrop" styleClass="save-button"/>
+            <Button text="Cancel" onAction="#showCropList" styleClass="cancel-button"/>
+        </HBox>
+
+        <TextArea fx:id="resultArea" prefWidth="500" prefHeight="80" wrapText="true"/>
+    </VBox>
+</StackPane>
