@@ -61,7 +61,7 @@
                             </HBox>
 
                             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                                <Button fx:id="addFarmBtn" styleClass="add-button" text="+ Add Farm">
+                                <Button fx:id="addFarmBtn"  style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="+ Add Farm">
                                     <HBox.margin>
                                         <Insets right="20.0" />
                                     </HBox.margin>
