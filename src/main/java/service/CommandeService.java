@@ -100,8 +100,8 @@ public class CommandeService {
             double discountedPrice = applyDiscount(originalPrice, commande.getUserId());
             if (discountedPrice != originalPrice) {
                 commande.setPrix(discountedPrice);
-                logger.info("Réduction de 10% appliquée pour l'utilisateur " + commande.getUserId() + 
-                          ". Prix original: " + originalPrice + "€, Prix après réduction: " + discountedPrice + "€");
+                logger.info("Réduction de 10% appliquée pour l'utilisateur " + commande.getUserId() +
+                        ". Prix original: " + originalPrice + "€, Prix après réduction: " + discountedPrice + "€");
             }
 
             // Vérifier si la table a la colonne quantite
@@ -121,7 +121,7 @@ public class CommandeService {
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
                 statement.setTimestamp(7, commande.getDate_creation_commande() != null ?
                         new Timestamp(commande.getDate_creation_commande().getTime()) : currentTimestamp);
-                
+
                 // Set the user_id
                 statement.setInt(8, commande.getUserId());
 
@@ -143,7 +143,7 @@ public class CommandeService {
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
                 statement.setTimestamp(6, commande.getDate_creation_commande() != null ?
                         new Timestamp(commande.getDate_creation_commande().getTime()) : currentTimestamp);
-                
+
                 // Set the user_id
                 statement.setInt(7, commande.getUserId());
             }
@@ -694,10 +694,10 @@ public class CommandeService {
                 loadCommandeProduits(connection, commande);
                 commandes.add(commande);
 
-                LOGGER.info("Order ID: " + commande.getId() + 
-                          ", Status: " + commande.getStatus() + 
-                          ", Price: " + commande.getPrix() +
-                          ", Number of products: " + commande.getProduits().size());
+                LOGGER.info("Order ID: " + commande.getId() +
+                        ", Status: " + commande.getStatus() +
+                        ", Price: " + commande.getPrix() +
+                        ", Number of products: " + commande.getProduits().size());
             }
 
             LOGGER.info("Found " + commandes.size() + " orders for user " + userId);
@@ -744,7 +744,7 @@ public class CommandeService {
 
             // Informations de la commande
             contentStream.setFont(PDType1Font.HELVETICA, 12);
-            
+
             // Date et numéro de commande
             contentStream.beginText();
             contentStream.newLineAtOffset(margin, yPosition);
@@ -820,7 +820,7 @@ public class CommandeService {
                 sousTotal += totalProduit;
 
                 currentX = startX;
-                
+
                 // Nom du produit
                 contentStream.beginText();
                 contentStream.newLineAtOffset(currentX, yPosition);
@@ -894,7 +894,7 @@ public class CommandeService {
             fileChooser.setTitle("Enregistrer la facture");
             fileChooser.setInitialFileName("facture_" + commande.getId() + ".pdf");
             fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf")
+                    new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf")
             );
 
             File file = fileChooser.showSaveDialog(stage);
@@ -943,17 +943,8 @@ public class CommandeService {
                 String lastName = rs.getString("last_name");
                 String password = rs.getString("password");
                 List<String> roles = User.parseRolesFromJson(rs.getString("roles"));
-                
-                return new User(
-                    rs.getInt("id"),
-                    email,
-                    roles,
-                    password,
-                    lastName,
-                    firstName,
-                    rs.getTimestamp("created_at").toLocalDateTime(),
-                    rs.getString("image_file_name")
-                );
+
+
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error getting user by ID", e);

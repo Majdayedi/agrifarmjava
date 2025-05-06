@@ -301,18 +301,18 @@ public class PanierService implements Initializable {
         // Vérifier la disponibilité des produits
         ProduitService produitService = new ProduitService();
         Map<Produit, Integer> produitsQuantites = panier.getProduitsQuantites();
-        
+
         for (Map.Entry<Produit, Integer> entry : produitsQuantites.entrySet()) {
             Produit produit = entry.getKey();
             int quantiteDemandee = entry.getValue();
-            
+
             // Récupérer la quantité actuelle du produit
             Produit produitActuel = produitService.read(produit.getId());
             if (produitActuel == null || produitActuel.getQuantite() < quantiteDemandee) {
-                showError("Stock insuffisant", 
-                    "Le produit '" + produit.getNom() + "' n'est plus disponible en quantité suffisante.\n" +
-                    "Quantité disponible : " + (produitActuel != null ? produitActuel.getQuantite() : 0) + "\n" +
-                    "Quantité demandée : " + quantiteDemandee);
+                showError("Stock insuffisant",
+                        "Le produit '" + produit.getNom() + "' n'est plus disponible en quantité suffisante.\n" +
+                                "Quantité disponible : " + (produitActuel != null ? produitActuel.getQuantite() : 0) + "\n" +
+                                "Quantité demandée : " + quantiteDemandee);
                 return;
             }
         }
@@ -354,7 +354,7 @@ public class PanierService implements Initializable {
                     Produit produit = entry.getKey();
                     int quantite = entry.getValue();
                     commande.addProduit(produit, quantite);
-                    
+
                     // Mettre à jour la quantité du produit
                     Produit produitActuel = produitService.read(produit.getId());
                     produitActuel.setQuantite(produitActuel.getQuantite() - quantite);
@@ -369,21 +369,21 @@ public class PanierService implements Initializable {
                     panier.viderPanier();
                     chargerPanier();
                     mettreAJourRecapitulatif();
-                    
+
                     String messageSuccess = "Votre commande a été passée avec succès!";
                     if (!typePaiement.equals("Carte bancaire") && !typePaiement.equals("Virement bancaire")) {
-                        messageSuccess += "\nVeuillez préparer votre " + 
-                            (typePaiement.equals("Espèces") ? "paiement en espèces" : 
-                             typePaiement.equals("Chèque") ? "chèque" : 
-                             "paiement") + " pour la livraison.";
+                        messageSuccess += "\nVeuillez préparer votre " +
+                                (typePaiement.equals("Espèces") ? "paiement en espèces" :
+                                        typePaiement.equals("Chèque") ? "chèque" :
+                                                "paiement") + " pour la livraison.";
                     }
 
                     // Envoyer l'email de confirmation
                     EmailService emailService = new EmailService();
                     boolean emailSent = emailService.sendConfirmationEmail(
-                        currentUser.getEmail(),
-                        "Client", // Nom générique
-                        totalPrice
+                            currentUser.getEmail(),
+                            "Client", // Nom générique
+                            totalPrice
                     );
 
                     if (!emailSent) {

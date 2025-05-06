@@ -22,7 +22,6 @@ import org.opencv.core.Core ;
 import java.io.IOException;
 
 public class Main extends Application {
-    static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
     @Override
     public void start(Stage stage) throws IOException {
         // Check if user is already logged in
