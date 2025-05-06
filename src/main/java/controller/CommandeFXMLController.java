@@ -224,14 +224,13 @@ public class CommandeFXMLController implements Initializable {
     void handleAddButtonAction(ActionEvent event) {
         try {
             if (validateInputs()) {
-                Commande commande = new Commande(
-                        Integer.parseInt(quantiteField.getText()),
-                        Double.parseDouble(prixField.getText()),
-                        typeCommandeCombo.getValue(),
-                        statusCombo.getValue(),
-                        adressField.getText(),
-                        paimentCombo.getValue()
-                );
+                Commande commande = new Commande();
+                commande.setQuantite(Integer.parseInt(quantiteField.getText()));
+                commande.setPrix(Double.parseDouble(prixField.getText())); 
+                commande.setType_commande(typeCommandeCombo.getValue());
+                commande.setStatus(statusCombo.getValue());
+                commande.setAdress(adressField.getText());
+                commande.setPaiment(paimentCombo.getValue());
                 
                 // Ajouter les produits sélectionnés à la commande
                 for (Produit p : selectedProduits) {

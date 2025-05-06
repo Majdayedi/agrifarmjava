@@ -71,23 +71,26 @@ public class HomeArticleController {
                     if (article.getImage() != null && !article.getImage().isEmpty()) {
                         // Load the article's image from the uploads directory on disk
                         String imagePath = "file:src/main/resources/controller/uploads/" + article.getImage();
-                        Image image = new Image(imagePath, true);
+                        // Load image with reduced dimensions and enable background loading
+                        Image image = new Image(imagePath, 200, 150, true, true);
                         imageView.setImage(image);
                     } else {
                         // Load default agriculture image from uploads directory as resource
                         String defaultImagePath = getClass().getResource("/controller/uploads/agriculture.png").toExternalForm();
-                        Image defaultImage = new Image(defaultImagePath);
+                        Image defaultImage = new Image(defaultImagePath, 200, 150, true, true);
                         imageView.setImage(defaultImage);
                     }
-                    imageView.setFitHeight(200);
-                    imageView.setFitWidth(300);
+                    imageView.setFitHeight(150); // Reduced from 200
+                    imageView.setFitWidth(200); // Reduced from 300
                     imageView.setPreserveRatio(true);
+                    imageView.setSmooth(true); // Enable image smoothing
+                    imageView.setCache(true); // Enable caching
                 } catch (Exception e) {
                     System.out.println("Failed to load image for article: " + article.getId() + ", Error: " + e.getMessage());
                     // Load default agriculture image on error
                     try {
                         String defaultImagePath = getClass().getResource("/controller/uploads/agriculture.png").toExternalForm();
-                        Image defaultImage = new Image(defaultImagePath);
+                        Image defaultImage = new Image(defaultImagePath, 200, 150, true, true);
                         imageView.setImage(defaultImage);
                     } catch (Exception ex) {
                         System.out.println("Failed to load default image: " + ex.getMessage());

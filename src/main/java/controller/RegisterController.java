@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -9,11 +10,11 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import entite.User;
+import service.FacebookTokenFetcher;
+import service.FacebookUserService;
 import service.UserService;
-import utils.GoogleAuthConfig;
-import utils.SceneManager;
+import utils.*;
 import service.EmailService;
-import utils.WebcamUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -176,11 +177,55 @@ public class RegisterController {
             showAlert("Google Sign-In Error", "An error occurred during Google sign-up:\n" + e.getMessage());
         }
     }
+    @FXML
+    private void handleFacebookSignUp() {
+        try {
+            FacebookAuth.launchLogin(); // Open browser for Facebook OAuth
+
+            CallbackServer.start(code -> {
+                try {
+                    String accessToken = FacebookTokenFetcher.getAccessToken(code);
+                    FacebookUserService.FacebookUser fbUser = FacebookUserService.fetchUserInfo(accessToken);
+
+                    int userId = userService.registerFacebookUser(
+                            fbUser.getEmail(),
+                            fbUser.getFirstName(),
+                            fbUser.getLastName(),
+                            fbUser.getPictureUrl()
+                    );
+
+                    Platform.runLater(() -> {
+                        if (userId > 0) {
+                            // Optionally: auto-login user here
+                            // Session.setCurrentUser(userService.getUserById(userId));
+
+                            showAlert("Success", "You have been successfully registered via Facebook!");
+                            goToLogin();
+                        } else {
+                            showAlert("Info", "This Facebook account is already registered. Please use 'Login with Facebook'.");
+                            goToLogin();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Platform.runLater(() ->
+                            showAlert("Facebook Sign-In Error", "An error occurred during Facebook sign-up:\n" + e.getMessage()));
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Unable to open Facebook login page.");
+        }
+    }
+
+
 
     private void startFaceCapture() {
         String email = emailField.getText();
         if (email != null && !email.isEmpty()) {
-           WebcamUtil.captureAndSaveMultipleFacesWithPreview(email, 3, cameraView);
+            WebcamUtil.captureAndSaveMultipleFacesWithPreview(email, 3, cameraView);
         } else {
             showAlert("Error", "Email is required before capturing face.");
         }

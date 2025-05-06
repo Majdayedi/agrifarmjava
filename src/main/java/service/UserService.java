@@ -5,11 +5,19 @@ import entite.User;
 import org.mindrot.jbcrypt.BCrypt;
 import utils.Connections;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.*;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.*;
+
 
 public class UserService {
 
@@ -266,4 +274,71 @@ public class UserService {
             return false;
         }
     }
+    public int registerFacebookUser(String email, String firstName, String lastName, String profilePicUrl) {
+        if (emailExists(email)) {
+            System.out.println("Facebook email already exists, skipping registration.");
+            return -1;
+        }
+
+        List<String> roles = Collections.singletonList("ROLE_USER");
+
+        // Download and save the profile picture locally
+        String imageFileName = null;
+        if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+            try (InputStream in = new URL(profilePicUrl).openStream()) {
+                imageFileName = UUID.randomUUID() + ".jpg";
+                Path outputPath = Paths.get("src/user_data/profile_pics/", imageFileName);
+                Files.copy(in, outputPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+                imageFileName = null;
+            }
+        }
+
+        // Generate dummy password and hash it using BCrypt
+        String dummyPassword = Base64.getEncoder()
+                .encodeToString(String.valueOf(System.currentTimeMillis()).getBytes());
+
+        String hashedPassword = BCrypt.hashpw(dummyPassword, BCrypt.gensalt());
+
+        // Replace $2a$ with $2y$ for Symfony compatibility
+        if (hashedPassword.startsWith("$2a$")) {
+            hashedPassword = "$2y$" + hashedPassword.substring(4);
+        }
+
+        String rolesJson = gson.toJson(roles);
+
+        String sql = "INSERT INTO users (email, password, roles, first_name, last_name, created_at, image_file_name, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = Connections.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, email);
+            stmt.setString(2, hashedPassword);
+            stmt.setString(3, rolesJson);
+            stmt.setString(4, firstName);
+            stmt.setString(5, lastName);
+            stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(7, imageFileName);
+            stmt.setBoolean(8, true); // Facebook registration = verified
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+
+
+
 }

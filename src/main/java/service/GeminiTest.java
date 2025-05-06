@@ -12,29 +12,62 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GeminiTest {
-    private static final String GEMINI_API_KEY = "AIzaSyC4YArqhQwxx7DuMfkUT9KHxuWglwfvpqc";
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
+    private static final Logger LOGGER = Logger.getLogger(GeminiTest.class.getName());
+    private static String API_KEY;
+    private static String API_URL;
     private static final TaskService taskService = new TaskService();
+    private static boolean isInitialized = false;
 
-    public void generator(Field field, String description,java.util.Date startDate) {
+    private static void initializeIfNeeded() {
+        if (!isInitialized) {
+            try {
+                Properties props = new Properties();
+                InputStream input = GeminiTest.class.getClassLoader().getResourceAsStream("config.properties");
+                if (input != null) {
+                    props.load(input);
+                    API_KEY = props.getProperty("gemini.api.key");
+                    if (API_KEY == null || API_KEY.trim().isEmpty()) {
+                        LOGGER.severe("Gemini API key is not configured in config.properties");
+                        return;
+                    }
+                    API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
+                    isInitialized = true;
+                } else {
+                    LOGGER.severe("Unable to find config.properties");
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error loading Gemini configuration", e);
+            }
+        }
+    }
+
+    public void generator(Field field, String description, java.util.Date startDate) {
         try {
-            System.out.println("Testing with description: " + description);
-            
-            // Get current date as starting point
+            initializeIfNeeded();
+            if (!isInitialized) {
+                LOGGER.severe("Cannot generate tasks: Gemini service is not properly initialized");
+                return;
+            }
 
+            LOGGER.info("Testing with description: " + description);
+            
             List<Task> tasks = generateFarmingTasks(field, description, startDate);
             if (tasks != null && !tasks.isEmpty()) {
-                System.out.println("Generated " + tasks.size() + " tasks:");
+                LOGGER.info("Generated " + tasks.size() + " tasks:");
                 for (Task task : tasks) {
-                    System.out.println("\nTask: " + task);
+                    LOGGER.info("\nTask: " + task);
                 }
             } else {
-                System.out.println("Failed to generate tasks");
+                LOGGER.warning("Failed to generate tasks");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error in generator", e);
         }
     }
 
@@ -88,7 +121,7 @@ public class GeminiTest {
             System.out.println("Request body: " + requestBody);
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(GEMINI_API_URL))
+                    .uri(URI.create(API_URL))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();

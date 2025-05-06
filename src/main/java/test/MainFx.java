@@ -18,12 +18,15 @@ public class MainFx extends Application {
     public void start(Stage primaryStage) {
         try {
             // Load the FXML file (make sure the path is correct)
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/home.fxml")));
+
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/controller/login.fxml")));
+
+
             // Create the scene with preferred size
             Scene scene = new Scene(root, 1200, 800);
 
             // Optional: apply stylesheet
-            String cssPath = "/css/styles.css";
+            String cssPath = "/css/StylesUser.css";
             if (getClass().getResource(cssPath) != null) {
                 scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(cssPath)).toExternalForm());
             }

@@ -1,43 +1,42 @@
 package utils;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Connections {
-
-    private static final String url = "jdbc:mysql://localhost:3306/projet";
-    private static final String username = "root";
-    private static final String password = "";
-    private static Connection connection;
+    private static final Logger logger = Logger.getLogger(Connections.class.getName());
     private static Connections instance;
+    private static Connection connection;
 
     private Connections() {
         try {
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            connection = DatabaseConnection.getConnection();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erreur lors de l'initialisation de la connexion", e);
         }
     }
 
     public static Connections getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new Connections();
+        }
         return instance;
     }
 
     public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(url, username, password);
+                connection = DatabaseConnection.getConnection();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reconnecting to the database", e);
+            logger.log(Level.SEVERE, "Erreur lors de la vérification de la connexion", e);
         }
         return connection;
     }
 
-    public void closeConnection() {
+    public static void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();

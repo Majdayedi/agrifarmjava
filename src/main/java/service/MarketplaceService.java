@@ -1,7 +1,9 @@
 package service;
 
+import entite.Commande;
 import entite.Panier;
 import entite.Produit;
+import entite.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +25,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import utils.Connections;
+import utils.Session;
+import views.StatistiquesView;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +42,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 
 public class MarketplaceService implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(MarketplaceService.class.getName());
@@ -47,7 +52,6 @@ public class MarketplaceService implements Initializable {
 
     @FXML
     private TextField searchField;
-
 
     @FXML
     private ComboBox<String> filterCategoryCombo;
@@ -59,7 +63,7 @@ public class MarketplaceService implements Initializable {
     private Label statisticsLabel;
 
     @FXML
-    private Button agricoleButton;
+    private Button produitButton;
 
     @FXML
     private Button panierButton;
@@ -69,6 +73,12 @@ public class MarketplaceService implements Initializable {
 
     @FXML
     private Button homeButton;
+
+    @FXML
+    private Button ordersButton;
+
+    @FXML
+    private Button statsButton;
 
     private ProduitService produitService;
     private ObservableList<Produit> productsList = FXCollections.observableArrayList();
@@ -84,9 +94,15 @@ public class MarketplaceService implements Initializable {
             "Tous les prix", "Moins de 10 DT", "10 DT - 50 DT", "50 DT - 100 DT", "Plus de 100 DT"
     );
 
+    private User currentUser;
+    private final CommandeService commandeService = new CommandeService();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         produitService = new ProduitService();
+
+        // Get the current user from session
+        this.currentUser = Session.getInstance().getUser();
 
         // Vérifier que nous avons une connexion valide à la base de données
         if (produitService.getConnection() == null) {
@@ -112,37 +128,35 @@ public class MarketplaceService implements Initializable {
 
         // Load products initially
         loadApprovedProducts();
-    }
 
-    @FXML
-    private void handleAgricoleButtonAction(ActionEvent event) {
-        try {
-            // Load the Agricole CRUD view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/produit.fxml"));
-            Parent agricoleView = loader.load();
-
-            // Get current stage
-            Stage stage = (Stage) agricoleButton.getScene().getWindow();
-
-            // Create new scene with Agricole view
-            Scene scene = new Scene(agricoleView);
-
-            // Set the scene to the stage
-            stage.setScene(scene);
-            stage.setTitle("AgriFarm - Agricole (CRUD)");
-            stage.show();
-
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading Agricole view", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
-                    "Impossible de charger la vue Agricole",
-                    "Une erreur s'est produite: " + e.getMessage());
+        if (produitButton != null) {
+            produitButton.setOnAction(event -> handleAgricoleButtonAction(event));
         }
     }
 
+    @FXML
+    public void handleAgricoleButtonAction(ActionEvent event) {
+        try {
+            // Charger la vue Agricole
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/produit.fxml"));
+            Parent agricoleView = loader.load();
 
+            // Obtenir la fenêtre actuelle
+            Stage stage = (Stage) produitButton.getScene().getWindow();
 
+            // Créer une nouvelle scène avec la vue Agricole
+            Scene scene = new Scene(agricoleView);
 
+            // Définir la scène sur la fenêtre
+            stage.setScene(scene);
+            stage.setTitle("AgriFarm - Produits");
+            stage.show();
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du chargement de la vue Produits", e);
+            showError("Erreur de Navigation", "Impossible de charger la vue Produits: " + e.getMessage());
+        }
+    }
 
     @FXML
     private void handleSearchButtonAction() {
@@ -296,52 +310,56 @@ public class MarketplaceService implements Initializable {
 
         // Product image
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(150);
+        imageView.setFitHeight(100);
         imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
 
-        try {
-            String imagePath = product.getImage_file_name();
-            if (imagePath != null && !imagePath.isEmpty()) {
-                File imageFile = new File(imagePath);
-                if (imageFile.exists()) {
-                    Image image = new Image(imageFile.toURI().toString());
-                    imageView.setImage(image);
-                } else {
-                    // Try as a relative path from resources
-                    String relativePath = IMAGE_DIRECTORY + new File(imagePath).getName();
-                    File relativeFile = new File(relativePath);
-
-                    if (relativeFile.exists()) {
-                        Image image = new Image(relativeFile.toURI().toString());
+        // Load image asynchronously
+        Platform.runLater(() -> {
+            try {
+                String imagePath = product.getImage_file_name();
+                if (imagePath != null && !imagePath.isEmpty()) {
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists()) {
+                        Image image = new Image(imageFile.toURI().toString(), 150, 100, true, true);
                         imageView.setImage(image);
                     } else {
-                        // Load default image
-                        File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
-                        if (defaultImage.exists()) {
-                            Image image = new Image(defaultImage.toURI().toString());
+                        // Try as a relative path from resources
+                        String relativePath = IMAGE_DIRECTORY + new File(imagePath).getName();
+                        File relativeFile = new File(relativePath);
+
+                        if (relativeFile.exists()) {
+                            Image image = new Image(relativeFile.toURI().toString(), 150, 100, true, true);
                             imageView.setImage(image);
+                        } else {
+                            // Load default image
+                            File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
+                            if (defaultImage.exists()) {
+                                Image image = new Image(defaultImage.toURI().toString(), 150, 100, true, true);
+                                imageView.setImage(image);
+                            }
                         }
                     }
+                } else {
+                    // Load default image
+                    File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
+                    if (defaultImage.exists()) {
+                        Image image = new Image(defaultImage.toURI().toString(), 150, 100, true, true);
+                        imageView.setImage(image);
+                    }
                 }
-            } else {
-                // Load default image
-                File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
-                if (defaultImage.exists()) {
-                    Image image = new Image(defaultImage.toURI().toString());
-                    imageView.setImage(image);
-                }
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Error loading image for product: " + product.getId(), ex);
+                imageView.setImage(null);
             }
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Error loading image for product: " + product.getId(), ex);
-            // If all else fails, add a placeholder text instead of image
-            imageView.setImage(null);
-        }
+        });
 
         // Center the imageView
         StackPane imageContainer = new StackPane();
         imageContainer.getChildren().add(imageView);
-        imageContainer.setPrefHeight(150);
+        imageContainer.setPrefHeight(100);
         imageContainer.getStyleClass().add("image-container");
 
         // Product details
@@ -540,6 +558,7 @@ public class MarketplaceService implements Initializable {
                     "Une erreur s'est produite: " + e.getMessage());
         }
     }
+
     /**
      * Ouvre la vue du panier
      */
@@ -618,6 +637,161 @@ public class MarketplaceService implements Initializable {
             LOGGER.log(Level.SEVERE, "Error loading Home view", e);
             showAlert(Alert.AlertType.ERROR, "Erreur de Navigation",
                     "Impossible de charger la vue d'accueil",
+                    "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleOrdersButtonAction(ActionEvent event) {
+        try {
+            // Check if user is logged in
+            if (currentUser == null) {
+                showAlert(Alert.AlertType.WARNING, "Non connecté",
+                        "Vous devez être connecté pour voir vos commandes",
+                        "Veuillez vous connecter pour accéder à vos commandes.");
+                return;
+            }
+
+            // Create a new dialog
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Mes Commandes");
+            dialog.setHeaderText("Liste de vos commandes");
+
+            // Create the content
+            VBox content = new VBox(10);
+            content.setPadding(new Insets(20));
+
+            // Get user's orders
+            List<Commande> commandes = commandeService.getCommandesByUser(currentUser.getId());
+
+            if (commandes.isEmpty()) {
+                content.getChildren().add(new Label("Vous n'avez pas encore de commandes."));
+            } else {
+                for (Commande commande : commandes) {
+                    // Create a card for each order
+                    VBox orderCard = createOrderCard(commande);
+                    content.getChildren().add(orderCard);
+                }
+            }
+
+            // Add scroll pane for better viewing
+            ScrollPane scrollPane = new ScrollPane(content);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setPrefHeight(400);
+
+            // Set the content
+            dialog.getDialogPane().setContent(scrollPane);
+
+            // Add close button
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+            // Show the dialog
+            dialog.showAndWait();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error displaying orders", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible d'afficher les commandes",
+                    "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+
+    private VBox createOrderCard(Commande commande) {
+        VBox card = new VBox(5);
+        card.getStyleClass().add("order-card");
+        card.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-color: #ddd; " +
+                     "-fx-border-radius: 5; -fx-background-radius: 5;");
+
+        // Order header
+        Label dateLabel = new Label("Date: " + commande.getDate_creation_commande());
+        dateLabel.setStyle("-fx-font-weight: bold;");
+
+        Label statusLabel = new Label("Status: " + commande.getStatus());
+        statusLabel.setStyle("-fx-text-fill: " + getStatusColor(commande.getStatus()));
+
+        Label totalLabel = new Label(String.format("Total: %.2f DT", commande.getPrix()));
+        totalLabel.setStyle("-fx-font-weight: bold;");
+
+        // Products list
+        VBox productsBox = new VBox(5);
+        for (Produit produit : commande.getProduits()) {
+            int quantite = commande.getQuantitesParProduit().get(produit.getId());
+            Label produitLabel = new Label(String.format("%s (x%d) - %.2f DT/unité",
+                    produit.getNom(), quantite, produit.getPrix()));
+            productsBox.getChildren().add(produitLabel);
+        }
+
+        // Download PDF button
+        Button downloadButton = new Button("Télécharger PDF");
+        downloadButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        downloadButton.setOnAction(e -> generatePDF(commande));
+
+        card.getChildren().addAll(dateLabel, statusLabel, totalLabel,
+                new Separator(), productsBox, downloadButton);
+
+        return card;
+    }
+
+    private String getStatusColor(String status) {
+        switch (status.toLowerCase()) {
+            case "en attente":
+                return "#f39c12";
+            case "confirmée":
+                return "#27ae60";
+            case "livrée":
+                return "#2ecc71";
+            case "annulée":
+                return "#e74c3c";
+            default:
+                return "#000000";
+        }
+    }
+
+    private void generatePDF(Commande commande) {
+        try {
+            commandeService.generatePDF(commande, (Stage) ordersButton.getScene().getWindow());
+            showAlert(Alert.AlertType.INFORMATION, "Succès",
+                    "PDF généré avec succès",
+                    "Le PDF de votre commande a été généré et enregistré.");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error generating PDF", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de générer le PDF",
+                    "Une erreur s'est produite: " + e.getMessage());
+        }
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleStatsButtonAction(ActionEvent event) {
+        try {
+            // Vérifier si l'utilisateur est connecté
+            if (currentUser == null) {
+                showAlert(Alert.AlertType.WARNING, "Non connecté",
+                        "Vous devez être connecté pour voir vos statistiques",
+                        "Veuillez vous connecter pour accéder à vos statistiques d'achat.");
+                return;
+            }
+
+            // Créer et afficher la vue des statistiques
+            StatistiquesView statsView = new StatistiquesView(currentUser.getId());
+            statsView.show();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'affichage des statistiques", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible d'afficher les statistiques",
                     "Une erreur s'est produite: " + e.getMessage());
         }
     }

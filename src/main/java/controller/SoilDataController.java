@@ -5,9 +5,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import service.CropManageAuthService;
 import service.CropManageSoilService;
@@ -19,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SoilDataController {
     private SoilDataCRUD soilDataCRUD = new SoilDataCRUD();
@@ -27,7 +32,7 @@ public class SoilDataController {
     private final CropManageAuthService apiAuthService = new CropManageAuthService();
     private final CropManageSoilService apiSoilService = new CropManageSoilService(apiAuthService);
 
-    @FXML private VBox soilDataCardsPane;
+    @FXML private FlowPane soilDataCardsPane;
     @FXML private TextField humiditeField;
     @FXML private TextField niveauPhField;
     @FXML private TextField niveauNutrimentField;
@@ -37,9 +42,18 @@ public class SoilDataController {
     @FXML
     private Button recommandationButton;
 
+    @FXML
+    private BarChart<String, Number> humidityChart;
+    @FXML
+    private BarChart<String, Number> phChart;
+    @FXML
+    private BarChart<String, Number> nutrientChart;
+
+
 
     public void setCropId(int cropId) {
         this.currentCropId = cropId;
+        loadStatistics();
         loadSoilData();
     }
 
@@ -118,115 +132,95 @@ public class SoilDataController {
     }
 
     private VBox createSoilDataCard(SoilData soilData) {
-        VBox card = new VBox(5);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        VBox card = new VBox(10);
         card.setPrefWidth(300);
-        card.setPrefHeight(250);
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 1); -fx-padding: 16;");
 
-        // Header with title and delete button
-        StackPane header = new StackPane();
-        header.setStyle("-fx-background-color: #4CAF50; -fx-background-radius: 10 10 0 0;");
-        header.setPrefHeight(40);
+        // Top Image + Delete Button
+        HBox topBox = new HBox();
+        topBox.setAlignment(Pos.TOP_RIGHT);
 
-        Label titleLabel = new Label("Soil Data #" + soilData.getId());
-        titleLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+        ImageView icon = new ImageView(new Image(getClass().getResource("/images/soildata.png").toExternalForm()));
+        icon.setFitHeight(30);
+        icon.setFitWidth(30);
+        icon.setPreserveRatio(true);
+        icon.setSmooth(true);
 
-        Button deleteButton = new Button("X");
-        deleteButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 0; -fx-min-width: 25; -fx-min-height: 25; -fx-padding: 0; -fx-border-width: 0;");
-        deleteButton.setOnAction(event -> {
-            try {
-                Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmDialog.setTitle("Confirm Delete");
-                confirmDialog.setHeaderText("Delete Soil Data");
-                confirmDialog.setContentText("Are you sure you want to delete this soil data? This action cannot be undone.");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                if (confirmDialog.showAndWait().get() == ButtonType.OK) {
-                    soilDataCRUD.deleteSoilData(soilData.getId());
-                    loadSoilData();
-                    if (resultArea != null) {
-                        resultArea.setText("Soil data deleted successfully!");
+        Button deleteBtn = new Button("X");
+        deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 20; -fx-min-width: 25; -fx-min-height: 25;");
+        deleteBtn.setOnAction(e -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this soil data?", ButtonType.OK, ButtonType.CANCEL);
+            confirm.setHeaderText("Confirm Deletion");
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        soilDataCRUD.deleteSoilData(soilData.getId());
+                        loadSoilData();
+                        if (resultArea != null) resultArea.setText("Deleted successfully!");
+                    } catch (SQLException ex) {
+                        if (resultArea != null) resultArea.setText("Delete error: " + ex.getMessage());
                     }
                 }
-            } catch (SQLException e) {
-                if (resultArea != null) {
-                    resultArea.setText("Error deleting soil data: " + e.getMessage());
-                }
-            }
+            });
         });
 
-        StackPane.setAlignment(deleteButton, Pos.TOP_RIGHT);
-        StackPane.setMargin(deleteButton, new Insets(5, 5, 0, 0));
+        topBox.getChildren().addAll(icon, spacer, deleteBtn);
 
-        header.getChildren().addAll(titleLabel, deleteButton);
+        // Labels
+        Label title = new Label("Soil Data #" + soilData.getId());
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #2c3e50;");
 
-        // Soil data details
-        VBox details = new VBox(10);
-        details.setAlignment(Pos.CENTER_LEFT);
-        details.setPadding(new Insets(20));
-        details.setStyle("-fx-background-color: white;");
+        Label subTitle = new Label(soilData.getType_sol());
+        subTitle.setStyle("-fx-text-fill: #666666; -fx-font-size: 12;");
 
-        Label humiditeLabel = new Label("Humidity: " + soilData.getHumidite() + "%");
-        humiditeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+        Label humidity = new Label("Humidity: " + soilData.getHumidite() + "%");
+        Label ph = new Label("pH Level: " + soilData.getNiveau_ph());
+        Label nutrient = new Label("Nutrient: " + soilData.getNiveau_nutriment());
 
-        Label phLabel = new Label("pH Level: " + soilData.getNiveau_ph());
-        phLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+        humidity.setStyle("-fx-text-fill: #2c3e50;");
+        ph.setStyle("-fx-text-fill: #2c3e50;");
+        nutrient.setStyle("-fx-text-fill: #2c3e50;");
 
-        Label nutrimentLabel = new Label("Nutrient Level: " + soilData.getNiveau_nutriment());
-        nutrimentLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+        // Buttons
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.CENTER);
 
-        Label typeSolLabel = new Label("Soil Type: " + soilData.getType_sol());
-        typeSolLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-
-        // Action buttons
-        HBox buttons = new HBox(10);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setPadding(new Insets(10));
-        buttons.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 0 0 10 10;");
-
-        Button updateButton = new Button("Update");
-        updateButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
-        updateButton.setOnAction(event -> {
+        Button updateBtn = new Button("Update");
+        updateBtn.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 6 16;");
+        updateBtn.setOnAction(e -> {
             try {
                 selectedSoilData = soilData;
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/add_soil_data.fxml"));
                 Parent root = loader.load();
-
                 SoilDataController controller = loader.getController();
                 controller.selectedSoilData = soilData;
                 controller.currentCropId = this.currentCropId;
                 controller.populateFields(soilData);
-
                 Stage stage = new Stage();
                 stage.setTitle("Update Soil Data");
                 stage.setScene(new Scene(root));
                 stage.showAndWait();
-
-                // Only reload if we're in the main view
-                if (soilDataCardsPane != null) {
-                    loadSoilData();
-                }
-            } catch (IOException e) {
-                if (resultArea != null) {
-                    resultArea.setText("Error loading update form: " + e.getMessage());
-                }
+                loadSoilData();
+            } catch (IOException ex) {
+                if (resultArea != null) resultArea.setText("Error loading update form: " + ex.getMessage());
             }
         });
 
-        Button detailsButton = new Button("Details");
-        detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
-        detailsButton.setOnAction(event -> {
-            if (resultArea != null) {
-                resultArea.setText(soilData.toString());
-            }
+        Button detailsBtn = new Button("Details");
+        detailsBtn.setStyle("-fx-background-color: #e0e0e0; -fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 6 16;");
+        detailsBtn.setOnAction(e -> {
+            if (resultArea != null) resultArea.setText(soilData.toString());
         });
 
-        buttons.getChildren().addAll(updateButton, detailsButton);
+        buttonBox.getChildren().addAll(detailsBtn, updateBtn);
 
-        details.getChildren().addAll(humiditeLabel, phLabel, nutrimentLabel, typeSolLabel);
-        card.getChildren().addAll(header, details, buttons);
-
+        card.getChildren().addAll(topBox, title, subTitle, humidity, ph, nutrient, buttonBox);
         return card;
     }
+
 
     @FXML
     private void createSoilData() {
@@ -388,13 +382,98 @@ public class SoilDataController {
 
         if (soilTypes != null && !soilTypes.isEmpty()) {
             Platform.runLater(() -> {
-                typeSolCombo.getItems().clear();
-                for (Map<String, Object> soilType : soilTypes) {
-                    typeSolCombo.getItems().add((String) soilType.get("Name"));
+                if (typeSolCombo != null) {
+                    typeSolCombo.getItems().clear();
+                    for (Map<String, Object> soilType : soilTypes) {
+                        typeSolCombo.getItems().add((String) soilType.get("Name"));
+                    }
                 }
             });
+
         }
     }
 
 
+
+
+
+
+
+    public void SoilStatisticsController() {
+        this.soilDataCRUD = new SoilDataCRUD();
+    }
+
+
+
+    private void loadStatistics() {
+        try {
+            List<SoilData> soilDataList = soilDataCRUD.getSoilDataByCropId(currentCropId);
+            updateHumidityChart(soilDataList);
+            updatePhChart(soilDataList);
+            updateNutrientChart(soilDataList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateHumidityChart(List<SoilData> soilDataList) {
+        humidityChart.getData().clear();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Humidity");
+
+        for (int i = 0; i < soilDataList.size(); i++) {
+            SoilData data = soilDataList.get(i);
+            series.getData().add(new XYChart.Data<>(
+                    "Data " + (i + 1),
+                    data.getHumidite()
+            ));
+        }
+
+        humidityChart.getData().add(series);
+    }
+
+    private void updatePhChart(List<SoilData> soilDataList) {
+        phChart.getData().clear();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("pH Level");
+
+        for (int i = 0; i < soilDataList.size(); i++) {
+            SoilData data = soilDataList.get(i);
+            series.getData().add(new XYChart.Data<>(
+                    "Data " + (i + 1),
+                    data.getNiveau_ph()
+            ));
+        }
+
+        phChart.getData().add(series);
+    }
+
+    private void updateNutrientChart(List<SoilData> soilDataList) {
+        nutrientChart.getData().clear();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Nutrient Level");
+
+        for (int i = 0; i < soilDataList.size(); i++) {
+            SoilData data = soilDataList.get(i);
+            series.getData().add(new XYChart.Data<>(
+                    "Data " + (i + 1),
+                    data.getNiveau_nutriment()
+            ));
+        }
+
+        nutrientChart.getData().add(series);
+    }
+
+    private void updateSoilTypeChart(List<SoilData> soilDataList) {
+
+        Map<String, Long> soilTypeCounts = soilDataList.stream()
+                .collect(Collectors.groupingBy(
+                        SoilData::getType_sol,
+                        Collectors.counting()
+                ));
+
+        soilTypeCounts.forEach((type, count) -> {
+
+        });
+    }
 }
