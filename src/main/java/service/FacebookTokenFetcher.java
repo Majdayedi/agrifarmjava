@@ -11,7 +11,7 @@ import java.net.URLEncoder;
 
 public class FacebookTokenFetcher {
     private static final String APP_ID = "";
-    private static final String APP_SECRET = "";
+    private static final String APP_SECRET = "ec4ac94567518c18571169cb503f76f5";
     private static final String REDIRECT_URI = "http://localhost:8888/fb-callback";
 
     public static String getAccessToken(String code) throws IOException {
