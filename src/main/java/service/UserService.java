@@ -287,7 +287,7 @@ public class UserService {
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
             try (InputStream in = new URL(profilePicUrl).openStream()) {
                 imageFileName = UUID.randomUUID() + ".jpg";
-                Path outputPath = Paths.get("src/main/resources/profile_pics/", imageFileName);
+                Path outputPath = Paths.get("src/user_data/profile_pics/", imageFileName);
                 Files.copy(in, outputPath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -295,9 +295,18 @@ public class UserService {
             }
         }
 
-        String rolesJson = gson.toJson(roles);
+        // Generate dummy password and hash it using BCrypt
         String dummyPassword = Base64.getEncoder()
                 .encodeToString(String.valueOf(System.currentTimeMillis()).getBytes());
+
+        String hashedPassword = BCrypt.hashpw(dummyPassword, BCrypt.gensalt());
+
+        // Replace $2a$ with $2y$ for Symfony compatibility
+        if (hashedPassword.startsWith("$2a$")) {
+            hashedPassword = "$2y$" + hashedPassword.substring(4);
+        }
+
+        String rolesJson = gson.toJson(roles);
 
         String sql = "INSERT INTO users (email, password, roles, first_name, last_name, created_at, image_file_name, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -305,7 +314,7 @@ public class UserService {
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, email);
-            stmt.setString(2, dummyPassword); // use a dummy password instead of null
+            stmt.setString(2, hashedPassword);
             stmt.setString(3, rolesJson);
             stmt.setString(4, firstName);
             stmt.setString(5, lastName);
@@ -328,6 +337,7 @@ public class UserService {
 
         return -1;
     }
+
 
 
 
