@@ -10,7 +10,6 @@ import org.opencv.core.Core;
 import java.util.Objects;
 
 public class MainFx extends Application {
-static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
     public static void main(String[] args) {
         launch(args);
     }
@@ -20,9 +19,8 @@ static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
         try {
             // Load the FXML file (make sure the path is correct)
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/home.fxml")));
-
             // Create the scene with preferred size
-            Scene scene = new Scene(root, 520, 440);
+            Scene scene = new Scene(root, 1200, 800);
 
             // Optional: apply stylesheet
             String cssPath = "/css/styles.css";

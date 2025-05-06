@@ -107,6 +107,23 @@ public class FarmService implements IService<Farm> {
         }
         return farms;
     }
+    public List<Farm> read(int id) {
+        List<Farm> farms = new ArrayList<>();
+        String query = "SELECT * FROM farm WHERE user_id_id = ?";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, id);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    farms.add(mapResultSetToFarm(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading all farms: " + e.getMessage(), e);
+        }
+
+        return farms;
+    }
 
     @Override
     public Farm readById(int id) {
