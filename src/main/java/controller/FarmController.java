@@ -1,6 +1,7 @@
 package controller;
 
 import entite.Farm;
+import entite.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -26,6 +27,8 @@ import service.WeatherService;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import service.TwilioService;
+import utils.Session;
+
 public class FarmController {
     public Button cropButton;
     public Button weatherBtn;
@@ -51,19 +54,21 @@ public class FarmController {
     private final FarmService farmService = new FarmService();
     private WeatherService.Weather weather;
     private List<WeatherService.Weather> forecasts;
-    private int currentUser = 23; // Replace with the actual user ID
+    private int currentUser ;
+    private Session session ;
+    // Replace with the actual user ID
     public void taks( List<WeatherService.Weather> forecasts) {
         this.forecasts=forecasts;
         this.weather=forecasts.get(0);
     }
-    public void setUser(int userId) {
-        this.currentUser = userId;
-    }
+
     @FXML
     public void initialize() {
         farmgrid.setAlignment(Pos.CENTER);
         farmgrid.setHgap(30);
         farmgrid.setVgap(200);
+     session = Session.getInstance();
+        currentUser = session.getUser().getId();
         loadFarms();
 
         // Add Farm button handler
@@ -155,7 +160,7 @@ public class FarmController {
     public void loadFarms() {
         // Clear existing content in the grid before refreshing
         farmgrid.getChildren().clear();
-
+        System.out.println("user id: "+currentUser);
         List<Farm> farms = farmService.read(currentUser);
         int col = 0, row = 0;
 

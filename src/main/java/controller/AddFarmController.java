@@ -181,35 +181,35 @@ public class AddFarmController {
     }
 
     public void handleUpdate(ActionEvent actionEvent) {
-            try {
-                Farm farm = currentFarm != null ? currentFarm : new Farm();
-                farm.setName(nameField.getText());
-                farm.setSurface(Float.parseFloat(surfaceField.getText()));
-                farm.setAdress(addressField.getText());
-                farm.setBudget(Float.parseFloat(budgetField.getText()));
-                farm.setWeather(" ");
-                farm.setLocation(locationField.getText());
-                farm.setLat((float) currentLat);
-                farm.setLon((float) currentLon);
-                farm.setDescription(descriptionField.getText());
-                farm.setBir(bircheck.isSelected());
-                farm.setIrrigation(irrigationCheck.isSelected());
-                farm.setPhotovoltaic(photoCheck.isSelected());
-                farm.setFence(fence.isSelected());
-                farm.setCabin(cabincheck.isSelected());
+        try {
+            Farm farm = currentFarm != null ? currentFarm : new Farm();
+            farm.setName(nameField.getText());
+            farm.setSurface(Float.parseFloat(surfaceField.getText()));
+            farm.setAdress(addressField.getText());
+            farm.setBudget(Float.parseFloat(budgetField.getText()));
+            farm.setWeather(" ");
+            farm.setLocation(locationField.getText());
+            farm.setLat((float) currentLat);
+            farm.setLon((float) currentLon);
+            farm.setDescription(descriptionField.getText());
+            farm.setBir(bircheck.isSelected());
+            farm.setIrrigation(irrigationCheck.isSelected());
+            farm.setPhotovoltaic(photoCheck.isSelected());
+            farm.setFence(fence.isSelected());
+            farm.setCabin(cabincheck.isSelected());
 
-                if (currentFarm != null) {
-                    farmService.update(farm);
-                }
-
-                refreshMainView();
-            } catch (NumberFormatException e) {
-                showError("Input Error", "Please enter valid numbers for numeric fields");
-            } catch (Exception e) {
-                showError("Error", "Could not save farm: " + e.getMessage());
-                System.out.println("Could not save farm: " + e.getMessage());;
+            if (currentFarm != null) {
+                farmService.update(farm);
             }
+
+            refreshMainView();
+        } catch (NumberFormatException e) {
+            showError("Input Error", "Please enter valid numbers for numeric fields");
+        } catch (Exception e) {
+            showError("Error", "Could not save farm: " + e.getMessage());
+            System.out.println("Could not save farm: " + e.getMessage());;
         }
+    }
 
 
 
@@ -284,19 +284,19 @@ public class AddFarmController {
     public void setFarm(Farm farm) {
         this.currentFarm = farm;
         if (farm != null) {
-        nameField.setText(farm.getName());
+            nameField.setText(farm.getName());
             surfaceField.setText(String.valueOf(farm.getSurface()));
-        addressField.setText(farm.getAdress());
-        budgetField.setText(String.valueOf(farm.getBudget()));
+            addressField.setText(farm.getAdress());
+            budgetField.setText(String.valueOf(farm.getBudget()));
             locationField.setText(farm.getLocation());
             longitudeField.setText(String.valueOf(farm.getLon()));
             latitudeField.setText(String.valueOf(farm.getLat()));
-        descriptionField.setText(farm.getDescription());
-        bircheck.setSelected(farm.isBir());
-        irrigationCheck.setSelected(farm.isIrrigation());
-        photoCheck.setSelected(farm.isPhotovoltaic());
-        fence.setSelected(farm.isFence());
-        cabincheck.setSelected(farm.isCabin());
+            descriptionField.setText(farm.getDescription());
+            bircheck.setSelected(farm.isBir());
+            irrigationCheck.setSelected(farm.isIrrigation());
+            photoCheck.setSelected(farm.isPhotovoltaic());
+            fence.setSelected(farm.isFence());
+            cabincheck.setSelected(farm.isCabin());
 
             // Update map marker
             if (farm.getLat() != 0 && farm.getLon() != 0) {
@@ -342,9 +342,9 @@ public class AddFarmController {
             if (currentFarm != null) {
                 farmService.update(farm);
             } else {
-            farmService.create(farm);
-            Field field = new Field(farm, 0, "Main field", 0.0, 0, 0, 0, "",null);
-            fieldservice.create(field);
+                farmService.create(farm);
+                Field field = new Field(farm, 0, "Main field", 0.0, 0, 0, 0, "",null);
+                fieldservice.create(field);
 
             }
 
