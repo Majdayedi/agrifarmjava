@@ -27,8 +27,9 @@
             <HBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="10.0">
                <children>
                   <Button fx:id="produitButton" mnemonicParsing="false" onAction="#handleAgricoleButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Produits" />
-
                   <Button fx:id="marketplaceButton" mnemonicParsing="false" styleClass="nav-button-active" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Marketplace" />
+                  <Button fx:id="ordersButton" mnemonicParsing="false" onAction="#handleOrdersButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Mes Commandes" />
+                  <Button fx:id="statsButton" mnemonicParsing="false" onAction="#handleStatsButtonAction" styleClass="nav-button" style="-fx-text-fill: white; -fx-background-color: transparent; -fx-font-weight: bold;" text="Statistiques" />
                </children>
                <HBox.margin>
                   <Insets left="50.0" />

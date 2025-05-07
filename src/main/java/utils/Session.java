@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDateTime;
 
+
 public class Session {
     private static Session instance;
     private User loggedInUser;
@@ -29,6 +30,7 @@ public class Session {
         }
         return instance;
     }
+
 
     public void setUser(User user) {
         this.loggedInUser = user;
@@ -62,6 +64,7 @@ public class Session {
             }
         }
     }
+
 
     public boolean isAdmin() {
         return loggedInUser != null && loggedInUser.getRoles().contains("ROLE_ADMIN");

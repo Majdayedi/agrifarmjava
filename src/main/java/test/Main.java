@@ -8,15 +8,19 @@ import controller.AdminDashboardController;
 import controller.UserDashboardController;
 import utils.Session;
 import utils.SceneManager;
-import org.opencv.core.Core ;
-
+import org.opencv.core.Core;
 
 import java.io.IOException;
 
 public class Main extends Application {
-    static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
     @Override
     public void start(Stage stage) throws IOException {
+        // Load the OpenCV library
+          // This will automatically load the appropriate OpenCV DLL.
+
+        // Print OpenCV version to confirm it loaded successfully
+        System.out.println("OpenCV Version: " + Core.VERSION);
+
         // Check if user is already logged in
         if (Session.getInstance().isLoggedIn()) {
             // User is logged in, redirect to appropriate dashboard
@@ -35,7 +39,6 @@ public class Main extends Application {
             stage.setScene(scene);
             stage.show();
         }
-        System.out.println(Core.VERSION);
     }
 
     public static void main(String[] args) {

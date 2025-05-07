@@ -3,6 +3,7 @@ package service;
 import entite.Commande;
 import entite.Panier;
 import entite.Produit;
+import entite.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,14 +20,17 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 
 public class PanierService implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(PanierService.class.getName());
@@ -62,10 +66,16 @@ public class PanierService implements Initializable {
             "Carte bancaire", "Espèces", "Chèque", "Virement bancaire", "Paiement à la livraison"
     );
 
+    private Connection connection;
+    private User currentUser;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Récupérer l'instance du panier
         panier = Panier.getInstance();
+
+        // Récupérer l'utilisateur courant depuis la session
+        currentUser = utils.Session.getInstance().getUser();
 
         // Initialiser les combos
         typeCommandeCombo.getItems().addAll(TYPES_COMMANDE);
@@ -113,45 +123,50 @@ public class PanierService implements Initializable {
 
         // Image du produit
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(80);
-        imageView.setFitHeight(80);
+        imageView.setFitWidth(60);
+        imageView.setFitHeight(60);
         imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
 
-        try {
-            String imagePath = produit.getImage_file_name();
-            if (imagePath != null && !imagePath.isEmpty()) {
-                File imageFile = new File(imagePath);
-                if (imageFile.exists()) {
-                    Image image = new Image(imageFile.toURI().toString());
-                    imageView.setImage(image);
-                } else {
-                    // Essayer comme un chemin relatif depuis les ressources
-                    String relativePath = IMAGE_DIRECTORY + new File(imagePath).getName();
-                    File relativeFile = new File(relativePath);
-
-                    if (relativeFile.exists()) {
-                        Image image = new Image(relativeFile.toURI().toString());
+        // Load image asynchronously
+        Platform.runLater(() -> {
+            try {
+                String imagePath = produit.getImage_file_name();
+                if (imagePath != null && !imagePath.isEmpty()) {
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists()) {
+                        Image image = new Image(imageFile.toURI().toString(), 60, 60, true, true);
                         imageView.setImage(image);
                     } else {
-                        // Charger l'image par défaut
-                        File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
-                        if (defaultImage.exists()) {
-                            Image image = new Image(defaultImage.toURI().toString());
+                        // Essayer comme un chemin relatif depuis les ressources
+                        String relativePath = IMAGE_DIRECTORY + new File(imagePath).getName();
+                        File relativeFile = new File(relativePath);
+
+                        if (relativeFile.exists()) {
+                            Image image = new Image(relativeFile.toURI().toString(), 60, 60, true, true);
                             imageView.setImage(image);
+                        } else {
+                            // Charger l'image par défaut
+                            File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
+                            if (defaultImage.exists()) {
+                                Image image = new Image(defaultImage.toURI().toString(), 60, 60, true, true);
+                                imageView.setImage(image);
+                            }
                         }
                     }
+                } else {
+                    // Charger l'image par défaut
+                    File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
+                    if (defaultImage.exists()) {
+                        Image image = new Image(defaultImage.toURI().toString(), 60, 60, true, true);
+                        imageView.setImage(image);
+                    }
                 }
-            } else {
-                // Charger l'image par défaut
-                File defaultImage = new File(IMAGE_DIRECTORY + "default_product.png");
-                if (defaultImage.exists()) {
-                    Image image = new Image(defaultImage.toURI().toString());
-                    imageView.setImage(image);
-                }
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Error loading image for product: " + produit.getId(), ex);
             }
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Error loading image for product: " + produit.getId(), ex);
-        }
+        });
 
         // Centre l'image dans un StackPane
         StackPane imageContainer = new StackPane();
@@ -267,70 +282,125 @@ public class PanierService implements Initializable {
 
     @FXML
     void handlePasserCommandeButtonAction(ActionEvent event) {
-        // Vérifier si l'adresse est fournie
+        if (currentUser == null) {
+            showError("Erreur", "Vous devez être connecté pour passer une commande.");
+            return;
+        }
+
         if (adresseField.getText() == null || adresseField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Adresse manquante",
-                    "Veuillez fournir une adresse de livraison",
-                    "L'adresse est requise pour finaliser la commande.");
+            showError("Erreur", "Veuillez saisir une adresse de livraison.");
             return;
         }
 
-        // Créer la commande à partir du panier
-        Commande commande = panier.creerCommande(
-                adresseField.getText(),
-                paiementCombo.getValue(),
-                typeCommandeCombo.getValue()
-        );
-
-        if (commande == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de créer la commande",
-                    "Le panier est vide ou une erreur s'est produite.");
+        String typePaiement = paiementCombo.getValue();
+        if (typePaiement == null) {
+            showError("Erreur", "Veuillez sélectionner un mode de paiement.");
             return;
         }
 
-        // Enregistrer la commande dans la base de données
-        boolean success = commandeService.create(commande);
+        // Vérifier la disponibilité des produits
+        ProduitService produitService = new ProduitService();
+        Map<Produit, Integer> produitsQuantites = panier.getProduitsQuantites();
 
-        if (success) {
-            // Vider le panier après une commande réussie
-            panier.viderPanier();
+        for (Map.Entry<Produit, Integer> entry : produitsQuantites.entrySet()) {
+            Produit produit = entry.getKey();
+            int quantiteDemandee = entry.getValue();
 
-            // Afficher une confirmation
-            showAlert(Alert.AlertType.INFORMATION, "Commande passée",
-                    "Votre commande a été passée avec succès",
-                    "Merci pour votre commande ! Les quantités des produits ont été mises à jour.");
+            // Récupérer la quantité actuelle du produit
+            Produit produitActuel = produitService.read(produit.getId());
+            if (produitActuel == null || produitActuel.getQuantite() < quantiteDemandee) {
+                showError("Stock insuffisant",
+                        "Le produit '" + produit.getNom() + "' n'est plus disponible en quantité suffisante.\n" +
+                                "Quantité disponible : " + (produitActuel != null ? produitActuel.getQuantite() : 0) + "\n" +
+                                "Quantité demandée : " + quantiteDemandee);
+                return;
+            }
+        }
 
-            // Retourner au marketplace avec un indicateur pour rafraîchir les produits
+        // Calculate total price
+        double totalPrice = calculateTotalPrice();
+
+        boolean paiementReussi = false;
+
+        // Process payment based on payment type
+        if (typePaiement.equals("Carte bancaire") || typePaiement.equals("Virement bancaire")) {
             try {
-                // Charger la vue du marketplace avec refresh forcé
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/marketplace.fxml"));
-                Parent marketplaceView = loader.load();
-
-                // Récupérer le contrôleur pour appeler directement le refresh
-                MarketplaceService marketplaceController = loader.getController();
-
-                // Get current stage
-                Stage stage = (Stage) passerCommandeButton.getScene().getWindow();
-
-                // Create new scene with Marketplace view
-                Scene scene = new Scene(marketplaceView);
-
-                // Set the scene to the stage
-                stage.setScene(scene);
-                stage.setTitle("AgriFarm - Marketplace");
-                stage.show();
-
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error loading Marketplace view", e);
-                showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "Impossible de charger la vue Marketplace",
-                        "Une erreur s'est produite: " + e.getMessage());
+                StripePaymentService stripeService = new StripePaymentService();
+                paiementReussi = stripeService.processPayment(totalPrice, "EUR");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Erreur de paiement", "Une erreur est survenue lors du traitement du paiement: " + e.getMessage());
+                return;
             }
         } else {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de finaliser la commande",
-                    "Une erreur s'est produite lors de l'enregistrement de la commande.");
+            paiementReussi = true;
+        }
+
+        if (paiementReussi) {
+            try {
+                // Create the order
+                Commande commande = new Commande();
+                commande.setUserId(currentUser.getId());
+                commande.setDate_creation_commande(new java.sql.Date(System.currentTimeMillis()));
+                commande.setStatus(typePaiement.equals("Paiement à la livraison") ? "En attente de paiement" : "Confirmée");
+                commande.setAdress(adresseField.getText());
+                commande.setPrix(totalPrice);
+                commande.setQuantite(panier.getNombreTotalArticles());
+                commande.setType_commande(typeCommandeCombo.getValue());
+                commande.setPaiment(typePaiement);
+
+                // Ajouter les produits à la commande
+                for (Map.Entry<Produit, Integer> entry : produitsQuantites.entrySet()) {
+                    Produit produit = entry.getKey();
+                    int quantite = entry.getValue();
+                    commande.addProduit(produit, quantite);
+
+                    // Mettre à jour la quantité du produit
+                    Produit produitActuel = produitService.read(produit.getId());
+                    produitActuel.setQuantite(produitActuel.getQuantite() - quantite);
+                    produitService.update(produitActuel);
+                }
+
+                // Save the order
+                boolean success = commandeService.create(commande);
+
+                if (success) {
+                    // Clear the cart
+                    panier.viderPanier();
+                    chargerPanier();
+                    mettreAJourRecapitulatif();
+
+                    String messageSuccess = "Votre commande a été passée avec succès!";
+                    if (!typePaiement.equals("Carte bancaire") && !typePaiement.equals("Virement bancaire")) {
+                        messageSuccess += "\nVeuillez préparer votre " +
+                                (typePaiement.equals("Espèces") ? "paiement en espèces" :
+                                        typePaiement.equals("Chèque") ? "chèque" :
+                                                "paiement") + " pour la livraison.";
+                    }
+
+                    // Envoyer l'email de confirmation
+                    EmailService emailService = new EmailService();
+                    boolean emailSent = emailService.sendConfirmationEmail(
+                            currentUser.getEmail(),
+                            "Client", // Nom générique
+                            totalPrice
+                    );
+
+                    if (!emailSent) {
+                        LOGGER.warning("L'email de confirmation n'a pas pu être envoyé.");
+                    }
+
+                    showSuccess("Succès", messageSuccess);
+
+                    // Rediriger vers la page du marketplace
+                    handleContinuerAchatsButtonAction(event);
+                } else {
+                    showError("Erreur", "Une erreur est survenue lors de la création de la commande.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Erreur", "Une erreur est survenue lors de la création de la commande: " + e.getMessage());
+            }
         }
     }
 
@@ -414,5 +484,121 @@ public class PanierService implements Initializable {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void ajouterProduit(Produit produit, int quantite) {
+        panier.ajouterProduit(produit, quantite);
+    }
+
+    public void retirerProduit(Produit produit) {
+        panier.supprimerProduit(produit);
+    }
+
+    public Map<Produit, Integer> getPanier() {
+        return panier.getProduitsQuantites();
+    }
+
+    public double getTotal() {
+        return panier.calculerTotal();
+    }
+
+    public void viderPanier() {
+        panier.viderPanier();
+    }
+
+    public boolean passerCommande(String adresse, String typePaiement) {
+        if (currentUser == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Authentification requise");
+            alert.setHeaderText(null);
+            alert.setContentText("Vous devez être connecté pour passer une commande.");
+            alert.showAndWait();
+            return false;
+        }
+
+        if (adresse == null || adresse.trim().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Adresse manquante");
+            alert.setHeaderText(null);
+            alert.setContentText("Veuillez saisir une adresse de livraison.");
+            alert.showAndWait();
+            return false;
+        }
+
+        try {
+            Commande commande = new Commande();
+            commande.setUserId(currentUser.getId());
+            commande.setAdress(adresse);
+            commande.setPaiment(typePaiement);
+            commande.setStatus("En attente");
+            commande.setPrix(getTotal());
+            commande.setQuantite(panier.getNombreTotalArticles());
+
+            // Ajouter les produits à la commande
+            for (Map.Entry<Produit, Integer> entry : panier.getProduitsQuantites().entrySet()) {
+                commande.addProduit(entry.getKey(), entry.getValue());
+            }
+
+            // Sauvegarder la commande
+            commandeService.create(commande);
+
+            // Vider le panier après la commande
+            viderPanier();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Commande passée");
+            alert.setHeaderText(null);
+            alert.setContentText("Votre commande a été enregistrée avec succès !");
+            alert.showAndWait();
+
+            return true;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du passage de la commande", e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Une erreur est survenue lors du passage de la commande.");
+            alert.showAndWait();
+            return false;
+        }
+    }
+
+    public List<Commande> getCommandesUtilisateur() {
+        if (currentUser == null) {
+            return new ArrayList<>();
+        }
+        return commandeService.getCommandesByUser(currentUser.getId());
+    }
+
+    public void genererPDFCommande(Commande commande, Stage stage) {
+        if (currentUser == null || commande.getUserId() != currentUser.getId()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Accès refusé");
+            alert.setHeaderText(null);
+            alert.setContentText("Vous n'avez pas accès à cette commande.");
+            alert.showAndWait();
+            return;
+        }
+        commandeService.generatePDF(commande, stage);
+    }
+
+    private double calculateTotalPrice() {
+        return getTotal();
+    }
+
+    private void showError(String title, String content) {
+        showAlert(Alert.AlertType.ERROR, title, null, content);
+    }
+
+    private void showSuccess(String title, String content) {
+        showAlert(Alert.AlertType.INFORMATION, title, null, content);
     }
 }

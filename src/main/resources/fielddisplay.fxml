@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Font?>
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.FieldController">
-    <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-padding: -10 20 20 20;">
-            <content>
-                <VBox  >
-                    <HBox alignment="CENTER_LEFT" spacing="10" >
-                        <Label style="-fx-text-fill: #2c3e50; -fx-font-size: 24; -fx-font-weight: bold;" text="Fields" />
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <HBox>
-                            <VBox fx:id="weatherCard" alignment="CENTER" spacing="6" style="-fx-background-color: linear-gradient(to bottom right, #e3f2fd, #bbdefb); -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2); -fx-padding: 18;">
-                                <ImageView fx:id="weatherIcon" fitWidth="36" fitHeight="36" />
-                                <Label fx:id="weatherTemp" style="-fx-text-fill: #1976d2; -fx-font-size: 32; -fx-font-weight: bold;" />
-                                <Label fx:id="weatherDesc" style="-fx-text-fill: #333; -fx-font-size: 15; -fx-opacity: 0.85;" />
-                                <Button fx:id="weatherBtn" text="Show Details"
-                                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                            </VBox>
-                        </HBox>
+<center>
+    <VBox>
+        <VBox spacing="10" style="-fx-padding :0 ;">
+            <!-- First Row: Back button and Title -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Button fx:id="backButton" text="← Back"
+                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    <Label text="Fields" textFill="#2e7d32">
+                        <font><Font name="Georgia Bold" size="32.0"/></font>
+                    </Label>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Weather Card in top-right corner -->
+                <VBox fx:id="weatherCard" alignment="CENTER" spacing="6"
+                      style="-fx-background-color: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
+                             -fx-background-radius: 16;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
+                             -fx-padding: 18;">
+                    <ImageView fx:id="weatherIcon" fitWidth="36" fitHeight="36" />
+                    <Label fx:id="weatherTemp" style="-fx-text-fill: #1976d2; -fx-font-size: 32; -fx-font-weight: bold;" />
+                    <Label fx:id="weatherDesc" style="-fx-text-fill: #333; -fx-font-size: 15; -fx-opacity: 0.85;" />
+                    <Button fx:id="weatherBtn" text="Show Details"
+                            style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Second Row: Search and Filter controls -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <TextField fx:id="searchField" promptText="Search fields..." prefWidth="200"
+                               style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <Button fx:id="searchButton" text="Search"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                    <ComboBox fx:id="cropTypeCombo" promptText="Crop Type" prefWidth="120"
+                              style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <TextField fx:id="surfaceMinField" promptText="Min Surface" prefWidth="80"
+                               style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <TextField fx:id="surfaceMaxField" promptText="Max Surface" prefWidth="80"
+                               style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                    <Button fx:id="filterButton" text="Filter"
+                            style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
                 </HBox>
                 <HBox>
                         <HBox alignment="CENTER_LEFT">
@@ -50,15 +72,22 @@
                                     style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
                         </HBox>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="20" style="-fx-padding: 0 0 10 0;">
-                            <Button fx:id="addFieldBtn" alignment="CENTER_RIGHT" styleClass="add-button" text="+" />
-                        </HBox>
-                    </HBox>
-                    <GridPane fx:id="fieldgrid" hgap="10" vgap="10">
-                        <!-- Grille des champs -->
-                    </GridPane>
-                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="addFieldBtn" text="+ Add field"
+                        style="-fx-background-color: #13af02; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+            </HBox>
+        </VBox>
+
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-padding: 0 20 20 20;">
+            <content>
+                <GridPane fx:id="fieldgrid" hgap="10" vgap="10">
+                    <!-- Fields grid content -->
+                </GridPane>
             </content>
         </ScrollPane>
-    </center>
+    </VBox>
+</center>
 </BorderPane>

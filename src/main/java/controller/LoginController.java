@@ -68,21 +68,18 @@ public class LoginController {
 
             Session.getInstance().setUser(user); // Store globally
             showAlert("Success", "Welcome, " + user.getFirstName() + "!");
-            Stage stage = (Stage) emailField.getScene().getWindow();
 
-            if (user.getRoles().contains("ROLE_ADMIN")) {
-                SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", (AdminDashboardController controller) -> {
-                    controller.setUser(user);
-                });
-            } else {
-                SceneManager.switchScene(stage, "/controller/UserDashboard.fxml", (UserDashboardController controller) -> {
-                    controller.setUser(user);
-                });
-            }
+            // ✅ Redirect to home.fxml for all users
+            Stage stage = (Stage) emailField.getScene().getWindow();
+            SceneManager.switchScene(stage, "/home.fxml", (HomeController controller) -> {
+                controller.setUser(user); // Optional: if HomeController needs it
+            });
+
         } else {
             showAlert("Error", "Invalid email or password.");
         }
     }
+
 
     @FXML
     private void goToRegister() {
@@ -110,11 +107,12 @@ public class LoginController {
             }
 
             List<User> allUsers = userService.getAllUsers();
+            double similarityThreshold = 0.85;
 
             for (User user : allUsers) {
-                boolean matchFound = false;
+                double totalScore = 0.0;
+                int validSamples = 0;
 
-                // Try up to 5 samples for each user
                 for (int i = 1; i <= 5; i++) {
                     File faceFile = new File("src/main/resources/faces/" + user.getEmail() + "_" + i + ".jpg");
                     if (!faceFile.exists()) continue;
@@ -122,32 +120,36 @@ public class LoginController {
                     Mat storedMat = Imgcodecs.imread(faceFile.getAbsolutePath());
                     if (storedMat.empty()) continue;
 
-                    if (FaceRecognitionUtil.compareFaces(currentFace, storedMat)) {
-                        matchFound = true;
-                        break;
-                    }
+                    double score = FaceRecognitionUtil.getFaceSimilarityScore(currentFace, storedMat);
+                    totalScore += score;
+                    validSamples++;
                 }
 
-                if (matchFound) {
-                    if (!user.isVerified()) {
-                        showAlert("Login Failed", "Please verify your email first.");
+                if (validSamples > 0) {
+                    double averageScore = totalScore / validSamples;
+                    System.out.println("Average similarity score for " + user.getEmail() + ": " + averageScore);
+
+                    if (averageScore >= similarityThreshold) {
+                        if (!user.isVerified()) {
+                            showAlert("Login Failed", "Please verify your email first.");
+                            return;
+                        }
+
+                        Session.getInstance().setUser(user);
+                        showAlert("Login Successful", "Welcome, " + user.getFirstName() + "!");
+                        Stage stage = (Stage) emailField.getScene().getWindow();
+
+                        if (user.getRoles().contains("ROLE_ADMIN")) {
+                            SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", controller -> {
+                                ((AdminDashboardController) controller).setUser(user);
+                            });
+                        } else {
+                            SceneManager.switchScene(stage, "/controller/UserDashboard.fxml", controller -> {
+                                ((UserDashboardController) controller).setUser(user);
+                            });
+                        }
                         return;
                     }
-
-                    Session.getInstance().setUser(user);
-                    showAlert("Login Successful", "Welcome, " + user.getFirstName() + "!");
-                    Stage stage = (Stage) emailField.getScene().getWindow();
-
-                    if (user.getRoles().contains("ROLE_ADMIN")) {
-                        SceneManager.switchScene(stage, "/controller/AdminDashboard.fxml", controller -> {
-                            ((AdminDashboardController) controller).setUser(user);
-                        });
-                    } else {
-                        SceneManager.switchScene(stage, "/controller/UserDashboard.fxml", controller -> {
-                            ((UserDashboardController) controller).setUser(user);
-                        });
-                    }
-                    return;
                 }
             }
 
@@ -157,6 +159,7 @@ public class LoginController {
             showAlert("Error", "An error occurred: " + e.getMessage());
         }
     }
+
 
 
 

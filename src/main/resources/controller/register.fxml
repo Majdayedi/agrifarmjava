@@ -17,7 +17,7 @@
       alignment="CENTER"
       spacing="20"
       styleClass="dashboard-vbox"
-      stylesheets="@styles.css">
+      stylesheets="@/css/StylesUser.css">
 
     <Label text="Register" styleClass="dashboard-label"/>
 
@@ -53,6 +53,9 @@
         <Button text="Sign up with Google" onAction="#handleGoogleSignUp"
                 GridPane.columnIndex="1" GridPane.rowIndex="9"
                 styleClass="google-button" prefWidth="150"/>
+
+        <Button fx:id="facebookRegisterBtn" text="Register with Facebook" onAction="#handleFacebookSignUp"/>
+
 
         <Hyperlink text="Back to Login" onAction="#goToLogin"
                    GridPane.columnIndex="1" GridPane.rowIndex="10"

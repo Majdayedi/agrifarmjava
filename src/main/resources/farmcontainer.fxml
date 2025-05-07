@@ -18,7 +18,7 @@
         <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" translateX="50">
             <Image url="@img/icon-2.png"/>
         </ImageView>
-        <Button fx:id="deleteBtn" text="X" styleClass="delete-button" StackPane.alignment="TOP_RIGHT">
+        <Button fx:id="deleteBtn" text="X" style="-fx-background-color: #ff2424; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" StackPane.alignment="TOP_RIGHT">
             <StackPane.margin>
                 <Insets top="-10" right="-10"/>
             </StackPane.margin>

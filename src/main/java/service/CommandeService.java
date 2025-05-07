@@ -2,17 +2,85 @@ package service;
 
 import entite.Commande;
 import entite.Produit;
+import entite.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import utils.DatabaseConnection;
 import utils.Connections;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CommandeService {
+    private static final Logger logger = Logger.getLogger(CommandeService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CommandeService.class.getName());
+
+    public CommandeService() {
+        // No need to initialize connection here as we're using getConnection() method
+    }
 
     // Méthode pour obtenir une connexion fraîche à chaque fois
     private Connection getConnection() {
         return Connections.getInstance().getConnection();
+    }
+
+    // Méthode pour compter le nombre de commandes d'un utilisateur
+    private int countUserOrders(int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        int count = 0;
+
+        try {
+            connection = getConnection();
+            if (connection == null) {
+                logger.log(Level.SEVERE, "Cannot count user orders: Database connection is null");
+                return count;
+            }
+
+            String sql = "SELECT COUNT(*) as order_count FROM commande WHERE user_id = ?";
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt("order_count");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error counting user orders", e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Error closing resources", e);
+            }
+        }
+        return count;
+    }
+
+    // Méthode pour appliquer la réduction si nécessaire
+    private double applyDiscount(double price, int userId) {
+        int orderCount = countUserOrders(userId);
+        // Si c'est la 5ème commande (ou multiple de 5)
+        if ((orderCount + 1) % 5 == 0) {
+            // Appliquer une réduction de 10%
+            return price * 0.9;
+        }
+        return price;
     }
 
     public boolean create(Commande commande) {
@@ -27,37 +95,19 @@ public class CommandeService {
                 return false;
             }
 
+            // Appliquer la réduction si nécessaire
+            double originalPrice = commande.getPrix();
+            double discountedPrice = applyDiscount(originalPrice, commande.getUserId());
+            if (discountedPrice != originalPrice) {
+                commande.setPrix(discountedPrice);
+                logger.info("Réduction de 10% appliquée pour l'utilisateur " + commande.getUserId() +
+                        ". Prix original: " + originalPrice + "€, Prix après réduction: " + discountedPrice + "€");
+            }
+
             // Vérifier si la table a la colonne quantite
-            boolean hasQuantiteColumn = false;
             try {
-                PreparedStatement checkStatement = connection.prepareStatement("DESCRIBE commande");
-                ResultSet checkRs = checkStatement.executeQuery();
-                System.out.println("Structure de la table commande:");
-
-                while (checkRs.next()) {
-                    String columnName = checkRs.getString("Field");
-                    System.out.println(columnName);
-                    if ("quantite".equals(columnName)) {
-                        hasQuantiteColumn = true;
-                    }
-                }
-
-                checkRs.close();
-                checkStatement.close();
-
-                // Si la colonne quantite n'existe pas, on l'ajoute
-                if (!hasQuantiteColumn) {
-                    System.out.println("La colonne quantite n'existe pas, ajout...");
-                    PreparedStatement alterStatement = connection.prepareStatement(
-                            "ALTER TABLE commande ADD COLUMN quantite INT NOT NULL DEFAULT 1 AFTER id");
-                    alterStatement.executeUpdate();
-                    alterStatement.close();
-                    hasQuantiteColumn = true;
-                }
-
-                // Requête d'insertion avec la colonne quantite
-                String sql = "INSERT INTO commande (quantite, prix, type_commande, status, " +
-                        "adress, paiment, date_creation_commande) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO commande (quantite, prix, type_commande, status, adress, " +
+                        "paiment, date_creation_commande, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
                 statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 statement.setInt(1, commande.getQuantite());
@@ -72,12 +122,15 @@ public class CommandeService {
                 statement.setTimestamp(7, commande.getDate_creation_commande() != null ?
                         new Timestamp(commande.getDate_creation_commande().getTime()) : currentTimestamp);
 
+                // Set the user_id
+                statement.setInt(8, commande.getUserId());
+
             } catch (SQLException e) {
                 System.err.println("Erreur lors de la vérification ou modification de la structure de la table: " + e.getMessage());
 
                 // Si la vérification échoue, on utilise une requête sans la colonne quantite
                 String sql = "INSERT INTO commande (prix, type_commande, status, adress, " +
-                        "paiment, date_creation_commande) VALUES (?, ?, ?, ?, ?, ?)";
+                        "paiment, date_creation_commande, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                 statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 statement.setDouble(1, commande.getPrix());
@@ -90,6 +143,9 @@ public class CommandeService {
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
                 statement.setTimestamp(6, commande.getDate_creation_commande() != null ?
                         new Timestamp(commande.getDate_creation_commande().getTime()) : currentTimestamp);
+
+                // Set the user_id
+                statement.setInt(7, commande.getUserId());
             }
 
             int rowsAffected = statement.executeUpdate();
@@ -109,12 +165,10 @@ public class CommandeService {
             e.printStackTrace();
             return false;
         } finally {
-            // Fermer les ressources dans l'ordre inverse de leur création
             try {
                 if (generatedKeys != null) generatedKeys.close();
                 if (statement != null) statement.close();
-                // Ne pas fermer la connexion ici
-                // if (connection != null) connection.close();
+                // Ne pas fermer la connexion ici car elle est gérée par le pool
             } catch (SQLException e) {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
@@ -611,7 +665,297 @@ public class CommandeService {
         commande.setAdress(rs.getString("adress"));
         commande.setPaiment(rs.getString("paiment"));
         commande.setDate_creation_commande(rs.getDate("date_creation_commande"));
+        commande.setUserId(rs.getInt("user_id"));
 
         return commande;
+    }
+
+    public List<Commande> getCommandesByUserId(int userId) {
+        List<Commande> commandes = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            connection = getConnection();
+            if (connection == null) {
+                LOGGER.severe("Cannot get commandes: Database connection is null");
+                return commandes;
+            }
+
+            String query = "SELECT * FROM commande WHERE user_id = ? ORDER BY date_creation_commande DESC";
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, userId);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Commande commande = extractCommandeFromResultSet(rs);
+                // Charger les produits associés à cette commande
+                loadCommandeProduits(connection, commande);
+                commandes.add(commande);
+
+                LOGGER.info("Order ID: " + commande.getId() +
+                        ", Status: " + commande.getStatus() +
+                        ", Price: " + commande.getPrix() +
+                        ", Number of products: " + commande.getProduits().size());
+            }
+
+            LOGGER.info("Found " + commandes.size() + " orders for user " + userId);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving orders for user " + userId, e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Error closing resources", e);
+            }
+        }
+
+        return commandes;
+    }
+
+    public List<Commande> getCommandesByUser(int userId) {
+        return getCommandesByUserId(userId);
+    }
+
+    public void generatePDF(Commande commande, Stage stage) {
+        try {
+            // Créer un nouveau document PDF
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            // Créer le contenu du PDF
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            // Configuration de la police et de la taille
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
+            float margin = 50;
+            float yPosition = page.getMediaBox().getHeight() - margin;
+            float lineHeight = 20;
+
+            // Titre
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("Facture - AgriFarm");
+            contentStream.endText();
+            yPosition -= lineHeight * 2;
+
+            // Informations de la commande
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+
+            // Date et numéro de commande
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("N° Commande: " + commande.getId());
+            contentStream.endText();
+            yPosition -= lineHeight;
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("Date: " + commande.getDate_creation_commande());
+            contentStream.endText();
+            yPosition -= lineHeight;
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("Statut: " + commande.getStatus());
+            contentStream.endText();
+            yPosition -= lineHeight;
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("Mode de paiement: " + commande.getPaiment());
+            contentStream.endText();
+            yPosition -= lineHeight;
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("Adresse de livraison: " + commande.getAdress());
+            contentStream.endText();
+            yPosition -= lineHeight * 2;
+
+            // En-tête du tableau des produits
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("Détails des produits:");
+            contentStream.endText();
+            yPosition -= lineHeight;
+
+            // Colonnes du tableau
+            float[] columnWidths = {200, 80, 80, 100};
+            String[] headers = {"Produit", "Quantité", "Prix unit.", "Total"};
+            float startX = margin;
+            float tableWidth = 0;
+            for (float width : columnWidths) {
+                tableWidth += width;
+            }
+
+            // En-têtes des colonnes
+            float currentX = startX;
+            for (int i = 0; i < headers.length; i++) {
+                contentStream.beginText();
+                contentStream.newLineAtOffset(currentX, yPosition);
+                contentStream.showText(headers[i]);
+                contentStream.endText();
+                currentX += columnWidths[i];
+            }
+            yPosition -= lineHeight;
+
+            // Ligne de séparation
+            contentStream.moveTo(startX, yPosition + 5);
+            contentStream.lineTo(startX + tableWidth, yPosition + 5);
+            contentStream.stroke();
+            yPosition -= lineHeight;
+
+            // Contenu du tableau
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            double sousTotal = 0;
+            for (Produit produit : commande.getProduits()) {
+                int quantite = commande.getQuantitesParProduit().get(produit.getId());
+                double prixUnitaire = produit.getPrix();
+                double totalProduit = prixUnitaire * quantite;
+                sousTotal += totalProduit;
+
+                currentX = startX;
+
+                // Nom du produit
+                contentStream.beginText();
+                contentStream.newLineAtOffset(currentX, yPosition);
+                contentStream.showText(produit.getNom());
+                contentStream.endText();
+                currentX += columnWidths[0];
+
+                // Quantité
+                contentStream.beginText();
+                contentStream.newLineAtOffset(currentX, yPosition);
+                contentStream.showText(String.valueOf(quantite));
+                contentStream.endText();
+                currentX += columnWidths[1];
+
+                // Prix unitaire
+                contentStream.beginText();
+                contentStream.newLineAtOffset(currentX, yPosition);
+                contentStream.showText(String.format("%.2f€", prixUnitaire));
+                contentStream.endText();
+                currentX += columnWidths[2];
+
+                // Total du produit
+                contentStream.beginText();
+                contentStream.newLineAtOffset(currentX, yPosition);
+                contentStream.showText(String.format("%.2f€", totalProduit));
+                contentStream.endText();
+
+                yPosition -= lineHeight;
+            }
+
+            // Ligne de séparation
+            yPosition -= lineHeight;
+            contentStream.moveTo(startX, yPosition + 5);
+            contentStream.lineTo(startX + tableWidth, yPosition + 5);
+            contentStream.stroke();
+            yPosition -= lineHeight;
+
+            // Sous-total
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(startX, yPosition);
+            contentStream.showText("Sous-total: " + String.format("%.2f€", sousTotal));
+            contentStream.endText();
+            yPosition -= lineHeight;
+
+            // Vérifier si une réduction a été appliquée
+            if (sousTotal > commande.getPrix()) {
+                double reduction = sousTotal - commande.getPrix();
+                double pourcentageReduction = (reduction / sousTotal) * 100;
+
+                contentStream.setFont(PDType1Font.HELVETICA, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(startX, yPosition);
+                contentStream.showText(String.format("Réduction (%.0f%%): -%.2f€", pourcentageReduction, reduction));
+                contentStream.endText();
+                yPosition -= lineHeight;
+            }
+
+            // Total final
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(startX, yPosition);
+            contentStream.showText("Total: " + String.format("%.2f€", commande.getPrix()));
+            contentStream.endText();
+
+            // Fermer le flux de contenu
+            contentStream.close();
+
+            // Ouvrir une boîte de dialogue pour sauvegarder le fichier
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Enregistrer la facture");
+            fileChooser.setInitialFileName("facture_" + commande.getId() + ".pdf");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf")
+            );
+
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                document.save(file);
+                document.close();
+
+                // Afficher une confirmation
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succès");
+                alert.setHeaderText(null);
+                alert.setContentText("La facture a été générée avec succès !");
+                alert.showAndWait();
+            }
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la génération du PDF", e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Une erreur est survenue lors de la génération du PDF: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    private User getUserById(int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            connection = getConnection();
+            if (connection == null) {
+                logger.log(Level.SEVERE, "Cannot get user: Database connection is null");
+                return null;
+            }
+
+            String sql = "SELECT * FROM users WHERE id = ?";
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String email = rs.getString("email");
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                String password = rs.getString("password");
+                List<String> roles = User.parseRolesFromJson(rs.getString("roles"));
+
+
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error getting user by ID", e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Error closing resources", e);
+            }
+        }
+        return null;
     }
 }

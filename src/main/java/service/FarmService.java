@@ -49,7 +49,38 @@ public class FarmService implements IService<Farm> {
             throw new RuntimeException("Error creating farm: " + e.getMessage(), e);
         }
     }
+    public void createfarm(Farm farm, int userId) {
+        String requete = "INSERT INTO farm (location, name, surface, adress, budget, weather, " +
+                "description, bir, photovoltaic, fence, irrigation, cabin, lon, lat,user_id_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+        try (PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
+            pst.setString(1, farm.getLocation());
+            pst.setString(2, farm.getName());
+            pst.setDouble(3, farm.getSurface());
+            pst.setString(4, farm.getAdress());
+            pst.setDouble(5, farm.getBudget());
+            pst.setString(6, farm.getWeather());
+            pst.setString(7, farm.getDescription());
+            pst.setBoolean(8, farm.isBir());
+            pst.setBoolean(9, farm.isPhotovoltaic());
+            pst.setBoolean(10, farm.isFence());
+            pst.setBoolean(11, farm.isIrrigation());
+            pst.setBoolean(12, farm.isCabin());
+            pst.setFloat(13, farm.getLon());
+            pst.setFloat(14, farm.getLat());
+            pst.setFloat(15, userId);
+            pst.executeUpdate();
+
+            try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    farm.setId(generatedKeys.getInt(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating farm: " + e.getMessage(), e);
+        }
+    }
     @Override
     public boolean update(Farm farm) {
         String requete = "UPDATE farm SET location=?, name=?, surface=?, adress=?, budget=?, " +
@@ -105,6 +136,23 @@ public class FarmService implements IService<Farm> {
         } catch (SQLException e) {
             throw new RuntimeException("Error reading all farms: " + e.getMessage(), e);
         }
+        return farms;
+    }
+    public List<Farm> read(int id) {
+        List<Farm> farms = new ArrayList<>();
+        String query = "SELECT * FROM farm WHERE user_id_id = ?";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, id);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    farms.add(mapResultSetToFarm(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading all farms: " + e.getMessage(), e);
+        }
+
         return farms;
     }
 
