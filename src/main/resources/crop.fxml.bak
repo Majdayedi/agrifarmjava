@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-        <VBox xmlns="http://javafx.com/javafx/17"
-              xmlns:fx="http://javafx.com/fxml"
-             fx:controller="controller.CropController"
-             spacing="30" style="-fx-background-color: #f6fbf4; -fx-padding: 20;"
-              stylesheets="@css/styleCrop.css">
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.CropController"
+      spacing="30"
+      style="-fx-background-color: #f6fbf4; -fx-padding: 30;">
 
     <!-- 🔝 Title and Close -->
     <HBox alignment="CENTER_LEFT" spacing="20">
@@ -27,7 +27,12 @@
     <HBox alignment="CENTER_LEFT" spacing="20">
         <Label text="Crop Management"
                style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-
+        <Button text="Add New Crop" onAction="#showAddCropForm"
+                visible="false" managed="false"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
+        <Button text="Crop Calendar" onAction="#showCropCalendar"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px;
+                       -fx-padding: 8 15; -fx-background-radius: 5;"/>
         <Button text="Disease Detection" onAction="#openDiseaseDetection"
                 style="-fx-background-color: #FF5722; -fx-text-fill: white; -fx-font-size: 14px;
                        -fx-padding: 8 15; -fx-background-radius: 5;"/>
@@ -46,30 +51,19 @@
     </HBox>
 
     <!-- 🆕 Add Crop Button -->
-
+    <Button fx:id="addButton" text="+ Add New Crop" onAction="#showAddCropForm"
+            style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;
+                   -fx-background-radius: 8; -fx-padding: 10 24; -fx-font-size: 14px;" />
 
     <!-- 🌾 Crop Cards List -->
-    <!-- 🌾 Crop cards list -->
     <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS"
                 style="-fx-background-color: transparent;">
-
-        <!-- 👇 every ScrollPane child must live inside <content> -->
-        <content>
-            <FlowPane fx:id="cropCardsPane"
-                      prefWrapLength="800"
-                      hgap="20" vgap="20"
-                      style="-fx-background-color: transparent;">
-
-                <!-- Proper way to add padding -->
-                <padding>
-                    <Insets top="20" right="20" bottom="20" left="20"/>
-                </padding>
-
-            </FlowPane>
-        </content>
+        <FlowPane fx:id="cropCardsPane" hgap="20" vgap="20" style="-fx-background-color: transparent;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </FlowPane>
     </ScrollPane>
-
-
 
     <!-- 📝 Feedback Area -->
     <TextArea fx:id="resultArea" editable="false" wrapText="true" visible="false"

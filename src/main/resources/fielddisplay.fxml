@@ -49,6 +49,29 @@
                     <Button fx:id="filterButton" text="Filter"
                             style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
                 </HBox>
+                <HBox>
+                        <HBox alignment="CENTER_LEFT">
+                            <Button fx:id="backButton" text="? Back"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <TextField fx:id="searchField" promptText="Search fields..." prefWidth="200"
+                                       style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                            <Button fx:id="searchButton" text="Search"
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                            <ComboBox fx:id="cropTypeCombo" promptText="Crop Type" prefWidth="120"
+                                      style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                            <TextField fx:id="surfaceMinField" promptText="Min Surface" prefWidth="80"
+                                       style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                            <TextField fx:id="surfaceMaxField" promptText="Max Surface" prefWidth="80"
+                                       style="-fx-background-radius: 5; -fx-padding: 6 10;"/>
+                            <Button fx:id="filterButton" text="Filter"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                            <Button text="Crop Calendar" onAction="#showCropCalendar"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+                        </HBox>
+
 
                 <Region HBox.hgrow="ALWAYS"/>
 

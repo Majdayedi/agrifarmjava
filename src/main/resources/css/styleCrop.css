@@ -65,6 +65,19 @@
     -fx-padding: 6 14;
 }
 
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-padding: 15;
+    -fx-spacing: 10;
+}
+
+.root-pane {
+    -fx-background-color: #f6fbf4;
+    -fx-padding: 20;
+}
+
 .muted-label {
     -fx-text-fill: #777;
     -fx-font-style: italic;

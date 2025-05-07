@@ -11,10 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import service.CropCRUD;
@@ -40,7 +37,6 @@ import java.util.stream.Collectors;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import javafx.geometry.Insets;
@@ -61,8 +57,8 @@ public class CropController {
             this.harvestPeriod = harvestPeriod;
         }
     }
-    private CropCRUD cropCRUD = new CropCRUD();
-    private CropCalendarService cropCalendarService = new CropCalendarService();
+    private final CropCRUD cropCRUD = new CropCRUD();
+    private final CropCalendarService cropCalendarService = new CropCalendarService();
     private Crop selectedCrop;
     private CropPeriods selectedCropPeriods;
     private final ObservableList<Crop> cropData = FXCollections.observableArrayList();
@@ -93,6 +89,8 @@ public class CropController {
     @FXML private TableColumn<Crop, Void> actionsColumn;
 
     private boolean isUpdateMode = false;
+    @FXML private ScrollPane cropScrollPane;
+
 
     @FXML
     public void initialize() {
@@ -581,132 +579,153 @@ public class CropController {
         }
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+//  Creates a single crop card with the same look‑and‑feel as your soil cards
+// ──────────────────────────────────────────────────────────────────────────
+    /** Builds a single crop card that visually matches the Soil‑Data card style */
     private VBox createCropCard(Crop crop) {
-        VBox card = new VBox(5);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
-        card.setPrefWidth(300);
-        card.setPrefHeight(250);
-        card.getStyleClass().add("card");
+        // ── Card container ────────────────────────────────────────────────────────
+        VBox card = new VBox(10);                 // 10 px gap between vertical children
+        card.setPadding(new Insets(16));          // same padding as SoilData cards
+        card.setPrefWidth(300);                   // fixed width so cards align nicely
+        card.setStyle("""
+        -fx-background-color: white;
+        -fx-background-radius: 12;
+        -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 1);
+    """);
 
-        // Header with title and delete button
-        StackPane header = new StackPane();
-        header.setStyle("-fx-background-color: #4CAF50; -fx-background-radius: 10 10 0 0;");
-        header.setPrefHeight(40);
+        /* ── Top row : icon + spacer + delete button ──────────────────────────── */
+        HBox topBox = new HBox();
+        topBox.setAlignment(Pos.TOP_RIGHT);
 
-        Label titleLabel = new Label("Crop #" + crop.getId());
-        titleLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+        ImageView icon = new ImageView(
+                getClass().getResource("/images/me.png").toExternalForm()); // <-- put your own icon here
+        icon.setFitWidth(28);
+        icon.setFitHeight(28);
+        icon.setPreserveRatio(true);
 
-        Button deleteButton = new Button("X");
-        deleteButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 0; -fx-min-width: 25; -fx-min-height: 25; -fx-padding: 0; -fx-border-width: 0;");
-        deleteButton.setOnAction(event -> {
-            try {
-                Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmDialog.setTitle("Confirm Delete");
-                confirmDialog.setHeaderText("Delete Crop");
-                confirmDialog.setContentText("Are you sure you want to delete this crop? This action cannot be undone.");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                if (confirmDialog.showAndWait().get() == ButtonType.OK) {
+        Button deleteBtn = new Button("X");
+        deleteBtn.setStyle("""
+        -fx-background-color: #e74c3c;
+        -fx-text-fill: white;
+        -fx-background-radius: 20;
+        -fx-min-width: 25; -fx-min-height: 25;
+    """);
+        deleteBtn.setOnAction(e -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Delete this crop?", ButtonType.OK, ButtonType.CANCEL);
+            confirm.setHeaderText("Confirm deletion");
+            confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
+                try {
                     cropCRUD.deleteCrop(crop.getId());
                     loadAllCrops();
-                    resultArea.setText("Crop deleted successfully!");
+                    if (resultArea != null) resultArea.setText("Crop deleted!");
+                } catch (SQLException ex) {
+                    if (resultArea != null) resultArea.setText("Delete error: " + ex.getMessage());
                 }
-            } catch (SQLException e) {
-                resultArea.setText("Error deleting crop: " + e.getMessage());
-            }
+            });
         });
 
-        StackPane.setAlignment(deleteButton, Pos.TOP_RIGHT);
-        StackPane.setMargin(deleteButton, new Insets(5, 5, 0, 0));
+        topBox.getChildren().addAll(icon, spacer, deleteBtn);
 
-        header.getChildren().addAll(titleLabel, deleteButton);
+        /* ── Title + subtitle ─────────────────────────────────────────────────── */
+        Label title  = new Label(crop.getTypeCrop());   // Event as headline
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #2c3e50;");
 
-        // Crop details
-        VBox details = new VBox(10);
-        details.setAlignment(Pos.CENTER_LEFT);
-        details.setPadding(new Insets(20));
-        details.setStyle("-fx-background-color: white;");
+        Label sub    = new Label("Event:       " + crop.getCropEvent());    // Type as sub‑title
+        sub.setStyle("-fx-text-fill: #666666; -fx-font-size: 12;");
+        /* ── Details section ──────────────────────────────────────────────────── */
+        String detailStyle = "-fx-text-fill: #2c3e50;";
+        Label event    = new Label("Event:       " + crop.getCropEvent());          event.setStyle(detailStyle);
 
-        Label eventLabel = new Label("Event: " + crop.getCropEvent());
-        eventLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+        /* ── Action buttons row ───────────────────────────────────────────────── */
+        HBox btnRow = new HBox(10);
+        btnRow.setAlignment(Pos.CENTER);
+        btnRow.setPadding(new Insets(5,0,0,0));
 
-        Label typeLabel = new Label("Type: " + crop.getTypeCrop());
-        typeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+        Button updateBtn = new Button("Update");
+        updateBtn.setStyle("-fx-background-color:#2e7d32;-fx-text-fill:white;-fx-background-radius:20;");
+        updateBtn.setOnAction(ev -> openUpdateForm(crop));
 
-        Label methodLabel = new Label("Method: " + crop.getMethodCrop());
-        methodLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
 
-        Label plantationLabel = new Label("Plantation: " + crop.getPlantationDate() + " " + crop.getHourPlantation());
-        plantationLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
 
-        Label cropLabel = new Label("Crop: " + crop.getCropDate() + " " + crop.getHourCrop());
-        cropLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
-
-        // Action buttons
-        HBox buttons = new HBox(10);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setPadding(new Insets(10));
-        buttons.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 0 0 10 10;");
-
-        Button updateButton = new Button("Update");
-        updateButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
-        updateButton.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("add_crop.fxml"));
-                Parent root = loader.load();
-
-                CropController controller = loader.getController();
-                controller.setUpdateMode(true);
-                controller.setSelectedCrop(crop);
-                controller.populateFields(crop);
-
-                Stage stage = new Stage();
-                stage.setTitle("Modify Crop");
-                stage.setScene(new Scene(root));
-                stage.showAndWait();
-
-                // Refresh the main view after the modify window closes
-                loadAllCrops();
-            } catch (IOException e) {
-                resultArea.setText("Error loading update form: " + e.getMessage());
-            }
-        });
-
-        Button detailsButton = new Button("Details");
-        detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
-        detailsButton.setOnAction(event -> {
-            resultArea.setText(crop.toString());
-        });
-
-        Button soilDataButton = new Button("Soil Data");
-        soilDataButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
-        soilDataButton.setOnAction(event -> {
+        Button soilBtn = new Button("Soil Data");
+        soilBtn.setStyle("-fx-background-color:#FF9800;-fx-text-fill:white;-fx-background-radius:20;");
+        soilBtn.setOnAction(e -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("soil_data.fxml"));
                 Parent root = loader.load();
-
-                SoilDataController controller = loader.getController();
-                controller.setCropId(crop.getId());
-
-                Scene scene = new Scene(root);
-                Stage stage = (Stage) soilDataButton.getScene().getWindow();
-                stage.setScene(scene);
-                stage.setTitle("Soil Data for Crop #" + crop.getId());
-            } catch (IOException e) {
-                resultArea.setText("Error loading soil data: " + e.getMessage());
+                SoilDataController ctrl = loader.getController();
+                ctrl.setCropId(crop.getId());
+                Stage s = (Stage) soilBtn.getScene().getWindow();
+                s.setScene(new Scene(root));
+                s.setTitle("Soil Data for Crop #" + crop.getId());
+            } catch (IOException ex) {
+                if (resultArea != null) resultArea.setText("Load error: " + ex.getMessage());
             }
         });
 
-        Button qrCodeButton = new Button("QR Code");
-        qrCodeButton.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;");
-        qrCodeButton.setOnAction(event -> showQRCode(crop));
+        Button qrBtn = new Button("QR Code");
+        qrBtn.setStyle("-fx-background-color:#9b59b6;-fx-text-fill:white;-fx-background-radius:20;");
+        qrBtn.setOnAction(ev -> showQRCode(crop));
 
-        buttons.getChildren().addAll(updateButton, detailsButton, soilDataButton, qrCodeButton);
+        btnRow.getChildren().addAll( updateBtn, soilBtn, qrBtn);
 
-        details.getChildren().addAll(eventLabel, typeLabel, methodLabel, plantationLabel, cropLabel);
-        card.getChildren().addAll(header, details, buttons);
+        /* ── Assemble card ────────────────────────────────────────────────────── */
+        card.getChildren().addAll(
+                topBox,
+                title,
+                event,
+                btnRow
+        );
 
         return card;
     }
+
+
+    /* Small helper so the lambda stays tidy */
+    /**
+     * Opens the Update dialog, pre-populating all fields
+     * from the given crop, then waits for it to close.
+     */
+    private void openUpdateForm(Crop crop) {
+        try {
+            // Load the new FXML
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/update_crop.fxml")
+            );
+            Parent root = loader.load();
+
+            // Grab its controller, tell it we want "update" mode
+            CropController ctrl = loader.getController();
+            ctrl.setUpdateMode(true);
+            ctrl.setSelectedCrop(crop);
+            // This will fill in cropEventField, typeCombo, etc.
+            ctrl.populateFields(crop);
+
+            // Show as a modal dialog
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setTitle("Update Crop");
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+
+            // After it's closed, reload the main list
+            loadAllCrops();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (resultArea != null)
+                resultArea.setText("Error opening update form: " + e.getMessage());
+        }
+    }
+
+
+
+
 
     @FXML
     private void populateFields(Crop crop) {
@@ -1068,12 +1087,7 @@ public class CropController {
             imageView.setFitHeight(400);
             
             // Add a label showing preview of the data
-            TextArea dataPreview = new TextArea(data.toString());
-            dataPreview.setEditable(false);
-            dataPreview.setPrefRowCount(10);
-            dataPreview.setPrefColumnCount(30);
-            dataPreview.setWrapText(true);
-            
+
             // Add close button
             Button closeButton = new Button("Close");
             closeButton.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white;");
@@ -1082,8 +1096,7 @@ public class CropController {
             layout.getChildren().addAll(
                 new Label("Scan this QR code to view crop and soil data:"),
                 imageView,
-                new Label("Data Preview:"),
-                dataPreview,
+
                 closeButton
             );
             
