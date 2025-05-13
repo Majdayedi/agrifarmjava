@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import netscape.javascript.JSObject;
 import entite.Field;
 import service.FieldService;
+import utils.Session;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -50,10 +52,14 @@ public class AddFarmController {
     private WebEngine webEngine;
     private double currentLat = 0;
     private double currentLon = 0;
+    private int currentUser;
+    private Session session;
     private FieldService fieldservice= new FieldService();
 
     @FXML
     public void initialize() {
+        session = Session.getInstance();
+        currentUser = session.getUser().getId();
         System.out.println("Initializing AddFarmController"); // Debug log
         webEngine = webView.getEngine();
 
@@ -322,6 +328,7 @@ public class AddFarmController {
     }
     @FXML
     private void handleSave() {
+
         try {
             Farm farm = currentFarm != null ? currentFarm : new Farm();
             farm.setName(nameField.getText());
@@ -342,7 +349,7 @@ public class AddFarmController {
             if (currentFarm != null) {
                 farmService.update(farm);
             } else {
-                farmService.create(farm);
+                farmService.createfarm(farm, currentUser);
                 Field field = new Field(farm, 0, "Main field", 0.0, 0, 0, 0, "",null);
                 fieldservice.create(field);
 

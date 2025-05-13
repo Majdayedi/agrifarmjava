@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Separator?>
 
+<?import javafx.scene.control.ScrollPane?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx/8"
       fx:controller="controller.RegisterController"
@@ -18,7 +19,7 @@
       spacing="20"
       styleClass="dashboard-vbox"
       stylesheets="@/css/StylesUser.css">
-
+    <ScrollPane>
     <Label text="Register" styleClass="dashboard-label"/>
 
     <GridPane hgap="10" vgap="15" alignment="CENTER">
@@ -65,4 +66,5 @@
 
 
     </GridPane>
+    </ScrollPane>
 </VBox>

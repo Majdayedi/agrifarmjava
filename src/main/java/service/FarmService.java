@@ -52,7 +52,7 @@ public class FarmService implements IService<Farm> {
     public void createfarm(Farm farm, int userId) {
         String requete = "INSERT INTO farm (location, name, surface, adress, budget, weather, " +
                 "description, bir, photovoltaic, fence, irrigation, cabin, lon, lat,user_id_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement pst = cnx.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, farm.getLocation());
