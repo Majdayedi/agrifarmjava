@@ -73,9 +73,11 @@ public class FieldController {
     @FXML
     private Button filterButton;
     private WeatherService.Weather weather;
+
     public void setFirst(WeatherService.Weather first) {
-        this.weather= first;
+        this.weather = first;
     }
+
     @FXML
     public void initialize() {
 
@@ -106,7 +108,7 @@ public class FieldController {
 
     private void setupFilters() {
         FieldService fieldService = new FieldService();
-        List <String> cropTypes = fieldService.getCropList(currentFarm);
+        List<String> cropTypes = fieldService.getCropList(currentFarm);
 
 
         cropTypeCombo.getItems().addAll(cropTypes);
@@ -115,40 +117,43 @@ public class FieldController {
     }
 
 
-        private void searchFields(String searchText) {
-            fieldgrid.getChildren().clear();
-            if (currentFarm == null) return;
-            List<Field> fields = fieldService.getFieldsByFarm(currentFarm.getId());
-            int col = 0, row = 0;
-            try {
-                for (Field field : fields) {
-                    if (matchesSearch(field, searchText)) {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/field.fxml"));
-                        Pane card = loader.load();
-                        ((Label) card.lookup("#Namef")).setText(field.getName());
-                        ((Label) card.lookup("#Surfacef")).setText(String.format("%.2f ha", field.getSurface()));
-                        ((Label) card.lookup("#Budgetf")).setText(String.format("$%.2f", field.getBudget()));
-                        ((Label) card.lookup("#incomef")).setText(String.format("$%.2f", field.getIncome()));
-                        ((Label) card.lookup("#outcomef")).setText(String.format("$%.2f", field.getOutcome()));
-                        ((Label) card.lookup("#cropf")).setText(field.getCrop() != null ? field.getCrop().getTypeCrop() : "No Crop");
-                        ((Label) card.lookup("#descriptionf")).setText(field.getDescription());
-                        Button deleteBtn = (Button) card.lookup("#deleteBtn");
-                        Button modifyBtn = (Button) card.lookup("#modifyBtn");
-                        Button detailsBtn = (Button) card.lookup("#detailsBtn");
-                        deleteBtn.setOnAction(e -> handleDelete(field, card));
-                        modifyBtn.setOnAction(e -> handleModify(field));
-                        detailsBtn.setOnAction(e -> handleDetails(field));
-                        fieldgrid.add(card, col % 5, row);
-                        col++;
-                        if (col % 5 == 0) row++;
-                    }
+    private void searchFields(String searchText) {
+        fieldgrid.getChildren().clear();
+        if (currentFarm == null) return;
+        List<Field> fields = fieldService.getFieldsByFarm(currentFarm.getId());
+        int col = 0, row = 0;
+        try {
+            for (Field field : fields) {
+                if (matchesSearch(field, searchText)) {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/field.fxml"));
+                    Pane card = loader.load();
+                    ((Label) card.lookup("#Namef")).setText(field.getName());
+                    ((Label) card.lookup("#Surfacef")).setText(String.format("%.2f ha", field.getSurface()));
+                    ((Label) card.lookup("#Budgetf")).setText(String.format("$%.2f", field.getBudget()));
+                    ((Label) card.lookup("#incomef")).setText(String.format("$%.2f", field.getIncome()));
+                    ((Label) card.lookup("#outcomef")).setText(String.format("$%.2f", field.getOutcome()));
+                    ((Label) card.lookup("#cropf")).setText(field.getCrop() != null ? field.getCrop().getTypeCrop() : "No Crop");
+                    ((Label) card.lookup("#descriptionf")).setText(field.getDescription());
+                    Button deleteBtn = (Button) card.lookup("#deleteBtn");
+                    Button modifyBtn = (Button) card.lookup("#modifyBtn");
+                    Button detailsBtn = (Button) card.lookup("#detailsBtn");
+                    deleteBtn.setOnAction(e -> handleDelete(field, card));
+                    modifyBtn.setOnAction(e -> handleModify(field));
+                    detailsBtn.setOnAction(e -> handleDetails(field));
+                    fieldgrid.add(card, col % 5, row);
+                    col++;
+                    if (col % 5 == 0) row++;
                 }
             }
-        } catch (Exception e) {
-            showError("Error Loading Fields", "Failed to load fields: " + e.getMessage());
-            e.printStackTrace();
-        }
+
+    } catch(
+    Exception e)
+
+    {
+        showError("Error Loading Fields", "Failed to load fields: " + e.getMessage());
+        e.printStackTrace();
     }
+}
 
     private boolean matchesSearch(Field field, String searchText) {
         if (searchText == null || searchText.isEmpty()) return true;
@@ -798,6 +803,5 @@ public class FieldController {
             e.printStackTrace();
             showError("Error", "Error loading crop calendar: " + e.getMessage());
         }
-    }
+    }}
 
-}

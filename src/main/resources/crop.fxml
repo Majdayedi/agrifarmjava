@@ -32,7 +32,6 @@
                 style="-fx-background-color: #FF5722; -fx-text-fill: white; -fx-font-size: 14px;
                        -fx-padding: 8 15; -fx-background-radius: 5;"/>
         <Button text="Crop Info" onAction="#showCropInfo"
-                visible="false" managed="false"
                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;">
             <graphic>
                 <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
