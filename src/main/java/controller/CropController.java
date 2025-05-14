@@ -102,13 +102,13 @@ public class CropController {
                 typeCropCombo.setDisable(true);
                 
                 // Add selection listener
-                typeCropCombo.getSelectionModel().selectedItemProperty().addListener(
+                /*typeCropCombo.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> {
                         if (newValue != null) {
                             loadCropPeriods(newValue);
                         }
                     }
-                );
+                );*/
                 
                 // Load crop types from API when initializing
                 loadCropTypesFromAPI();

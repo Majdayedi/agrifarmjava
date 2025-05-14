@@ -76,8 +76,8 @@
 
     <bottom>
         <HBox spacing="10" alignment="CENTER">
-            <Button text="Save" onAction="#handleSave" styleClass="save-button"/>
-            <Button text="Cancel" onAction="#handleCancel" styleClass="cancel-button"/>
+            <Button text="Save" onAction="#handleSave" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+            <Button text="Cancel" onAction="#handleCancel" style="-fx-background-color: #ff2424; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
         </HBox>
     </bottom>
 </BorderPane>

@@ -6,10 +6,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import entite.User;
+import org.apache.commons.lang3.StringUtils;
 import utils.SceneManager;
 
 import java.io.File;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class ViewProfileController {
 
@@ -20,6 +25,10 @@ public class ViewProfileController {
     @FXML private ImageView profileImageView;
 
     private User currentUser;
+
+    // Add these constants at the class level
+    private static final String SHARED_PROFILE_DIR = "C:\\shared-profile-pics\\";
+    private static final String DEFAULT_IMAGE_RESOURCE = SHARED_PROFILE_DIR + "default.jpg"; // Update to your actual resource path
 
     public void setUserDetail(User user) {
         if (user == null) {
@@ -35,34 +44,66 @@ public class ViewProfileController {
         firstNameLabel.setText("First Name: " + user.getFirstName());
         lastNameLabel.setText("Last Name: " + user.getLastName());
 
-        // Load profile picture from external folder
+        // Load profile picture
         String imageFileName = user.getImageFileName();
-        if (imageFileName != null && !imageFileName.isEmpty()) {
-            String imagePath = "src/user_data/profile_pics/" + imageFileName; // external path
-            File imageFile = new File(imagePath);
+        if (StringUtils.isNotBlank(imageFileName)) {
+            // 1. Try shared directory first
+            File imageFile = new File(SHARED_PROFILE_DIR + imageFileName);
+            System.out.println("Checking image in: " + imageFile.getAbsolutePath()); // Log the full path
 
             if (imageFile.exists()) {
-                profileImageView.setImage(new Image(imageFile.toURI().toString()));
-            } else {
-                System.out.println("Profile image not found at: " + imagePath);
-                loadDefaultProfileImage();
+                String imageUrl = imageFile.toURI().toString();
+                System.out.println("Loaded image from shared folder.");
+                profileImageView.setImage(new Image(imageUrl));
+                return;
             }
-        } else {
-            loadDefaultProfileImage();
+
+            // 2. Fallback to legacy location (temporary during migration)
+            File legacyFile = new File("src/user_data/profile_pics/" + imageFileName);
+            if (legacyFile.exists()) {
+                try {
+                    // Migrate to shared directory
+                    Files.copy(
+                            legacyFile.toPath(),
+                            Paths.get(SHARED_PROFILE_DIR + imageFileName),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                    profileImageView.setImage(new Image(legacyFile.toURI().toString()));
+                    System.out.println("Migrated image from legacy folder.");
+                    return;
+                } catch (IOException e) {
+                    System.err.println("Failed to migrate profile image: " + e.getMessage());
+                }
+            }
+
+            System.out.println("Profile image not found for: " + imageFileName);
         }
+
+        loadDefaultProfileImage();
     }
 
     private void loadDefaultProfileImage() {
         try {
-            // Default image from resources (e.g., src/main/resources/profile_pics/default.jpg)
-            URL defaultImageUrl = getClass().getResource("/profile_pics/default.jpg");
-            if (defaultImageUrl != null) {
-                profileImageView.setImage(new Image(defaultImageUrl.toExternalForm()));
+            // 1. Try shared directory first
+            File defaultFile = new File(SHARED_PROFILE_DIR + "default.jpg");
+            if (defaultFile.exists()) {
+                profileImageView.setImage(new Image(defaultFile.toURI().toString()));
+                System.out.println("Loaded default image from shared folder.");
+                return;
+            }
+
+            // 2. Fallback to embedded resource
+            InputStream defaultStream = getClass().getResourceAsStream(DEFAULT_IMAGE_RESOURCE);
+            if (defaultStream != null) {
+                profileImageView.setImage(new Image(defaultStream));
+                System.out.println("Loaded default image from resources.");
             } else {
-                System.err.println("Default image not found in /profile_pics/default.jpg");
+                System.err.println("Default image not found in resources: " + DEFAULT_IMAGE_RESOURCE);
+                profileImageView.setImage(null); // Clear image view
             }
         } catch (Exception e) {
             System.err.println("Error loading default profile image: " + e.getMessage());
+            profileImageView.setImage(null);
         }
     }
 
@@ -73,4 +114,3 @@ public class ViewProfileController {
                 (AdminDashboardController controller) -> controller.setUser(currentUser));
     }
 }
-

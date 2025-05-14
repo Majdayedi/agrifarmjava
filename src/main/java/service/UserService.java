@@ -281,16 +281,33 @@ public class UserService {
         }
 
         List<String> roles = Collections.singletonList("ROLE_USER");
-
-        // Download and save the profile picture locally
         String imageFileName = null;
+
+        // Download and save the profile picture to shared directory
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
-            try (InputStream in = new URL(profilePicUrl).openStream()) {
-                imageFileName = UUID.randomUUID() + ".jpg";
-                Path outputPath = Paths.get("src/user_data/profile_pics/", imageFileName);
-                Files.copy(in, outputPath, StandardCopyOption.REPLACE_EXISTING);
+            try {
+                // 1. Create shared directory if it doesn't exist
+                Path profilePicsDir = Path.of("C:\\shared-profile-pics");
+                if (!Files.exists(profilePicsDir)) {
+                    Files.createDirectories(profilePicsDir);
+                }
+
+                // 2. Generate unique filename with proper extension
+                imageFileName = "fb_" + UUID.randomUUID() + ".jpg";
+                Path outputPath = profilePicsDir.resolve(imageFileName);
+
+                // 3. Download and save the image
+                try (InputStream in = new URL(profilePicUrl).openStream()) {
+                    Files.copy(in, outputPath, StandardCopyOption.REPLACE_EXISTING);
+
+                    // 4. Verify the image was saved successfully
+                    if (!Files.exists(outputPath) || Files.size(outputPath) == 0) {
+                        System.err.println("Failed to save Facebook profile picture");
+                        imageFileName = null;
+                    }
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error saving Facebook profile picture: " + e.getMessage());
                 imageFileName = null;
             }
         }
@@ -330,9 +347,8 @@ public class UserService {
                     }
                 }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Database error during Facebook registration: " + e.getMessage());
         }
 
         return -1;

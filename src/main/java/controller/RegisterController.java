@@ -63,16 +63,34 @@ public class RegisterController {
         try {
             String imageFileName = null;
             if (selectedImageFile != null) {
-                Path imagesDir = Path.of("src/user_data/profile_pics/");
+                // 1. Use the shared directory path
+                Path imagesDir = Path.of("C:\\shared-profile-pics");
+
+                // 2. Create directory if it doesn't exist (with better error handling)
                 if (!Files.exists(imagesDir)) {
-                    Files.createDirectory(imagesDir);
+                    try {
+                        Files.createDirectories(imagesDir); // createDirectories is better for nested paths
+                    } catch (IOException e) {
+                        showAlert("Error", "Could not create profile pictures directory");
+                        return;
+                    }
                 }
 
-                imageFileName = email + "_" + System.currentTimeMillis() + ".jpg";
+                // 3. Sanitize filename and ensure unique naming
+                String sanitizedEmail = email.replaceAll("[^a-zA-Z0-9]", "_");
+                imageFileName = sanitizedEmail + "_" + System.currentTimeMillis() + getFileExtension(selectedImageFile);
+
+                // 4. Copy file to shared directory
                 Path targetPath = imagesDir.resolve(imageFileName);
-                Files.copy(selectedImageFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+                try {
+                    Files.copy(selectedImageFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    showAlert("Error", "Failed to save profile picture");
+                    imageFileName = null; // Continue registration without image
+                }
             }
 
+            // 5. Register user (existing code remains the same)
             int userId = userService.registerUser(
                     email,
                     password,
@@ -97,6 +115,16 @@ public class RegisterController {
         } catch (Exception e) {
             showAlert("Error", "An error occurred during registration: " + e.getMessage());
         }
+    }
+
+    // Helper method to get file extension
+    private String getFileExtension(File file) {
+        String name = file.getName();
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot > 0) {
+            return name.substring(lastDot).toLowerCase();
+        }
+        return ".jpg"; // default extension
     }
 
     @FXML

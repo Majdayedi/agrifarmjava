@@ -15,7 +15,9 @@ import utils.CredentialManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class UserDashboardController {
 
@@ -30,6 +32,9 @@ public class UserDashboardController {
 
     @FXML
     private ImageView profileImageView;
+
+    private static final String PROFILE_PICS_DIR = "C:\\shared-profile-pics\\";
+    private static final String DEFAULT_IMAGE_PATH = PROFILE_PICS_DIR + "default.jpg";
 
     private User currentUser;
 
@@ -54,26 +59,53 @@ public class UserDashboardController {
     }
 
     private void loadUserProfilePicture(String imageName) {
-        if (imageName != null && !imageName.isEmpty()) {
-            File file = new File("src/user_data/profile_pics/" + imageName);
-            if (file.exists()) {
-                Image image = new Image(file.toURI().toString());
-                profileImageView.setImage(image);
+        try {
+            if (imageName != null && !imageName.isEmpty()) {
+                File sharedFile = new File(PROFILE_PICS_DIR + imageName);
+                System.out.println("Checking image in: " + sharedFile.getAbsolutePath());
+
+                if (sharedFile.exists()) {
+                    String uri = sharedFile.toURI().toString() + "?t=" + System.currentTimeMillis();
+                    profileImageView.setImage(new Image(uri));
+                    System.out.println("Loaded image from shared folder.");
+                } else {
+                    File legacyFile = new File("src/user_data/profile_pics/" + imageName);
+                    if (legacyFile.exists()) {
+                        // Copy to shared directory for future use
+                        Files.copy(
+                                legacyFile.toPath(),
+                                Path.of(PROFILE_PICS_DIR + imageName),
+                                StandardCopyOption.REPLACE_EXISTING
+                        );
+                        profileImageView.setImage(new Image(legacyFile.toURI().toString()));
+                        System.out.println("Loaded image from legacy folder.");
+                    } else {
+                        System.out.println("Profile image not found. Loading default image.");
+                        setDefaultProfileImage();
+                    }
+                }
             } else {
-                System.out.println("Profile image not found. Loading default.");
+                System.out.println("No image name provided. Loading default image.");
                 setDefaultProfileImage();
             }
-        } else {
+        } catch (Exception e) {
+            System.err.println("Error loading profile picture: " + e.getMessage());
             setDefaultProfileImage();
         }
     }
 
     private void setDefaultProfileImage() {
         try {
-            Image image = new Image(getClass().getResource("/profile_pics/default.jpg").toExternalForm());
-            profileImageView.setImage(image);
+            File defaultFile = new File(DEFAULT_IMAGE_PATH);
+            if (defaultFile.exists()) {
+                profileImageView.setImage(new Image(defaultFile.toURI().toString()));
+                System.out.println("Loaded default profile image.");
+            } else {
+                System.err.println("Default profile image not found at " + DEFAULT_IMAGE_PATH);
+                profileImageView.setImage(null); // Optional: show placeholder
+            }
         } catch (Exception e) {
-            System.out.println("Default profile image not found in resources!");
+            System.err.println("Error loading default profile image: " + e.getMessage());
         }
     }
 
@@ -114,5 +146,4 @@ public class UserDashboardController {
             e.printStackTrace();
         }
     }
-
 }

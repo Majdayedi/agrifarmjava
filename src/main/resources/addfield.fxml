@@ -16,7 +16,6 @@
     <Label text="Add New Field" styleClass="form-title"/>
 
     <GridPane vgap="10" hgap="10">
-        <Button text="Add New Crop" onAction="#showAddCropForm" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
 
         <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
@@ -35,13 +34,16 @@
 
         <Label text="Description:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
         <TextArea fx:id="descriptionField" GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="2" prefRowCount="3"/>
+        <Label text="crop" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <Button text="Add New Crop" GridPane.rowIndex="6" GridPane.columnIndex="1" onAction="#showAddCropForm" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
+
     </GridPane>
 
 
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Save" onAction="#handleSave" styleClass="save-button"/>
-        <Button text="Cancel" onAction="#handleCancel" styleClass="cancel-button"/>
+        <Button text="Save" onAction="#handleSave" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+        <Button text="Cancel" onAction="#handleCancel" style="-fx-background-color: #ff2424; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
     </HBox>
 
 </VBox>
