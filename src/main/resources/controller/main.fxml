@@ -25,7 +25,7 @@
             </Label>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogoutAction" styleClass="logout-button" text="Déconnexion">
+                  <Button fx:id="logoutButton" mnemonicParsing="false"  styleClass="logout-button" text="Déconnexion">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>

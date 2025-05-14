@@ -9,28 +9,38 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.Region?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.HomeController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.HomeArticleController" style="-fx-background-color: #f8f9fa;">
     <children>
         <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+
             <!-- Header -->
-            <HBox spacing="10">
+            <HBox spacing="10" style="-fx-background-color: #13af02; -fx-background-radius: 0 0 20 20;">
                 <padding>
-                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                    <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
                 </padding>
-                <Text text="📚 Article Home" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+                <Button text="⬅ Return" onAction="#handleGoBackHome"
+                        style="-fx-background-color: #13af02; -fx-text-fill: white; -fx-font-size: 14px;
+                               -fx-background-radius: 15; -fx-padding: 6 12; -fx-cursor: hand;"/>
+
+                <Text text="🌾 AGRIFARM Articles" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-fill: white;" />
+
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="🔐 Admin Dashboard" onAction="#handleAdminArticleDashboard"
-                        style="-fx-background-color: #673AB7; -fx-text-fill: white;"/>
-                <Button text="➕ New Article" onAction="#handleNewArticle"
-                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+
+                <Button text="🔐 Admin" onAction="#handleAdminDashboard"
+                        style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 20; -fx-padding: 10 20; -fx-cursor: hand;"/>
+                <Button text="🌱 New Article" onAction="#handleNewArticle"
+                        style="-fx-background-color: #8BC34A; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 20; -fx-padding: 10 20; -fx-cursor: hand;"/>
             </HBox>
 
             <!-- Scrollable Article Container -->
-            <ScrollPane fitToWidth="true">
+            <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
                 <content>
-                    <VBox fx:id="articleContainer" spacing="15">
+                    <VBox fx:id="articleContainer" spacing="15" style="-fx-background-color: #f0fff4;">
                         <padding>
-                            <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                            <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
                         </padding>
                     </VBox>
                 </content>

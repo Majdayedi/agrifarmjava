@@ -16,7 +16,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Load the OpenCV library
-          // This will automatically load the appropriate OpenCV DLL.
+        // This will automatically load the appropriate OpenCV DLL.
 
         // Print OpenCV version to confirm it loaded successfully
         System.out.println("OpenCV Version: " + Core.VERSION);

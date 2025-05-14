@@ -1,41 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
 
-<VBox xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controller.LoginController"
-      alignment="CENTER"
-      spacing="20"
-      styleClass="dashboard-vbox"
-      stylesheets="@/css/StylesUser.css">
+<BorderPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.LoginController"
+            stylesheets="@/css/StylesUser.css">
 
-    <Label text="Login" styleClass="dashboard-label"/>
+    <!-- LEFT: Login Form -->
+    <right>
+        <VBox alignment="CENTER" spacing="20" BorderPane.alignment="CENTER" styleClass="dashboard-vbox">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+            <Label text="Login" styleClass="dashboard-label"/>
 
-    <GridPane hgap="10" vgap="15" alignment="CENTER">
+            <GridPane hgap="10" vgap="15" alignment="CENTER">
+                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="label"/>
+                <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="text-field"/>
 
-        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="label"/>
-        <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="text-field"/>
+                <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="label"/>
+                <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="password-field"/>
 
-        <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="label"/>
-        <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="password-field"/>
+                <CheckBox fx:id="rememberMeCheckBox" text="Remember Me" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="checkbox"/>
 
-        <CheckBox fx:id="rememberMeCheckBox" text="Remember Me" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="checkbox"/>
+                <Button text="Login" onAction="#handleLogin" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" prefWidth="120"/>
 
-        <Button text="Login" onAction="#handleLogin" GridPane.columnIndex="1" GridPane.rowIndex="3"
-                styleClass="dashboard-button" prefWidth="120"/>
+                <Button text="Login with Face" onAction="#handleFaceLogin" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-        <Button text="Login with Face" onAction="#handleFaceLogin" />
+                <Hyperlink text="Register" onAction="#goToRegister" GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="hyperlink"/>
+                <Hyperlink text="Forgot Password?" onAction="#goToForgotPassword" GridPane.columnIndex="1" GridPane.rowIndex="6" styleClass="hyperlink"/>
+            </GridPane>
+        </VBox>
+    </right>
 
-        <Hyperlink text="Register" onAction="#goToRegister" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="hyperlink"/>
-        <Hyperlink text="Forgot Password?" onAction="#goToForgotPassword" GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="hyperlink"/>
+    <!-- RIGHT: Image -->
+    <left>
+        <StackPane alignment="CENTER" BorderPane.alignment="CENTER">
+            <ImageView fitWidth="400" preserveRatio="true">
+                <image>
+                    <Image url="@/img/FARMER.png" />
+                </image>
+            </ImageView>
+        </StackPane>
+    </left>
 
-    </GridPane>
-</VBox>
+</BorderPane>

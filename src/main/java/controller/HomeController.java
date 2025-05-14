@@ -172,7 +172,7 @@ public class HomeController implements Initializable {
     public void navigateToArticles() {
         if (!ensureUserLoggedIn()) return;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_form.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/home.fxml"));
             Parent view = loader.load();
             Stage stage = (Stage) articlesButton.getScene().getWindow();
             stage.setTitle("Articles");

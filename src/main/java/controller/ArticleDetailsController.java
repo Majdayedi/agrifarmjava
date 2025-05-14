@@ -6,12 +6,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -19,12 +20,18 @@ import entite.Article;
 import entite.Commentaire;
 import service.ArticleService;
 import service.CommentaireService;
+import service.HuggingFaceSummarizationService;
+import service.TextRazorService;
 
+import javafx.scene.input.MouseEvent; // ✅ Bon import
 import java.io.IOException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.net.URL;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 
 public class ArticleDetailsController {
 
@@ -61,18 +68,51 @@ public class ArticleDetailsController {
     @FXML
     private CommentaireViewController commentaireViewControllerController;
 
+    @FXML
+    private Label wordCountLabel;
+
+    @FXML
+    private Label charCountLabel;
+
+    @FXML
+    private Label summaryLabel;
+
+    @FXML
+    private ImageView fbpartage;
+
+    @FXML
+    private ImageView facebpartage;
+
+    @FXML
+    private ImageView pinpartage;
+
+
+    @FXML
+    private VBox tagsContainer;
+
+
+
     private Article currentArticle;
     private final ArticleService articleService;
     private final CommentaireService commentaireService;
+    private HuggingFaceSummarizationService huggingFaceSummarizationService;
+    private TextRazorService textRazorService;
     private boolean isAdminMode = false;
 
     public ArticleDetailsController() throws SQLException {
         this.articleService = new ArticleService();
         this.commentaireService = new CommentaireService();
+        this.huggingFaceSummarizationService = new HuggingFaceSummarizationService("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");
+        this.textRazorService = new TextRazorService("03b4341e18d486ec1239db298bfe846dd6486b81ede4bbf530a975aa"); // Replace with your API key
     }
 
     @FXML
     private void initialize() {
+        fbpartage.setOnMouseClicked(this::handleFacebookShare);
+        pinpartage.setOnMouseClicked(this::handlePintersetShare);
+        facebpartage.setOnMouseClicked(this::handleFBShare);
+
+
         // Any initialization code if needed
     }
 
@@ -91,7 +131,25 @@ public class ArticleDetailsController {
             titleLabel.setText(currentArticle.getTitle());
             contentLabel.setText(currentArticle.getContent());
             featuredTextLabel.setText(currentArticle.getFeaturedText());
-            
+
+            // Update word and character counts
+            updateWordAndCharCount(currentArticle.getContent());
+
+            // Generate and display article summary
+            if (huggingFaceSummarizationService != null && currentArticle.getContent() != null) {
+                try {
+                    String summary = huggingFaceSummarizationService.summarize(currentArticle.getContent());
+                    summaryLabel.setText("Summary: " + summary);
+                } catch (IOException e) {
+                    summaryLabel.setText("Summary generation failed: " + e.getMessage());
+                }
+            } else {
+                summaryLabel.setText("Summary not available - API key not set");
+            }
+
+            // Generate and display tags
+            generateTags();
+
             // Format and display the creation date
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
             dateLabel.setText("Created on: " + dateFormat.format(currentArticle.getCreatedAt()));
@@ -99,14 +157,11 @@ public class ArticleDetailsController {
             // Load and display the image if available
             if (currentArticle.getImage() != null && !currentArticle.getImage().isEmpty()) {
                 try {
-                    String imagePath = "file:src/main/resources/uploads/" + currentArticle.getImage().replace("uploads/", "");
-                    // Load image with background loading and caching enabled
-                    Image image = new Image(imagePath, 400, 300, true, true); // Reduced dimensions
+                    String imagePath = "file:src/main/resources/controller/uploads/" + currentArticle.getImage().replace("uploads/", "");
+                    Image image = new Image(imagePath, true);
                     articleImage.setImage(image);
-                    articleImage.setFitWidth(400); // Reduced from 600
+                    articleImage.setFitWidth(600); // Set a reasonable max width
                     articleImage.setPreserveRatio(true);
-                    articleImage.setSmooth(true); // Enable image smoothing
-                    articleImage.setCache(true); // Enable caching
                     articleImage.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
                     articleImage.setVisible(true);
                 } catch (Exception e) {
@@ -128,7 +183,7 @@ public class ArticleDetailsController {
 
             // Update UI
             commentCountLabel.setText(String.format("%d Comments", commentCount));
-            averageRatingLabel.setText(String.format("%.1f ⭐", avgRating));
+            averageRatingLabel.setText(String.format("%.1f ", avgRating));
 
             // Clear and reload comments
             commentsContainer.getChildren().clear();
@@ -145,7 +200,7 @@ public class ArticleDetailsController {
         VBox commentBox = new VBox(5);
         commentBox.setStyle("-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-background-radius: 5;");
 
-        Label ratingLabel = new Label("⭐ ".repeat(comment.getRate()));
+        Label ratingLabel = new Label(" ".repeat(comment.getRate()));
         ratingLabel.setStyle("-fx-text-fill: #f39c12;");
 
         Label dateLabel = new Label(comment.getCreatedAt().toString());
@@ -184,7 +239,7 @@ public class ArticleDetailsController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
             Parent root = loader.load();
-            
+
             AddCommentaireController commentController = loader.getController();
             commentController.setEditMode(comment);
 
@@ -193,7 +248,7 @@ public class ArticleDetailsController {
             commentStage.setScene(new Scene(root));
             commentStage.initModality(Modality.APPLICATION_MODAL);
             commentStage.initOwner(backButton.getScene().getWindow());
-            
+
             // Reload comments after the edit window is closed
             commentStage.setOnHidden(e -> {
                 if (commentaireViewControllerController != null) {
@@ -202,7 +257,7 @@ public class ArticleDetailsController {
                     loadComments();
                 }
             });
-            
+
             commentStage.showAndWait();
 
         } catch (IOException e) {
@@ -215,7 +270,7 @@ public class ArticleDetailsController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
             Parent root = loader.load();
-            
+
             AddCommentaireController commentController = loader.getController();
             commentController.setArticleId(currentArticle.getId());
 
@@ -224,14 +279,14 @@ public class ArticleDetailsController {
             commentStage.setScene(new Scene(root));
             commentStage.initModality(Modality.APPLICATION_MODAL);
             commentStage.initOwner(backButton.getScene().getWindow());
-            
+
             // Reload comments after the comment window is closed
             commentStage.setOnHidden(e -> {
                 if (commentaireViewControllerController != null) {
                     commentaireViewControllerController.loadComments();
                 }
             });
-            
+
             commentStage.showAndWait();
 
         } catch (IOException e) {
@@ -292,6 +347,69 @@ public class ArticleDetailsController {
         }
     }
 
+    private void generateTags() {
+        if (currentArticle != null && currentArticle.getContent() != null) {
+            try {
+                List<String> tags = textRazorService.generateTags(currentArticle.getContent());
+                displayTags(tags);
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error", "Failed to generate tags: " + e.getMessage());
+            }
+        }
+    }
+
+    private void displayTags(List<String> tags) {
+        tagsContainer.getChildren().clear();
+
+        FlowPane tagFlow = new FlowPane();
+        tagFlow.setHgap(8);
+        tagFlow.setVgap(8);
+        tagFlow.setPrefWrapLength(400); // Adjust based on your layout
+        tagFlow.setAlignment(Pos.CENTER_LEFT);
+
+        for (String tag : tags) {
+            HBox tagBox = new HBox(5);
+            tagBox.setAlignment(Pos.CENTER);
+            tagBox.setPadding(new Insets(6, 12, 6, 12));
+            tagBox.setStyle("-fx-background-color: #e9ecef; " +
+                    "-fx-background-radius: 20; " +
+                    "-fx-border-color: #dee2e6; " +
+                    "-fx-border-radius: 20; " +
+                    "-fx-border-width: 1; " +
+                    "-fx-cursor: hand;");
+
+            Label hashLabel = new Label("#");
+            hashLabel.setStyle("-fx-text-fill: #6c757d; -fx-font-weight: bold; -fx-font-size: 13px;");
+
+            Label tagLabel = new Label(tag);
+            tagLabel.setStyle("-fx-text-fill: #495057; -fx-font-size: 13px;");
+
+            tagBox.getChildren().addAll(hashLabel, tagLabel);
+
+            // Add hover effect
+            tagBox.setOnMouseEntered(e ->
+                    tagBox.setStyle("-fx-background-color: #dee2e6; " +
+                            "-fx-background-radius: 20; " +
+                            "-fx-border-color: #ced4da; " +
+                            "-fx-border-radius: 20; " +
+                            "-fx-border-width: 1; " +
+                            "-fx-cursor: hand;"));
+
+            tagBox.setOnMouseExited(e ->
+                    tagBox.setStyle("-fx-background-color: #e9ecef; " +
+                            "-fx-background-radius: 20; " +
+                            "-fx-border-color: #dee2e6; " +
+                            "-fx-border-radius: 20; " +
+                            "-fx-border-width: 1; " +
+                            "-fx-cursor: hand;"));
+
+            tagFlow.getChildren().add(tagBox);
+        }
+
+        tagsContainer.getChildren().add(tagFlow);
+    }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -306,23 +424,58 @@ public class ArticleDetailsController {
             commentaireViewControllerController.setAdminMode(isAdmin);
         }
     }
-    
-    /**
-     * Initializes the controller with the given article ID.
-     * This method loads the article from the database and sets it for display.
-     * 
-     * @param articleId The ID of the article to display
-     */
-    public void initData(int articleId) {
-        try {
-            Article article = articleService.getById(articleId);
-            if (article != null) {
-                setArticle(article);
-            } else {
-                showAlert("Error", "Article not found.");
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Failed to load article: " + e.getMessage());
+
+    private void updateWordAndCharCount(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            wordCountLabel.setText("0 words");
+            charCountLabel.setText("0 characters");
+            return;
+        }
+
+        // Count characters (excluding whitespace)
+        int charCount = text.replaceAll("\\s+", "").length();
+        int totalCharCount = text.length();
+
+        // Count words (split by whitespace and filter out empty strings)
+        String[] words = text.trim().split("\\s+");
+        int wordCount = words.length;
+
+        // Calculate reading time (average reading speed: 200 words per minute)
+        int readingTimeSeconds = (int) Math.ceil(wordCount / 200.0 * 60);
+        String readingTime;
+        if (readingTimeSeconds < 60) {
+            readingTime = readingTimeSeconds + " sec read";
+        } else {
+            int minutes = readingTimeSeconds / 60;
+            readingTime = minutes + " min read";
+        }
+
+        // Update labels with formatted numbers
+        wordCountLabel.setText(String.format("%,d words", wordCount));
+        charCountLabel.setText(String.format("%,d chars", charCount));
+
+        // Set tooltips with additional information
+        Tooltip wordTooltip = new Tooltip(String.format("Total words: %,d\nEstimated reading time: %s", wordCount, readingTime));
+        Tooltip charTooltip = new Tooltip(String.format("Characters (no spaces): %,d\nTotal characters: %,d", charCount, totalCharCount));
+
+        wordCountLabel.setTooltip(wordTooltip);
+        charCountLabel.setTooltip(charTooltip);
+    }
+
+    private void handleFacebookShare(MouseEvent event) {
+        if (currentArticle != null) {
+            articleService.shareGoogle(currentArticle);
         }
     }
-} 
+    private void handlePintersetShare(MouseEvent event) {
+        if (currentArticle != null) {
+            articleService.sharePintrest(currentArticle);
+        }
+    }
+    private void handleFBShare(MouseEvent event) {
+        if (currentArticle != null) {
+            articleService.shareFacebook(currentArticle);
+        }
+    }
+
+}

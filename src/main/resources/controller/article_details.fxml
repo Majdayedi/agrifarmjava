@@ -1,52 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.image.ImageView?>
 
-<ScrollPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="controller.ArticleDetailsController"
-           fitToWidth="true">
-    
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ArticleDetailsController" style="-fx-background: #f8f9fa;">
+
     <VBox spacing="20" style="-fx-background-color: white;">
         <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
+            <Insets bottom="20" left="20" right="20" top="20" />
         </padding>
 
         <!-- Header with back button -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Button fx:id="backButton" text="← Back" onAction="#handleBack"
-                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="editButton" text="✏️ Edit" onAction="#handleEdit"
-                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D32; -fx-background-radius: 10; -fx-padding: 10;">
+            <Button fx:id="backButton" onAction="#handleBack"
+                    style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;
+                           -fx-background-radius: 20; -fx-padding: 8 15;" text="← Back" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="editButton" onAction="#handleEdit"
+                    style="-fx-background-color: #8BC34A; -fx-text-fill: white; -fx-font-weight: bold;
+                           -fx-background-radius: 20; -fx-padding: 8 15;" text="🌱 Edit" />
         </HBox>
 
         <!-- Article Title -->
-        <Label fx:id="titleLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        <Label fx:id="titleLabel" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;" />
 
         <!-- Featured Text -->
-        <VBox style="-fx-background-color: #f5f5f5; -fx-padding: 15; -fx-background-radius: 5;">
-            <Label fx:id="featuredTextLabel" wrapText="true" 
-                   style="-fx-font-size: 16px; -fx-font-style: italic;"/>
+        <VBox style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 10; -fx-border-color: #C8E6C9; -fx-border-radius: 10; -fx-border-width: 1;">
+            <Label fx:id="featuredTextLabel" style="-fx-font-size: 16px; -fx-font-style: italic; -fx-text-fill: #2E7D32;" wrapText="true" />
         </VBox>
 
         <!-- Article Image -->
-        <ImageView fx:id="articleImage" preserveRatio="true"/>
+        <ImageView fx:id="articleImage" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);" />
 
         <!-- Article Content -->
-        <VBox style="-fx-background-color: white; -fx-padding: 15;">
-            <Label fx:id="contentLabel" wrapText="true" 
-                   style="-fx-font-size: 14px; -fx-line-spacing: 1.5;"/>
+        <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+            <Label fx:id="contentLabel" style="-fx-font-size: 15px; -fx-line-spacing: 1.6; -fx-text-fill: #333333;" wrapText="true" />
+            <!-- Article Summary -->
+            <VBox style="-fx-background-color: #FFF3E0; -fx-padding: 15; -fx-background-radius: 10; -fx-border-color: #FFE0B2; -fx-border-radius: 10; -fx-border-width: 1; -fx-margin-top: 20;">
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #F57C00;" text="🌾 Article Summary" />
+                <Label fx:id="summaryLabel" style="-fx-font-size: 14px; -fx-text-fill: #795548; -fx-padding: 10 0 0 0;" wrapText="true" />
+            </VBox>
+
+            <!-- Article Stats -->
+            <HBox spacing="20" style="-fx-padding: 15; -fx-background-color: #E8F5E9; -fx-background-radius: 10; -fx-border-color: #C8E6C9; -fx-border-radius: 10; -fx-border-width: 1; -fx-margin-top: 15;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label style="-fx-font-size: 16px;" text="🌿" />
+                    <Label fx:id="wordCountLabel" style="-fx-font-size: 14px; -fx-text-fill: #2E7D32; -fx-font-weight: bold;" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label style="-fx-font-size: 16px;" text="📖" />
+                    <Label fx:id="charCountLabel" style="-fx-font-size: 14px; -fx-text-fill: #2E7D32; -fx-font-weight: bold;" />
+                </HBox>
+            </HBox>
+
+            <!-- Article Tags -->
+            <VBox fx:id="tagsContainer" spacing="10" style="-fx-padding: 20 0;" />
+            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 15; -fx-background-color: #FFF3E0; -fx-background-radius: 10;">
+                <children>
+                    <Label text="Share:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #F57C00;" />
+                    <ImageView fx:id="fbpartage" fitHeight="30.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                        <image>
+                            <Image url="@uploads/google.png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fx:id="pinpartage" fitHeight="36.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                        <image>
+                            <Image url="@uploads/pinterest.png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fx:id="facebpartage" fitHeight="36.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                        <image>
+                            <Image url="@uploads/fbpartage.png" />
+                        </image>
+                    </ImageView>
+                </children>
+            </HBox>
         </VBox>
 
         <!-- Creation Date -->
-        <Label fx:id="dateLabel" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+        <Label fx:id="dateLabel" style="-fx-font-size: 13px; -fx-text-fill: #689F38; -fx-font-style: italic;" />
 
         <!-- Comments Section -->
-        <fx:include fx:id="commentaireViewController" source="commentaire_view.fxml"/>
+        <fx:include fx:id="commentaireViewController" source="commentaire_view.fxml" />
     </VBox>
-</ScrollPane> 
+</ScrollPane>

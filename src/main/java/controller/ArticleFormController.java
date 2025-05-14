@@ -1,18 +1,18 @@
 package controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import entite.Article;
 import service.ArticleService;
 
@@ -46,7 +46,7 @@ public class ArticleFormController {
 
     private final ArticleService articleService;
     private File selectedImageFile;
-    private static final String UPLOAD_DIR = "src/main/resources/org/example/piarticle/uploads";
+    private static final String UPLOAD_DIR = "src/main/resources/controller/uploads";
 
     public ArticleFormController() throws SQLException {
         this.articleService = new ArticleService();
@@ -63,7 +63,7 @@ public class ArticleFormController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Image");
         fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+                new FileChooser.ExtensionFilter("Image Files", ".png", ".jpg", ".jpeg", ".gif")
         );
 
         File file = fileChooser.showOpenDialog(imageField.getScene().getWindow());
@@ -91,7 +91,7 @@ public class ArticleFormController {
 
         try {
             String finalImagePath = null;
-            
+
             // Handle image file if selected
             if (selectedImageFile != null) {
                 String fileName = System.currentTimeMillis() + "_" + selectedImageFile.getName();
@@ -109,23 +109,14 @@ public class ArticleFormController {
             article.setFeaturedText(featuredText);
             article.setImage(finalImagePath);
 
-            // We don't set the slug manually, letting the service generate a unique one
-
             articleService.add(article);
             showAlert("Success", "Article added successfully!");
-            
-            // Navigate to article details page instead of home page
-            goToArticleDetails(article.getId());
+            goToHomePage();
 
         } catch (SQLException e) {
-            String errorMessage = e.getMessage();
-            if (errorMessage.contains("Duplicate entry") && errorMessage.contains("UNIQ_")) {
-                showAlert("Error", "An article with a similar title already exists. Please use a different title.");
-            } else {
-                showAlert("Error", "Failed to add article: " + errorMessage);
-            }
+            showAlert("Error", "Failed to add article: " + e.getMessage());
         } catch (IOException e) {
-            showAlert("Error", "Failed to save image or navigate to article details page: " + e.getMessage());
+            showAlert("Error", "Failed to save image or navigate to home page: " + e.getMessage());
         }
     }
 
@@ -151,21 +142,6 @@ public class ArticleFormController {
         Parent root = loader.load();
         Stage stage = (Stage) submitButton.getScene().getWindow();
         stage.setScene(new Scene(root));
-        stage.show();
-    }
-
-    // Add a new method to navigate to article details
-    private void goToArticleDetails(int articleId) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/article_details.fxml"));
-        Parent root = loader.load();
-        
-        // Get the controller and pass the article ID
-        ArticleDetailsController detailsController = loader.getController();
-        detailsController.initData(articleId);
-        
-        Stage stage = (Stage) submitButton.getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.setTitle("Article Details");
         stage.show();
     }
 }

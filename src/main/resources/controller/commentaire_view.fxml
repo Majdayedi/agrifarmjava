@@ -8,20 +8,28 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="controller.CommentaireViewController"
-      spacing="10" styleClass="comments-section">
+      spacing="15" style="-fx-background-color: #f8f9fa; -fx-padding: 20;">
 
-    <!-- Comments Header -->
-    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="comments-header">
-        <Label text="Comments" styleClass="section-title"/>
+    <!-- Comments Header with agriculture theme -->
+    <HBox spacing="15" alignment="CENTER_LEFT"
+          style="-fx-background-color: #2E7D32; -fx-padding: 15 20; -fx-background-radius: 10;">
+        <Label text="🌱 Community Feedback"
+               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label fx:id="commentCountLabel" styleClass="comment-count"/>
-        <Label fx:id="averageRatingLabel" styleClass="average-rating"/>
-        <Button text="💬 Add Comment" onAction="#handleAddComment" styleClass="add-comment-button"/>
+        <Label fx:id="commentCountLabel"
+               style="-fx-font-size: 14px; -fx-text-fill: #A5D6A7; -fx-font-weight: bold;"/>
+        <Label fx:id="averageRatingLabel"
+               style="-fx-font-size: 14px; -fx-text-fill: #FFF176; -fx-font-weight: bold;"/>
+        <Button text="🌿 Share Your Thoughts" onAction="#handleAddComment"
+                style="-fx-background-color: #8BC34A; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-background-radius: 20; -fx-padding: 10 20; -fx-cursor: hand;"/>
     </HBox>
 
-    <!-- Comments List -->
-    <ScrollPane fitToWidth="true" styleClass="comments-scroll">
-        <VBox fx:id="commentsContainer" spacing="10" styleClass="comments-container">
+    <!-- Comments List with agriculture theme -->
+    <ScrollPane fitToWidth="true"
+                style="-fx-background: transparent; -fx-background-color: transparent;">
+        <VBox fx:id="commentsContainer" spacing="15"
+              style="-fx-padding: 10; -fx-background-color: transparent;">
             <!-- Comments will be added here dynamically -->
         </VBox>
     </ScrollPane>
@@ -29,4 +37,4 @@
     <stylesheets>
         <URL value="@styles.css"/>
     </stylesheets>
-</VBox> 
+</VBox>

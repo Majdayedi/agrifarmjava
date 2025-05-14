@@ -1,21 +1,24 @@
 package controller;
 
+import entite.Commentaire;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import entite.Commentaire;
 import service.CommentaireService;
 
+
 import java.io.IOException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.net.URL;
 
 public class CommentaireViewController {
 
@@ -83,17 +86,68 @@ public class CommentaireViewController {
         VBox commentBox = new VBox(5);
         commentBox.setStyle("-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-background-radius: 5;");
 
+        // Create buttons container
+        HBox buttonsContainer = new HBox(5);
+        buttonsContainer.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+
+        // Create edit button
+        Button editButton = new Button("✏️ Edit");
+        editButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        editButton.setOnAction(e -> handleEditComment(comment));
+
+        // Create delete button
+        Button deleteButton = new Button("🗑️ Delete");
+        deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
+        deleteButton.setOnAction(e -> handleDeleteComment(comment));
+
+        // Add buttons to container
+        buttonsContainer.getChildren().addAll(editButton, deleteButton);
+
         Label ratingLabel = new Label("⭐ ".repeat(comment.getRate()));
         ratingLabel.setStyle("-fx-text-fill: #f39c12;");
 
-        Label dateLabel = new Label(dateFormat.format(comment.getCreatedAt()));
+        String dateText = (comment.getCreatedAt() != null)
+                ? dateFormat.format(comment.getCreatedAt())
+                : "No date";
+        Label dateLabel = new Label(dateText);
         dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
 
         Label contentLabel = new Label(comment.getCommentaire());
         contentLabel.setWrapText(true);
+        contentLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
 
-        commentBox.getChildren().addAll(ratingLabel, contentLabel, dateLabel);
+        commentBox.getChildren().addAll(buttonsContainer, ratingLabel, contentLabel, dateLabel);
         commentsContainer.getChildren().add(commentBox);
+    }
+
+    private void handleEditComment(Commentaire comment) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/controller/add-commentaire.fxml"));
+            Parent root = loader.load();
+            AddCommentaireController controller = loader.getController();
+            controller.setEditMode(comment);
+            controller.setArticleId(articleId);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Comment");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Reload comments after editing
+            loadComments();
+        } catch (IOException e) {
+            showError("Failed to open edit form: " + e.getMessage());
+        }
+    }
+
+    private void handleDeleteComment(Commentaire comment) {
+        try {
+            commentaireService.delete(comment.getId(), comment.getArticleId());
+            loadComments();
+        } catch (SQLException e) {
+            showError("Failed to delete comment: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -102,7 +156,7 @@ public class CommentaireViewController {
             URL resource = getClass().getResource("/controller/add-commentaire.fxml");
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
-            
+
             AddCommentaireController commentController = loader.getController();
             commentController.setArticleId(articleId);
 
@@ -111,10 +165,10 @@ public class CommentaireViewController {
             commentStage.setScene(new Scene(root));
             commentStage.initModality(Modality.APPLICATION_MODAL);
             commentStage.initOwner(commentsContainer.getScene().getWindow());
-            
+
             // Reload comments after the window is closed
             commentStage.setOnHidden(e -> loadComments());
-            
+
             commentStage.showAndWait();
 
         } catch (IOException e) {
@@ -129,4 +183,4 @@ public class CommentaireViewController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-} 
+}

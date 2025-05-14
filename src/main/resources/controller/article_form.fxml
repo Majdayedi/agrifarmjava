@@ -8,34 +8,56 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="controller.ArticleFormController"
-      spacing="10">
+      spacing="15"
+      style="-fx-background-color: #f8f9fa;">
 
     <!-- Padding set via property element -->
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
 
-    <Text text="➕ Create New Article" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+    <!-- Header with agriculture theme -->
+    <HBox style="-fx-background-color: #2E7D32; -fx-background-radius: 10; -fx-padding: 20;">
+        <Text text="🌾 Create New Article" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" />
+    </HBox>
 
-    <TextField fx:id="titleField" promptText="Title" />
-    <TextArea fx:id="contentArea" promptText="Content" prefRowCount="5" />
-    <TextArea fx:id="featuredTextArea" promptText="Featured Text" prefRowCount="2" />
-    
-    <!-- Image Section -->
-    <VBox spacing="10">
-        <Label text="Image (Optional)" style="-fx-font-weight: bold;"/>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <TextField fx:id="imageField" promptText="Image URL or select a file" HBox.hgrow="ALWAYS"/>
-            <Button text="Choose File" onAction="#handleChooseImage"/>
-        </HBox>
-        <ImageView fx:id="imagePreview" fitWidth="200" fitHeight="200" preserveRatio="true"
-                   style="-fx-border-color: #ddd; -fx-border-width: 1; -fx-border-style: dashed;"/>
+    <!-- Form fields with agriculture theme -->
+    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+        <TextField fx:id="titleField" promptText="Enter article title..."
+                   style="-fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #C8E6C9; -fx-border-radius: 8;
+                          -fx-font-size: 14px; -fx-prompt-text-fill: #689F38;" />
+
+        <TextArea fx:id="contentArea" promptText="Write your article content here..." prefRowCount="8" wrapText="true"
+                  style="-fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #C8E6C9; -fx-border-radius: 8;
+                         -fx-font-size: 14px; -fx-prompt-text-fill: #689F38;" />
+
+        <TextArea fx:id="featuredTextArea" promptText="Enter a featured excerpt from your article..." prefRowCount="3" wrapText="true"
+                  style="-fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #C8E6C9; -fx-border-radius: 8;
+                         -fx-font-size: 14px; -fx-prompt-text-fill: #689F38;" />
+
+        <!-- Image Section with agriculture theme -->
+        <VBox spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 10;">
+            <Label text="🖼️ Article Image (Optional)" style="-fx-font-weight: bold; -fx-text-fill: #2E7D32; -fx-font-size: 14px;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="imageField" promptText="Image URL or choose a file..." HBox.hgrow="ALWAYS"
+                           style="-fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #C8E6C9; -fx-border-radius: 8;"/>
+                <Button text="Choose File" onAction="#handleChooseImage"
+                        style="-fx-background-color: #8BC34A; -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
+            </HBox>
+            <ImageView fx:id="imagePreview" fitWidth="200" fitHeight="200" preserveRatio="true"
+                       style="-fx-background-color: white; -fx-border-color: #C8E6C9; -fx-border-width: 2;
+                              -fx-border-style: dashed; -fx-border-radius: 10;"/>
+        </VBox>
     </VBox>
 
-    <HBox spacing="10">
-        <Button text="Submit" fx:id="submitButton" onAction="#handleSubmit" 
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-        <Button text="Cancel" onAction="#handleCancel" 
-                style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+    <!-- Action buttons with agriculture theme -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button text="🌱 Submit" fx:id="submitButton" onAction="#handleSubmit"
+                style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-padding: 12 25; -fx-background-radius: 20; -fx-cursor: hand;"/>
+        <Button text="Cancel" onAction="#handleCancel"
+                style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-padding: 12 25; -fx-background-radius: 20; -fx-cursor: hand;"/>
     </HBox>
 </VBox>
